@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "minigamesmod",
+  "version": "${version}",
+  "name": "MinigamesMod",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/minigamesmod/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "org.trivait.minigamesmod.client.MinigamesModClient"
+    ],
+    "main": [
+      "org.trivait.minigamesmod.MinigamesMod"
+    ]
+  },
+  "mixins": [
+    "minigamesmod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
