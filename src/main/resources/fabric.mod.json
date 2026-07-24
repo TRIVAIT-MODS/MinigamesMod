@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "minigamesmod",
+	"version": "${version}",
+	"name": "MinigamesMod",
+	"description": "This mod adds some cool minigames.",
+	"authors": [
+		"TRIVAIT"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/user/Trivait",
+		"sources": "https://github.com/TRIVAIT-MODS/MinigamesMod",
+		"issues": "https://github.com/TRIVAIT-MODS/MinigamesMod/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/minigamesmod/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"org.trivait.minigamesmod.MinigamesMod"
+		]
+	},
+	"mixins": [
+		"minigamesmod.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
