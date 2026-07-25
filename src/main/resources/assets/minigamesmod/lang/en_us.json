@@ -1,3 +1,68 @@
 {
+  "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.mainMenuButtonPosition": "Title screen button position",
+  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Game menu button position",
 
+  "config.minigames.category.general": "General",
+  "config.minigames.category.minigames": "Minigames",
+
+  "config.minigames.main_menu_button_position.left_singleplayer": "Left: Singleplayer",
+  "config.minigames.main_menu_button_position.left_multiplayer": "Left: Multiplayer",
+  "config.minigames.main_menu_button_position.left_realms": "Left: Realms",
+  "config.minigames.main_menu_button_position.left_mods": "Left: Mods",
+  "config.minigames.main_menu_button_position.right_singleplayer": "Right: Singleplayer",
+  "config.minigames.main_menu_button_position.right_multiplayer": "Right: Multiplayer",
+  "config.minigames.main_menu_button_position.right_realms": "Right: Realms",
+  "config.minigames.main_menu_button_position.right_mods": "Right: Mods",
+
+  "config.minigames.pause_menu_button_position.left_same_row": "Left: Row 1",
+  "config.minigames.pause_menu_button_position.left_next_row": "Left: Row 2",
+  "config.minigames.pause_menu_button_position.left_2_rows_down": "Left: Row 3",
+  "config.minigames.pause_menu_button_position.left_3_rows_down": "Left: Row 4",
+  "config.minigames.pause_menu_button_position.left_4_rows_down": "Left: Row 5",
+  "config.minigames.pause_menu_button_position.right_same_row": "Right: Row 1",
+  "config.minigames.pause_menu_button_position.right_next_row": "Right: Row 2",
+  "config.minigames.pause_menu_button_position.right_2_rows_down": "Right: Row 3",
+  "config.minigames.pause_menu_button_position.right_3_rows_down": "Right: Row 4",
+  "config.minigames.pause_menu_button_position.right_4_rows_down": "Right: Row 5",
+
+  "text.autoconfig.minigames/2048_ui.title": "2048 Settings",
+  "text.autoconfig.minigames/2048_ui.option.gridSize": "Grid size",
+  "text.autoconfig.minigames/2048_ui.option.volume": "Volume",
+
+  "text.autoconfig.minigames/tetris_ui.title": "Tetris Settings",
+  "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Hard drop",
+  "text.autoconfig.minigames/tetris_ui.option.volume": "Volume",
+
+  "minigame.tetris.mode.off": "Off",
+  "minigame.tetris.mode.instant": "Instant",
+  "minigame.tetris.mode.outline": "Outline",
+  "minigame.tetris.mode.ghost": "Ghost",
+
+  "screen.minigames.list.title": "Minigames",
+  "screen.minigames.list.empty": "No minigames installed",
+  "minigame.restart": "Restart",
+  "minigame.2048.title": "2048",
+  "minigame.2048.undo": "Undo",
+  "minigame.2048.score": "SCORE",
+  "minigame.2048.best": "BEST",
+  "minigame.2048.game_over": "Game Over!",
+  "minigame.2048.win": "You Win!",
+
+  "minigame.tetris.title": "Tetris",
+  "minigame.tetris.start": "Start game",
+  "minigame.tetris.return": "Return",
+  "minigame.tetris.restart": "Restart",
+  "minigame.tetris.pause": "Pause",
+  "minigame.tetris.next": "NEXT",
+  "minigame.tetris.paused": "PAUSED",
+  "minigame.tetris.combo": "Combo",
+  "minigame.tetris.tetris": "TETRIS!!!",
+  "minigame.tetris.score": "SCORE",
+  "minigame.tetris.lines": "LINES CLEARED",
+  "minigame.tetris.level": "LEVEL",
+  "minigame.tetris.high_score": "HIGH SCORE",
+  "minigame.tetris.new_high_score": "NEW HIGH SCORE",
+
+  "minigame.config.btn": "Open config"
 }

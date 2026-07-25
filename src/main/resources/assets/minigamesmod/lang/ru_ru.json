@@ -1,3 +1,68 @@
 {
+  "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.mainMenuButtonPosition": "Позиция на главном экране",
+  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Позиция в меню паузы",
 
+  "config.minigames.category.general": "Основное",
+  "config.minigames.category.minigames": "Мини-игры",
+
+  "config.minigames.main_menu_button_position.left_singleplayer": "Слева: Одиночная игра",
+  "config.minigames.main_menu_button_position.left_multiplayer": "Слева: Сетевая игра",
+  "config.minigames.main_menu_button_position.left_realms": "Слева: Realms",
+  "config.minigames.main_menu_button_position.left_mods": "Слева: Моды",
+  "config.minigames.main_menu_button_position.right_singleplayer": "Справа: Одиночная игра",
+  "config.minigames.main_menu_button_position.right_multiplayer": "Справа: Сетевая игра",
+  "config.minigames.main_menu_button_position.right_realms": "Справа: Realms",
+  "config.minigames.main_menu_button_position.right_mods": "Справа: Моды",
+
+  "config.minigames.pause_menu_button_position.left_same_row": "Слева: 1 ряд",
+  "config.minigames.pause_menu_button_position.left_next_row": "Слева: 2 ряд",
+  "config.minigames.pause_menu_button_position.left_2_rows_down": "Слева: 3 ряд",
+  "config.minigames.pause_menu_button_position.left_3_rows_down": "Слева: 4 ряд",
+  "config.minigames.pause_menu_button_position.left_4_rows_down": "Слева: 5 ряд",
+  "config.minigames.pause_menu_button_position.right_same_row": "Справа: 1 ряд",
+  "config.minigames.pause_menu_button_position.right_next_row": "Справа: 2 ряд",
+  "config.minigames.pause_menu_button_position.right_2_rows_down": "Справа: 3 ряд",
+  "config.minigames.pause_menu_button_position.right_3_rows_down": "Справа: 4 ряд",
+  "config.minigames.pause_menu_button_position.right_4_rows_down": "Справа: 5 ряд",
+
+  "text.autoconfig.minigames/2048_ui.title": "Настройки 2048",
+  "text.autoconfig.minigames/2048_ui.option.gridSize": "Размер поля",
+  "text.autoconfig.minigames/2048_ui.option.volume": "Громкость",
+
+  "text.autoconfig.minigames/tetris_ui.title": "Настройки Тетриса",
+  "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Хард-дроп",
+  "text.autoconfig.minigames/tetris_ui.option.volume": "Громкость",
+
+  "screen.minigames.list.title": "Мини-игры",
+  "screen.minigames.list.empty": "Нет установленных миниигр",
+  "minigame.restart": "Заново",
+  "minigame.2048.title": "2048",
+  "minigame.2048.undo": "Отмена",
+  "minigame.2048.score": "ОЧКИ",
+  "minigame.2048.best": "РЕКОРД",
+  "minigame.2048.game_over": "Игра окончена!",
+  "minigame.2048.win": "Победа!",
+
+  "minigame.tetris.title": "Тетрис",
+  "minigame.tetris.start": "Начать игру",
+  "minigame.tetris.return": "Назад",
+  "minigame.tetris.restart": "Заново",
+  "minigame.tetris.pause": "Пауза",
+  "minigame.tetris.next": "СЛЕД.",
+  "minigame.tetris.paused": "ПАУЗА",
+  "minigame.tetris.combo": "Комбо",
+  "minigame.tetris.tetris": "ТЕТРИС!!!",
+  "minigame.tetris.score": "ОЧКИ",
+  "minigame.tetris.lines": "ЛИНИЙ УБРАНО",
+  "minigame.tetris.level": "УРОВЕНЬ",
+  "minigame.tetris.high_score": "РЕКОРД",
+  "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
+
+  "minigame.tetris.mode.off": "Выкл",
+  "minigame.tetris.mode.instant": "Мгновенный",
+  "minigame.tetris.mode.outline": "Контур",
+  "minigame.tetris.mode.ghost": "Призрак",
+
+  "minigame.config.btn": "Открыть конфиг"
 }

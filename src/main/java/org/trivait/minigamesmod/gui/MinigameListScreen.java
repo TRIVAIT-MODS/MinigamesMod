@@ -1,0 +1,158 @@
+package org.trivait.minigamesmod.gui;
+
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
+import org.trivait.minigamesmod.api.MinigameDefinition;
+import org.trivait.minigamesmod.api.MinigameRegistry;
+import org.trivait.minigamesmod.gui.widget.ArrowButtonWidget;
+import org.trivait.minigamesmod.gui.widget.MinigameCardWidget;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MinigameListScreen extends Screen {
+
+    private static final int CARD_WIDTH   = 90;
+    private static final int CARD_HEIGHT  = 110;
+    private static final int CARD_SPACING = 20;
+    private static final int ARROW_SIZE   = 32;
+    private static final float CENTER_SCALE = 1.2f;
+    private static final float ANIM_SPEED   = 0.15f;
+
+    private final @Nullable Screen parent;
+
+    private int selectedIndex = 0;
+    private float animOffset  = 0f;
+
+    private final List<MinigameCardWidget> cards = new ArrayList<>();
+
+    public MinigameListScreen(@Nullable Screen parent) {
+        super(Text.translatable("screen.minigames.list.title"));
+        this.parent = parent;
+    }
+
+    @Override
+    protected void init() {
+        cards.clear();
+        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+
+        int centerX = this.width / 2;
+        int cardY   = this.height / 2 - CARD_HEIGHT / 2 - 10;
+
+        for (int i = 0; i < all.size(); i++) {
+            MinigameDefinition mg = all.get(i);
+            int cx = centerX + (i - selectedIndex) * (CARD_WIDTH + CARD_SPACING) - CARD_WIDTH / 2;
+            MinigameCardWidget card = new MinigameCardWidget(cx, cardY, CARD_WIDTH, CARD_HEIGHT, mg, () -> {
+                mg.onStart();
+                this.client.setScreen(mg.createScreen(this));
+            });
+            cards.add(card);
+            this.addDrawableChild(card);
+        }
+
+        updateCardScales(0f);
+
+        int arrowY = this.height / 2 - ARROW_SIZE / 2 - 10;
+
+        this.addDrawableChild(new ArrowButtonWidget(
+                5, arrowY, ARROW_SIZE,
+                ArrowButtonWidget.Direction.LEFT, this::scrollLeft));
+
+        this.addDrawableChild(new ArrowButtonWidget(
+                width-32, arrowY, ARROW_SIZE,
+                ArrowButtonWidget.Direction.RIGHT, this::scrollRight));
+
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.back"), b -> this.close())
+                .dimensions(this.width / 2 - 50, this.height - 28, 100, 20)
+                .build());
+    }
+
+    private void scrollLeft() {
+        if (selectedIndex > 0) {
+            selectedIndex--;
+            animOffset = -(CARD_WIDTH + CARD_SPACING);
+        }
+    }
+
+    private void scrollRight() {
+        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+        if (selectedIndex < all.size() - 1) {
+            selectedIndex++;
+            animOffset = (CARD_WIDTH + CARD_SPACING);
+        }
+    }
+
+    private void updateCardScales(float offset) {
+        int centerX = this.width / 2;
+        int cardY   = this.height / 2 - CARD_HEIGHT / 2 - 10;
+
+        for (int i = 0; i < cards.size(); i++) {
+            MinigameCardWidget card = cards.get(i);
+            float slotOffset = (i - selectedIndex) * (CARD_WIDTH + CARD_SPACING) + offset;
+            int cx = centerX + (int) slotOffset - CARD_WIDTH / 2;
+            card.setX(cx);
+            card.setY(cardY);
+
+            float dist = Math.abs(slotOffset) / (CARD_WIDTH + CARD_SPACING);
+            float scale = 1f + (CENTER_SCALE - 1f) * Math.max(0f, 1f - dist);
+            card.setScale(scale);
+        }
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (Math.abs(animOffset) > 0.5f) {
+            animOffset *= (1f - ANIM_SPEED);
+        } else {
+            animOffset = 0f;
+        }
+        updateCardScales(animOffset);
+
+        super.render(context, mouseX, mouseY, delta);
+
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 14, -1);
+
+        if (cards.isEmpty()) {
+            context.drawCenteredTextWithShadow(this.textRenderer,
+                    Text.translatable("screen.minigames.list.empty"),
+                    this.width / 2, this.height / 2 - 10, 0xFF888888);
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (verticalAmount < 0 || horizontalAmount < 0) scrollRight();
+        else if (verticalAmount > 0 || horizontalAmount > 0) scrollLeft();
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode==GLFW.GLFW_KEY_LEFT) {
+            scrollLeft();
+        }
+        if (keyCode==GLFW.GLFW_KEY_RIGHT) {
+            scrollRight();
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderBackground(context, mouseX, mouseY, delta);
+        int cardY = this.height / 2 - CARD_HEIGHT / 2 - 10;
+        context.drawHorizontalLine(0, this.width, cardY - 4, -1);
+        context.drawHorizontalLine(0, this.width, cardY + CARD_HEIGHT + 4, -1);
+        context.fill(0, cardY - 4, this.width, cardY + CARD_HEIGHT + 8, 0x30FFFFFF);
+    }
+
+    @Override
+    public void close() {
+        this.client.setScreen(parent);
+    }
+}

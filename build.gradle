@@ -23,6 +23,8 @@ dependencies {
 
 	modImplementation "maven.modrinth:modmenu:${project.modmenu_version}"
 	modImplementation "maven.modrinth:cloth-config:${project.cloth_config_version}"
+
+	modImplementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 processResources {
