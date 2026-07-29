@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
@@ -372,7 +373,7 @@ public class MinesweeperScreen extends Screen {
         if (c.revealed) {
             if (c.mine && !board.won) {
                 Identifier tex = (c.flagged && !board.alive) ? TEX_FLAG : TEX_TNT_SIDE;
-                context.drawTexture(tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
+                context.drawTexture(RenderLayer::getGuiTextured, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
             } else if (c.adjacent > 0) {
                 Text numText = ADJ_TEXT[c.adjacent];
                 int color = getAdjColor(c.adjacent);
@@ -387,7 +388,7 @@ public class MinesweeperScreen extends Screen {
             }
         } else if (c.flagged) {
             Identifier tex = (!board.alive && !board.won && !c.mine) ? TEX_BARRIER : TEX_FLAG;
-            context.drawTexture(tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
+            context.drawTexture(RenderLayer::getGuiTextured, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
         }
     }
 

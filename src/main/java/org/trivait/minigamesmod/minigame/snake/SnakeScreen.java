@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvent;
@@ -210,9 +211,9 @@ public class SnakeScreen extends Screen {
         gameX = (this.width - GAME_WIDTH) / 2;
         gameY = (this.height - GAME_HEIGHT) / 2;
 
-        context.drawTexture(Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
+        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
 
-        context.drawTexture(Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
+        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
 
         for (int i = 0; i < snake.size(); i++) {
             renderSnakeSegment(context, matrices, gameX, gameY, i);
@@ -221,7 +222,7 @@ public class SnakeScreen extends Screen {
         int foodX = gameX + food[0] * CELL_SIZE;
         int foodY = gameY + food[1] * CELL_SIZE;
 
-        context.drawTexture(currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        context.drawTexture(RenderLayer::getGuiTextured, currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         int textY = gameY - 20;
         int textX = gameX;
@@ -292,7 +293,7 @@ public class SnakeScreen extends Screen {
         matrices.translate(x + CELL_SIZE / 2.0, y + CELL_SIZE / 2.0, 0);
         matrices.multiply(new Quaternionf().rotateZ((float)Math.toRadians(rotation)));
         matrices.translate(-CELL_SIZE / 2.0, -CELL_SIZE / 2.0, 0);
-        context.drawTexture(texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        context.drawTexture(RenderLayer::getGuiTextured, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
         matrices.pop();
     }
 

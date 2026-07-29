@@ -1,6 +1,7 @@
 package org.trivait.minigamesmod.minigame.dino;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 
@@ -16,6 +17,6 @@ public class Cloud extends GameObject {
 
     @Override
     public void render(DrawContext ctx, float delta) {
-        ctx.drawTexture(texture, (int) x, y-height, 0, 0, width, height, width, height);
+        ctx.drawTexture(RenderLayer::getGuiTextured, texture, (int) x, y-height, 0, 0, width, height, width, height);
     }
 }

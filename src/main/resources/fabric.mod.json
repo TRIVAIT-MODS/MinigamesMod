@@ -34,5 +34,8 @@
 		"fabric-api": "*",
 		"cloth-config2": "*",
 		"modmenu": "*"
+	},
+	"suggests": {
+		"smoothscroll": "*"
 	}
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.trivait.minigamesmod.api.MinigameDefinition;
@@ -70,7 +71,7 @@ public class MinigameCardWidget extends ClickableWidget {
         context.fill(imgX, imgY, imgX + imgW, imgY + imgArea, 0xFF666666);
 
         if (icon != null) {
-            context.drawTexture(icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
+            context.drawTexture(RenderLayer::getGuiTextured, icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
         } else {
             TextRenderer tr = MinecraftClient.getInstance().textRenderer;
             context.drawCenteredTextWithShadow(tr,

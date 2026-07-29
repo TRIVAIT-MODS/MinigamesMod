@@ -3,6 +3,7 @@ package org.trivait.minigamesmod.gui.widget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -30,7 +31,7 @@ public class ArrowButtonWidget extends ClickableWidget {
             case LEFT  -> isHovered() ? SPRITE_LEFT_HIGHLIGHTED  : SPRITE_LEFT;
             case RIGHT -> isHovered() ? SPRITE_RIGHT_HIGHLIGHTED : SPRITE_RIGHT;
         };
-        context.drawGuiTexture(sprite, getX(), getY(), getWidth(), getHeight());
+        context.drawGuiTexture(RenderLayer::getGuiTextured, sprite, getX(), getY(), getWidth(), getHeight());
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -49,7 +50,7 @@ public class TimeSelectWidget extends ClickableWidget {
         ctx.fill(getX(), getY(), getX()+2, getY()+height-2, -2);
         ctx.fill(getX()+width, getY(), getX()+width-2, getY()+height-2, -1);
 
-        ctx.drawTexture(Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/time.png"), getX() + 1, getY() + 1, 0, 0, width - 2, height - 2, width - 2, height - 2);
+        ctx.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/time.png"), getX() + 1, getY() + 1, 0, 0, width - 2, height - 2, width - 2, height - 2);
 
         MinecraftClient mc = MinecraftClient.getInstance();
         MutableText label = Text.translatable("minigame.minesweeper.leaderboard.mode.time").styled(s -> s.withBold(true));

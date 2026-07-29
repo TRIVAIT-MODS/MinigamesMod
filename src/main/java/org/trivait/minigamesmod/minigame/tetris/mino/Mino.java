@@ -1,6 +1,5 @@
 package org.trivait.minigamesmod.minigame.tetris.mino;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -10,7 +9,6 @@ import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -19,106 +17,184 @@ import org.trivait.minigamesmod.minigame.tetris.TetrisScreen;
 import org.trivait.minigamesmod.minigame.tetris.TetrisVisibleConfig;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class Mino {
+public abstract class Mino {
     public Block[] b = new Block[4];
     public Block[] tempB = new Block[4];
+    public String type = "";
     float dropCounter = 0;
     public int direction = 1;
     boolean leftCollision, rightCollision, bottomCollision;
     public boolean active = true;
 
-    private float vol() {
-        return MinigameRegistry.getConfig(TetrisVisibleConfig.class).volume / 10f;
-    }
-
     public Mino() {
-        TextureResource randomBlockTexture = getRandomBlockTexture();
-        create(randomBlockTexture.texture, randomBlockTexture.width, randomBlockTexture.height);
-    }
-
-    public void create(Identifier t, int textureWidth, int textureHeight) {
-        for (int i = 0; i < 4; i++) {
-            b[i] = new Block(t, textureWidth, textureHeight);
-            tempB[i] = new Block(t, textureWidth, textureHeight);
+        switch (this) {
+            case Mino_Square ignored -> type = "square";
+            case Mino_Bar ignored -> type = "bar";
+            case Mino_T ignored -> type = "t";
+            case Mino_L1 ignored -> type = "l1";
+            case Mino_L2 ignored -> type = "l2";
+            case Mino_Z1 ignored -> type = "z1";
+            case Mino_Z2 ignored -> type = "z2";
+            default -> {
+            }
         }
+        Identifier randomBlockTexture = getRandomBlockTexture();
+        create(randomBlockTexture);
+        //SpriteContents sprite = getRandomBlockTexture();
+        //create(Identifier.of(sprite.getId().getNamespace().split(":")[0],"textures/" + sprite.getId().getPath() + ".png"), sprite.getWidth(), sprite.getHeight());
     }
 
-    public void setXY(int x, int y) {}
+    public void create(Identifier t) {
+        b[0] = new Block(t, this.type);
+        b[1] = new Block(t, this.type);
+        b[2] = new Block(t, this.type);
+        b[3] = new Block(t, this.type);
+        tempB[0] = new Block(t, this.type);
+        tempB[1] = new Block(t, this.type);
+        tempB[2] = new Block(t, this.type);
+        tempB[3] = new Block(t, this.type);
+    }
 
-    public void updateXY(int direction) {
-        for (Block block : tempB) {
-            if (block.x < 0) return;
-            if (block.x > TetrisScreen.WIDTH - Block.SIZE) return;
-            if (block.y > TetrisScreen.HEIGHT - Block.SIZE) return;
+    public void setXY (int x, int y) {}
+    public void updateXY (int direction) {
+        for (Block b : tempB) {
+            if (b.x < 0) {
+                for (Block sB : TetrisScreen.staticBlocks) {
+                    if (sB.x == b.x + Block.SIZE && sB.y == b.y) {
+                        return;
+                    }
+                }
+                for (Block block : tempB) {
+                    block.x += Block.SIZE;
+                }
+            }
+            if (b.x > TetrisScreen.WIDTH - Block.SIZE) {
+                for (Block sB : TetrisScreen.staticBlocks) {
+                    if (sB.x == b.x && sB.y == b.y) {
+                        return;
+                    }
+                }
+                for (Block block : tempB) {
+                    block.x -= Block.SIZE;
+                }
+            }
+            if (b.y > TetrisScreen.HEIGHT - Block.SIZE) return;
             for (Block sB : TetrisScreen.staticBlocks) {
-                if (sB.x == block.x && sB.y == block.y) return;
+                if (sB.x == b.x && sB.y == b.y) {
+                    return;
+                }
             }
         }
         this.direction = direction;
-        for (int i = 0; i < 4; i++) {
-            b[i].x = tempB[i].x;
-            b[i].y = tempB[i].y;
-        }
-        MinecraftClient.getInstance().getSoundManager().play(
-            PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
+        b[0].x = tempB[0].x;
+        b[0].y = tempB[0].y;
+        b[1].x = tempB[1].x;
+        b[1].y = tempB[1].y;
+        b[2].x = tempB[2].x;
+        b[2].y = tempB[2].y;
+        b[3].x = tempB[3].x;
+        b[3].y = tempB[3].y;
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
     }
-
     public void getDirection1() {}
     public void getDirection2() {}
     public void getDirection3() {}
     public void getDirection4() {}
-
     public void checkMovementCollision() {
         leftCollision = false;
         rightCollision = false;
         bottomCollision = false;
+
         checkStaticBlockCollision();
+
+        // check frame collision
+        //left wall
         for (Block block : b) {
-            if (block.x - Block.SIZE < 0) { leftCollision = true; break; }
+            if (block.x - Block.SIZE < 0) {
+                leftCollision = true;
+                break;
+            }
         }
+        //right wall
         for (Block block : b) {
-            if (block.x + Block.SIZE >= TetrisScreen.WIDTH) { rightCollision = true; break; }
+            if (block.x + Block.SIZE >= TetrisScreen.WIDTH) {
+                rightCollision = true;
+                break;
+            }
         }
+        //bottom floor
         for (Block block : b) {
-            if (block.y + Block.SIZE >= TetrisScreen.HEIGHT) { bottomCollision = true; break; }
+            if (block.y + Block.SIZE >= TetrisScreen.HEIGHT) {
+                bottomCollision = true;
+                break;
+            }
         }
     }
 
     private void checkStaticBlockCollision() {
         for (Block staticBlock : TetrisScreen.staticBlocks) {
+
+            //check down
             for (Block block : b) {
-                if (block.y + Block.SIZE == staticBlock.y && block.x == staticBlock.x) { bottomCollision = true; break; }
+                if (block.y + Block.SIZE == staticBlock.y && block.x == staticBlock.x) {
+                    bottomCollision = true;
+                    break;
+                }
+            }
+            //check left and right
+            for (Block block : b) {
+                if (block.x - Block.SIZE == staticBlock.x && block.y == staticBlock.y) {
+                    leftCollision = true;
+                    break;
+                }
             }
             for (Block block : b) {
-                if (block.x - Block.SIZE == staticBlock.x && block.y == staticBlock.y) { leftCollision = true; break; }
+                if (block.x + Block.SIZE == staticBlock.x && block.y == staticBlock.y) {
+                    rightCollision = true;
+                    break;
+                }
             }
-            for (Block block : b) {
-                if (block.x + Block.SIZE == staticBlock.x && block.y == staticBlock.y) { rightCollision = true; break; }
-            }
+
         }
     }
-
-    protected TextureResource getRandomBlockTexture() {
+    protected Identifier getRandomBlockTexture() {
         MinecraftClient client = MinecraftClient.getInstance();
+        Random random = new Random();
+        BlockState blockState;
+        List<BakedQuad> quads;
+        SpriteContents texture;
+
         while (true) {
-            net.minecraft.block.Block block = Registries.BLOCK.get(new Random().nextInt(Registries.BLOCK.size()));
-            BlockState blockState = block.getStateManager().getStates().get(new Random().nextInt(block.getStateManager().getStates().size()));
-            List<BakedQuad> quads = client.getBlockRenderManager().getModel(blockState).getQuads(blockState, Direction.random(client.textRenderer.random), client.textRenderer.random);
+            net.minecraft.block.Block mcBlock = Registries.BLOCK.get(random.nextInt(Registries.BLOCK.size()));
+            blockState = mcBlock.getStateManager().getStates().get(random.nextInt(mcBlock.getStateManager().getStates().size()));
+
+            quads = client.getBlockRenderManager()
+                    .getModel(blockState)
+                    .getQuads(blockState, null, net.minecraft.util.math.random.Random.create());
+
             if (!quads.isEmpty()) {
-                SpriteContents texture = quads.get(new Random().nextInt(quads.size())).getSprite().getContents();
+                texture = quads.get(random.nextInt(quads.size())).getSprite().getContents();
+
                 if (texture.getWidth() == 16 && texture.getHeight() == 16) {
-                    Optional<Resource> opR = client.getResourceManager().getResource(Identifier.of("textures/" + texture.getId().getPath() + ".png"));
-                    if (opR.isPresent()) {
+                    Optional<Resource> resource = client.getResourceManager().getResource(
+                            Identifier.of(texture.getId().getNamespace(), "textures/" + texture.getId().getPath() + ".png")
+                    );
+
+                    if (resource.isPresent()) {
                         try {
-                            BufferedImage image = ImageIO.read(opR.get().getInputStream());
-                            if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0)
-                                return new TextureResource(Identifier.of(texture.getId().getNamespace().split(":")[0], "textures/" + texture.getId().getPath() + ".png"), image.getWidth(), image.getHeight());
-                        } catch (Exception ignored) {}
+                            BufferedImage image = ImageIO.read(resource.get().getInputStream());
+
+                            if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0) {
+                                return texture.getId();
+                            }
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
@@ -133,14 +209,21 @@ public class Mino {
                 boolean proceed = true;
                 for (Block block : b) {
                     for (Block sBlock : TetrisScreen.staticBlocks) {
-                        if (block.x - Block.SIZE == sBlock.x && block.y == sBlock.y) { proceed = false; break; }
+                        if (block.x - Block.SIZE == sBlock.x && block.y == sBlock.y) {
+                            proceed = false;
+                            break;
+                        }
                     }
-                    if (block.x - Block.SIZE < 0) { proceed = false; break; }
+                    if (block.x - Block.SIZE < 0) {
+                        proceed = false;
+                        break;
+                    }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(
-                        PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
-                    for (Block block : b) block.x -= Block.SIZE;
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F,  vol()));
+                    for (Block block : b) {
+                        block.x -= Block.SIZE;
+                    }
                 }
             }
             TetrisScreen.leftPressed = false;
@@ -151,24 +234,31 @@ public class Mino {
                 boolean proceed = true;
                 for (Block block : b) {
                     for (Block sBlock : TetrisScreen.staticBlocks) {
-                        if (block.x + Block.SIZE == sBlock.x && block.y == sBlock.y) { proceed = false; break; }
+                        if (block.x + Block.SIZE == sBlock.x && block.y == sBlock.y) {
+                            proceed = false;
+                            break;
+                        }
                     }
-                    if (block.x + Block.SIZE > TetrisScreen.WIDTH) { proceed = false; break; }
+                    if (block.x + Block.SIZE > TetrisScreen.WIDTH) {
+                        proceed = false;
+                        break;
+                    }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(
-                        PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
-                    for (Block block : b) block.x += Block.SIZE;
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F,  vol()));
+                    for (Block block : b) {
+                        block.x += Block.SIZE;
+                    }
                 }
             }
             TetrisScreen.rightPressed = false;
         }
         if (TetrisScreen.upPressed) {
             switch (direction) {
-                case 1 -> getDirection2();
-                case 2 -> getDirection3();
-                case 3 -> getDirection4();
-                case 4 -> getDirection1();
+                case 1: getDirection2(); break;
+                case 2: getDirection3(); break;
+                case 3: getDirection4(); break;
+                case 4: getDirection1(); break;
             }
             TetrisScreen.upPressed = false;
         }
@@ -178,14 +268,18 @@ public class Mino {
             } else {
                 boolean proceed = true;
                 for (Block block : b) {
-                    for (Block sb : TetrisScreen.staticBlocks) {
-                        if (block.y + Block.SIZE == sb.y && block.x == sb.x) { proceed = false; break; }
+                    for (Block b : TetrisScreen.staticBlocks) {
+                        if (block.y + Block.SIZE == b.y && block.x == b.x) {
+                            proceed = false;
+                            break;
+                        }
                     }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(
-                        PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
-                    for (Block block : b) block.y += Block.SIZE;
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
+                    for (Block block : b) {
+                        block.y += Block.SIZE;
+                    }
                     TetrisScreen.score++;
                     dropCounter = 0;
                 }
@@ -193,17 +287,19 @@ public class Mino {
             TetrisScreen.downPressed = false;
         }
         if (TetrisScreen.spacePressed && TetrisScreen.hardDrop > 0) {
-            MinecraftClient.getInstance().getSoundManager().play(
-                PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("entity.wind_charge.wind_burst")), 1.0F, vol() / 2));
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("entity.wind_charge.wind_burst")), 1.0F,  vol()/2));
             int drop = getDropOffset();
             TetrisScreen.animations.add(new HardDropAnimation(b[0].x, b[0].y, 27, drop, 10));
-            for (Block block : b) block.y += drop;
+            b[0].y += drop;
+            b[1].y += drop;
+            b[2].y += drop;
+            b[3].y += drop;
             TetrisScreen.spacePressed = false;
             this.active = false;
             TetrisScreen.score += 2 * drop / Block.SIZE;
             return;
         }
-        dropCounter += timePassed;
+        dropCounter = dropCounter + timePassed;
         if (Math.floor(dropCounter) >= TetrisScreen.dropInterval) {
             if (bottomCollision) {
                 checkStaticBlockCollision();
@@ -212,78 +308,118 @@ public class Mino {
             } else {
                 boolean proceed = true;
                 for (Block block : b) {
-                    for (Block sb : TetrisScreen.staticBlocks) {
-                        if (block.y + Block.SIZE == sb.y && block.x == sb.x) { proceed = false; break; }
+                    for (Block b : TetrisScreen.staticBlocks) {
+                        if (block.y + Block.SIZE == b.y && block.x == b.x) {
+                            proceed = false;
+                            break;
+                        }
                     }
                 }
                 if (proceed) {
-                    for (Block block : b) block.y += Block.SIZE;
+                    for (Block block : b) {
+                        block.y += Block.SIZE;
+                    }
                     dropCounter = 0;
                 }
             }
         }
     }
-
-    public void draw(DrawContext context) {
-        for (Block block : b) block.draw(context);
+    public void draw (DrawContext context) {
+        for (Block block : b) {
+            block.draw(context);
+        }
     }
-
-    public void drawHardDrop(DrawContext context) {
+    public void drawHardDrop (DrawContext context) {
         int yOffset = getDropOffset();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1, 1, 1, 0.5f);
+
+        Color color = new Color(1, 1, 1, 0.5f);
         for (Block block : b) {
             switch (TetrisScreen.hardDrop) {
-                case 2 -> {
-                    boolean[] outline = getOutline(block);
-                    if (outline[0]) context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
-                    if (outline[1]) context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, Colors.WHITE);
-                    if (outline[2]) {
-                        context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, Colors.WHITE);
-                        if (!outline[1]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
-                        if (!outline[0]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
+                case 2:
+                    if (getOutline(block)[0]) {
+                        context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
                     }
-                    if (outline[3]) {
-                        context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, Colors.WHITE);
-                        if (!outline[1]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
-                        if (!outline[0]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
+                    if (getOutline(block)[1]) {
+                        context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
                     }
+                    if (getOutline(block)[2]) {
+                        context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
+                        if (!getOutline(block)[1]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                        }
+                        if (!getOutline(block)[0]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                        }
+                    }
+                    if (getOutline(block)[3]) {
+                        context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
+                        if (!getOutline(block)[1]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                        }
+                        if (!getOutline(block)[0]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                        }
+                    }
+                    //individual diagonal pixels
                     if (!(this instanceof Mino_Square)) {
-                        if (!outline[0] && !outline[2]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
-                        if (!outline[0] && !outline[3]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
-                        if (!outline[1] && !outline[2]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
-                        if (!outline[1] && !outline[3]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
-                    }
-                }
-                case 3 -> block.draw(context, yOffset);
+                        if (!getOutline(block)[0] && !getOutline(block)[2]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                        }
+                        if (!getOutline(block)[0] && !getOutline(block)[3]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                        }
+                        if (!getOutline(block)[1] && !getOutline(block)[2]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                        }
+                        if (!getOutline(block)[1] && !getOutline(block)[3]) {
+                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                        }
+                    } break;
+                case 3: block.draw(context, yOffset); break;
             }
         }
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.disableBlend();
     }
 
     private int getDropOffset() {
         int i;
         for (i = 0; i < TetrisScreen.HEIGHT / Block.SIZE; i++) {
-            for (Block block : b) {
+            for (Block b : b) {
                 for (Block sB : TetrisScreen.staticBlocks) {
-                    if (block.x == sB.x && block.y + i * Block.SIZE == sB.y) return i * Block.SIZE - Block.SIZE;
+                    if (b.x == sB.x && b.y + i * Block.SIZE == sB.y) {
+                        return i * Block.SIZE - Block.SIZE;
+                    }
                 }
-                if (block.y + i * Block.SIZE > TetrisScreen.HEIGHT - Block.SIZE) return i * Block.SIZE - Block.SIZE;
+                if (b.y + i * Block.SIZE > TetrisScreen.HEIGHT - Block.SIZE) {
+                    return i * Block.SIZE - Block.SIZE;
+                }
             }
         }
         return i * Block.SIZE - Block.SIZE;
     }
 
     private boolean[] getOutline(Block b) {
-        boolean top = true, bottom = true, left = true, right = true;
+        boolean top = true;
+        boolean bottom = true;
+        boolean left = true;
+        boolean right = true;
         for (Block block : this.b) {
-            if (b.y - Block.SIZE == block.y && b.x == block.x) top = false;
-            if (b.y + Block.SIZE == block.y && b.x == block.x) bottom = false;
-            if (b.x - Block.SIZE == block.x && b.y == block.y) left = false;
-            if (b.x + Block.SIZE == block.x && b.y == block.y) right = false;
+            if (b.y - Block.SIZE == block.y && b.x == block.x) {
+                top = false;
+            }
+            if (b.y + Block.SIZE == block.y && b.x == block.x) {
+                bottom = false;
+            }
+            if (b.x - Block.SIZE == block.x && b.y == block.y) {
+                left = false;
+            }
+            if (b.x + Block.SIZE == block.x && b.y == block.y) {
+                right = false;
+            }
         }
         return new boolean[]{top, bottom, left, right};
+    }
+
+    private float vol() {
+        return 5 * MinigameRegistry.getConfig(TetrisVisibleConfig.class).volume;
     }
 }

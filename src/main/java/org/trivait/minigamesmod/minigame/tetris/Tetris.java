@@ -32,6 +32,6 @@ public class Tetris extends AbstractMinigame {
 
     @Override
     public Screen createScreen(Screen parent) {
-        return new TetrisScreen(this, parent);
+        return new TetrisScreen(parent, this);
     }
 }

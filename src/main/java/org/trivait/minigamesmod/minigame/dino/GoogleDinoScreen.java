@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -144,7 +145,7 @@ public class GoogleDinoScreen extends Screen {
             road2X=road1X+ROAD_WIDTH;
         }
 
-        context.drawTexture(GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
+        context.drawTexture(RenderLayer::getGuiTextured, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
         context.fill(guiX+8, guiY+8, guiX+8+GAME_WIDTH, guiY+8+GAME_HEIGHT, -1);
 
         renderObjects(context, delta, guiX+8, guiY+8);
@@ -236,9 +237,9 @@ public class GoogleDinoScreen extends Screen {
         int y = gameY+GAME_HEIGHT-4-ROAD_HEIGHT;
         int x = (int) (gameX+road1X);
 
-        ctx.drawTexture(ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.drawTexture(RenderLayer::getGuiTextured, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
         x = (int) (gameX+road2X);
-        ctx.drawTexture(ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.drawTexture(RenderLayer::getGuiTextured, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
     }
 
     private void spawnObstacle(int gameX, int gameY) {

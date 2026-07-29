@@ -103,8 +103,8 @@
   "minigame.tetris.score": "ОЧКИ",
   "minigame.tetris.lines": "ЛИНИЙ УБРАНО",
   "minigame.tetris.level": "УРОВЕНЬ",
-  "minigame.tetris.high_score": "РЕКОРД",
-  "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
+  "minigame.tetris.hight_score": "РЕКОРД",
+  "minigame.tetris.new_hight_score": "НОВЫЙ РЕКОРД",
 
   "minigame.tetris.mode.off": "Выкл",
   "minigame.tetris.mode.instant": "Мгновенный",

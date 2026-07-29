@@ -1,6 +1,7 @@
 package org.trivait.minigamesmod.minigame.dino;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -39,13 +40,13 @@ public class Dino {
 
         switch (getDinoState()) {
             case RUN -> {
-                ctx.drawTexture(RUN, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH, 0, WIDTH, HEIGHT, WIDTH * 2, HEIGHT);
+                ctx.drawTexture(RenderLayer::getGuiTextured, RUN, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH, 0, WIDTH, HEIGHT, WIDTH * 2, HEIGHT);
             }
             case CROUCH -> {
-                ctx.drawTexture(CROUCH, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH_CROUCH, 0, WIDTH_CROUCH, HEIGHT_CROUCH, WIDTH_CROUCH * 2, HEIGHT_CROUCH);
+                ctx.drawTexture(RenderLayer::getGuiTextured, CROUCH, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH_CROUCH, 0, WIDTH_CROUCH, HEIGHT_CROUCH, WIDTH_CROUCH * 2, HEIGHT_CROUCH);
             }
             case NONE -> {
-                ctx.drawTexture(DEFAULT, (int) box.x, (int) box.y, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
+                ctx.drawTexture(RenderLayer::getGuiTextured, DEFAULT, (int) box.x, (int) box.y, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
             }
         }
     }

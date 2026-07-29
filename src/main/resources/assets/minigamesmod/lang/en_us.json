@@ -110,8 +110,8 @@
   "minigame.tetris.score": "SCORE",
   "minigame.tetris.lines": "LINES CLEARED",
   "minigame.tetris.level": "LEVEL",
-  "minigame.tetris.high_score": "HIGH SCORE",
-  "minigame.tetris.new_high_score": "NEW HIGH SCORE",
+  "minigame.tetris.hight_score": "HIGH SCORE",
+  "minigame.tetris.new_hight_score": "NEW HIGH SCORE",
 
   "minigame.leaderboard": "Leaderboard",
   "minigame.leaderboard.conditions": "Conditions",
