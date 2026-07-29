@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
@@ -49,7 +50,7 @@ public class DigitDisplayWidget {
         for (int i = 0; i < digits; i++) {
             int dx = x + i * (DIGIT_W + GAP);
             int u  = out[i] * DIGIT_W;
-            context.drawTexture(RenderLayer::getGuiTextured, TEX_DIGITS, dx, y, u, 0, DIGIT_W, DIGIT_H, SHEET_W, DIGIT_H);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEX_DIGITS, dx, y, u, 0, DIGIT_W, DIGIT_H, SHEET_W, DIGIT_H);
         }
     }
 }

@@ -2,6 +2,7 @@ package org.trivait.minigamesmod.minigame.dino;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,6 +16,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2fStack;
 import org.joml.Vector4d;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
@@ -119,7 +121,7 @@ public class GoogleDinoScreen extends Screen {
         this.selected = null;
         setFocused(null);
         TextRenderer tr = MinecraftClient.getInstance().textRenderer;
-        MatrixStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.getMatrices();
 
         int guiX = (width-GUI_WIDTH)/2;
         int guiY = (height-GUI_HEIGHT)/2;
@@ -145,7 +147,7 @@ public class GoogleDinoScreen extends Screen {
             road2X=road1X+ROAD_WIDTH;
         }
 
-        context.drawTexture(RenderLayer::getGuiTextured, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
         context.fill(guiX+8, guiY+8, guiX+8+GAME_WIDTH, guiY+8+GAME_HEIGHT, -1);
 
         renderObjects(context, delta, guiX+8, guiY+8);
@@ -158,11 +160,11 @@ public class GoogleDinoScreen extends Screen {
         int textX = guiX + 8 + GAME_WIDTH - textWidth - 24;
         int textY = guiY + 8 + 4;
 
-        matrices.push();
-        matrices.translate(textX, textY, 0);
-        matrices.scale(1.5F, 1.5F, 1.0F);
+        matrices.pushMatrix();
+        matrices.translate(textX, textY);
+        matrices.scale(1.5F, 1.5F);
         context.drawText(tr, Text.literal("HI " + formattedHIscore).styled(style -> style.withBold(true).withColor(0x909191)).append(Text.literal(" " + formattedScore).styled(style -> style.withBold(true).withColor(0xACACAC))), 0, 0, 0xFFFFFFFF, false);
-        matrices.pop();
+        matrices.popMatrix();
 
         if (!gameRunning) {
             String overText = "Game over!";
@@ -170,11 +172,11 @@ public class GoogleDinoScreen extends Screen {
             int overX = guiX + 8 + (GAME_WIDTH - overWidth) / 2;
             int overY = guiY + 8 + GAME_HEIGHT / 2 - 10;
 
-            matrices.push();
-            matrices.translate(overX-10, overY, 0);
-            matrices.scale(2.0F, 2.0F, 1.0F);
+            matrices.pushMatrix();
+            matrices.translate(overX-10, overY);
+            matrices.scale(2.0F, 2.0F);
             context.drawText(tr, Text.literal(overText).styled(style -> style.withBold(true).withColor(0x909191)), 0, 0, 0xFFFFFFFF, false);
-            matrices.pop();
+            matrices.popMatrix();
         }
     }
 
@@ -237,9 +239,9 @@ public class GoogleDinoScreen extends Screen {
         int y = gameY+GAME_HEIGHT-4-ROAD_HEIGHT;
         int x = (int) (gameX+road1X);
 
-        ctx.drawTexture(RenderLayer::getGuiTextured, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
         x = (int) (gameX+road2X);
-        ctx.drawTexture(RenderLayer::getGuiTextured, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
     }
 
     private void spawnObstacle(int gameX, int gameY) {

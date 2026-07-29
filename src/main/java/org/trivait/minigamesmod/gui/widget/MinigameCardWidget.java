@@ -2,6 +2,7 @@ package org.trivait.minigamesmod.gui.widget;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -39,14 +40,14 @@ public class MinigameCardWidget extends ClickableWidget {
         boolean hovered = mx >= getX() && mx < getX() + getWidth()
                        && my >= getY() && my < getY() + getHeight();
 
-        context.getMatrices().push();
-        context.getMatrices().translate(cx, cy, 0);
-        context.getMatrices().scale(scale, scale, 1f);
-        context.getMatrices().translate(-cx, -cy, 0);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(cx, cy);
+        context.getMatrices().scale(scale, scale);
+        context.getMatrices().translate(-cx, -cy);
 
         drawCard(context, hovered);
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
     }
 
     private void drawCard(DrawContext context, boolean hovered) {
@@ -71,7 +72,7 @@ public class MinigameCardWidget extends ClickableWidget {
         context.fill(imgX, imgY, imgX + imgW, imgY + imgArea, 0xFF666666);
 
         if (icon != null) {
-            context.drawTexture(RenderLayer::getGuiTextured, icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
         } else {
             TextRenderer tr = MinecraftClient.getInstance().textRenderer;
             context.drawCenteredTextWithShadow(tr,

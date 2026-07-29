@@ -1,6 +1,7 @@
 package org.trivait.minigamesmod.gui.widget;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
 import net.minecraft.client.render.RenderLayer;
@@ -28,6 +29,6 @@ public class MinigamesButton extends TextIconButtonWidget.IconOnly {
         super.renderWidget(context, mouseX, mouseY, delta);
         int i = this.getX() + this.getWidth() / 2 - this.textureWidth / 2;
         int j = this.getY() + this.getHeight() / 2 - this.textureHeight / 2;
-        context.drawGuiTexture(RenderLayer::getGuiTextured, currentTexture, i, j, this.textureWidth, this.textureHeight);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, currentTexture, i, j, this.textureWidth, this.textureHeight);
     }
 }

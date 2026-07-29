@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -51,7 +52,7 @@ public class SmileyButtonWidget extends ClickableWidget {
         int offset = pressed ? 1 : 0;
         int ix = x + pad + offset, iy = y + pad + offset;
         int iw = Math.max(1, w - pad * 2), ih = Math.max(1, h - pad * 2);
-        context.drawTexture(RenderLayer::getGuiTextured, tex, ix, iy, 0, 0, iw, ih, iw, ih);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, tex, ix, iy, 0, 0, iw, ih, iw, ih);
     }
 
     @Override

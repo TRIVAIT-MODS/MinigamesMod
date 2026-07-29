@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.dino;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
@@ -14,6 +15,6 @@ public class SuperCactus extends GameObject {
 
     @Override
     public void render(DrawContext ctx, float delta) {
-        ctx.drawTexture(RenderLayer::getGuiTextured, texture, (int) x, y-height, 0, 0, width, height, width, height);
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, texture, (int) x, y-height, 0, 0, width, height, width, height);
     }
 }
