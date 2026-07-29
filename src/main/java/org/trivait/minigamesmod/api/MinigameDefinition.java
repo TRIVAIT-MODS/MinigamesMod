@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.trivait.minigamesmod.leaderboard.Leaderboard;
 
 import java.util.Set;
 
@@ -28,6 +29,9 @@ public interface MinigameDefinition {
     default Class<? extends ConfigData> getVisibleConfigClass() {
         return null;
     }
+
+    @Nullable
+    default Leaderboard getLeaderboard() {return null;}
 
     default void onStart() {}
 

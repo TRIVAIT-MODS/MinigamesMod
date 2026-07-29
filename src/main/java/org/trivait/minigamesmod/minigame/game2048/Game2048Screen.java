@@ -2,6 +2,7 @@ package org.trivait.minigamesmod.minigame.game2048;
 
 import com.sun.jna.platform.win32.GL;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -180,6 +181,10 @@ public class Game2048Screen extends Screen {
                 gameOver = true;
                 saveBestScore();
                 minigame.onLose();
+                Game2048VisibleConfig cfg = MinigameRegistry.getConfig(Game2048VisibleConfig.class);
+                if (cfg.gridSize == 4) {
+                    minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), (int) score, true);
+                }
             }
         }
         return true;
@@ -239,6 +244,7 @@ public class Game2048Screen extends Screen {
                         won = true;
                         saveBestScore();
                         minigame.onWin();
+                        minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), (int) score, true);
                     }
                 } else {
                     grid[tr][tc] = grid[r][c];

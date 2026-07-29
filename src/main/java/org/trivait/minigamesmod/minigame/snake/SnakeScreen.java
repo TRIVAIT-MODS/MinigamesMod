@@ -48,6 +48,30 @@ public class SnakeScreen extends Screen {
     private static final int UPDATE_INTERVAL = 6;
     private Random random;
 
+    private static final Identifier[] FOODS = {
+            Identifier.ofVanilla("textures/item/apple.png"),
+            Identifier.ofVanilla("textures/item/bread.png"),
+            Identifier.ofVanilla("textures/item/carrot.png"),
+            Identifier.ofVanilla("textures/item/baked_potato.png"),
+            Identifier.ofVanilla("textures/item/cooked_beef.png"),
+            Identifier.ofVanilla("textures/item/cooked_chicken.png"),
+            Identifier.ofVanilla("textures/item/cooked_porkchop.png"),
+            Identifier.ofVanilla("textures/item/cooked_mutton.png"),
+            Identifier.ofVanilla("textures/item/cooked_rabbit.png"),
+            Identifier.ofVanilla("textures/item/cooked_cod.png"),
+            Identifier.ofVanilla("textures/item/cooked_salmon.png"),
+            Identifier.ofVanilla("textures/item/beetroot.png"),
+            Identifier.ofVanilla("textures/item/melon_slice.png"),
+            Identifier.ofVanilla("textures/item/pumpkin_pie.png"),
+            Identifier.ofVanilla("textures/item/cookie.png"),
+            Identifier.ofVanilla("textures/item/suspicious_stew.png"),
+            Identifier.ofVanilla("textures/item/rabbit_stew.png"),
+            Identifier.ofVanilla("textures/item/mushroom_stew.png"),
+            Identifier.ofVanilla("textures/item/beetroot_soup.png")
+    };
+
+    private Identifier currentFoodTexture = Identifier.ofVanilla("textures/item/apple.png");
+
     public SnakeScreen(Snake minigame, Screen parent) {
         super(Text.literal("Snake"));
         this.minigame = minigame;
@@ -79,15 +103,25 @@ public class SnakeScreen extends Screen {
 
     private void spawnFood() {
         boolean validPosition = false;
+
         while (!validPosition) {
             food = new int[]{random.nextInt(GRID_WIDTH), random.nextInt(GRID_HEIGHT)};
             validPosition = true;
+
             for (int[] segment : snake) {
                 if (segment[0] == food[0] && segment[1] == food[1]) {
                     validPosition = false;
                     break;
                 }
             }
+        }
+
+        SnakeVisibleConfig config = MinigameRegistry.getConfig(SnakeVisibleConfig.class);
+
+        if (config.randomFood) {
+            currentFoodTexture = FOODS[random.nextInt(FOODS.length)];
+        } else {
+            currentFoodTexture = Identifier.ofVanilla("textures/item/apple.png");
         }
     }
 
@@ -158,6 +192,7 @@ public class SnakeScreen extends Screen {
 
     private void endGame() {
         gameOver = true;
+        minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score, true);
         SnakeConfig config = MinigameRegistry.getConfig(SnakeConfig.class);
         if (score > config.snakeHighScore) {
             config.snakeHighScore = score;
@@ -185,7 +220,8 @@ public class SnakeScreen extends Screen {
 
         int foodX = gameX + food[0] * CELL_SIZE;
         int foodY = gameY + food[1] * CELL_SIZE;
-        context.drawTexture(Identifier.ofVanilla("textures/item/apple.png"), foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+        context.drawTexture(currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         int textY = gameY - 20;
         int textX = gameX;

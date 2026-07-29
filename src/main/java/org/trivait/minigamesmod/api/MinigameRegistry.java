@@ -43,9 +43,6 @@ public final class MinigameRegistry {
         return AutoConfig.getConfigHolder(configClass).getConfig();
     }
 
-    /**
-     * Открывает экран видимого конфига игры. Возвращает null если getVisibleConfigClass() == null.
-     */
     @Nullable
     public static Screen openVisibleConfig(MinigameDefinition minigame, Screen parent) {
         Class<? extends ConfigData> cls = minigame.getVisibleConfigClass();

@@ -5,11 +5,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
+import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.minigame.tetris.TetrisVisibleConfig;
+
+import java.util.List;
 
 public class Game2048 extends AbstractMinigame {
 
@@ -25,6 +29,13 @@ public class Game2048 extends AbstractMinigame {
     @Override
     public Class<? extends ConfigData> getVisibleConfigClass() {
         return Game2048VisibleConfig.class;
+    }
+
+    @Override
+    public @Nullable Leaderboard getLeaderboard() {
+        return new Leaderboard("Game2048", List.of(
+                Text.translatable("minigame.2048.condition")
+        ));
     }
 
     @Override

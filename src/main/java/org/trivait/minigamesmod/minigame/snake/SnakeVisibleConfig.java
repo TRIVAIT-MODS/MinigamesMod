@@ -8,4 +8,6 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 public class SnakeVisibleConfig implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int volume = 100;
+
+    public boolean randomFood = false;
 }

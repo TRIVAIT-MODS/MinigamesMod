@@ -111,7 +111,7 @@ public class TetrisScreen extends Screen {
         pauseButton.setDimensionsAndPosition(20, 20, 60, 10);
 
         playButton.setPosition(this.width / 2 - 150 / 2, this.height / 2 - 20 / 2);
-        playButton.setDimensions(140, 10);
+        playButton.setDimensions(140, 20);
 
         this.addDrawableChild(returnButton);
         this.addDrawableChild(restartButton);
@@ -223,6 +223,9 @@ public class TetrisScreen extends Screen {
         isNewHighScore = score > cfg.tetrisHighScore;
         active = false;
         minigame.onLose();
+        if (score!=0) {
+            minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score, true);
+        }
     }
 
     private boolean checkClear(int y) {

@@ -10,10 +10,13 @@ import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
+import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.minigame.game2048.Game2048Config;
 import org.trivait.minigamesmod.minigame.game2048.Game2048Screen;
 import org.trivait.minigamesmod.minigame.game2048.Game2048VisibleConfig;
 import org.trivait.minigamesmod.minigame.tetris.TetrisVisibleConfig;
+
+import java.util.List;
 
 public class GoogleDino extends AbstractMinigame {
 
@@ -29,6 +32,11 @@ public class GoogleDino extends AbstractMinigame {
     @Override
     public @Nullable Class<? extends ConfigData> getVisibleConfigClass() {
         return GoogleDinoVisibleConfig.class;
+    }
+
+    @Override
+    public @Nullable Leaderboard getLeaderboard() {
+        return new Leaderboard("Dino", null);
     }
 
     @Override

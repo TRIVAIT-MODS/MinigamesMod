@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.gui;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,6 +11,8 @@ import org.trivait.minigamesmod.api.MinigameDefinition;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ArrowButtonWidget;
 import org.trivait.minigamesmod.gui.widget.MinigameCardWidget;
+import org.trivait.minigamesmod.leaderboard.Leaderboard;
+import org.trivait.minigamesmod.minigame.minesweeper.screen.SelectLeaderboardScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +26,12 @@ public class MinigameListScreen extends Screen {
     private static final float ANIM_SPEED = 0.15f;
 
     private final @Nullable Screen parent;
-    private int selectedIndex = 0;
+    private int selectedIndex = 3;
     private float animOffset = 0f;
     private final List<MinigameCardWidget> cards = new ArrayList<>();
     private final List<ArrowButtonWidget> arrows = new ArrayList<>();
+
+    private ButtonWidget leaderboardBtn;
 
     public MinigameListScreen(@Nullable Screen parent) {
         super(Text.translatable("screen.minigames.list.title"));
@@ -68,12 +73,29 @@ public class MinigameListScreen extends Screen {
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.back"), b -> this.close())
                 .dimensions(this.width / 2 - 50, this.height - 28, 100, 20)
                 .build());
+
+        leaderboardBtn = ButtonWidget.builder(
+                Text.translatable("minigame.leaderboard"),
+                (b) -> {
+                    Leaderboard leaderboard = all.get(selectedIndex).getLeaderboard();
+                    b.active=leaderboard!=null;
+                    if (leaderboard!=null) {
+                        MinecraftClient.getInstance().setScreen(new LeaderboardScreen(leaderboard, this));
+                    } else if (all.get(selectedIndex).getId().equals("minesweeper")) {
+                        MinecraftClient.getInstance().setScreen(new SelectLeaderboardScreen(this));
+                    }
+                }
+        ).dimensions(width/2-35, height/2+70, 70, 20).build();
+        this.addDrawableChild(leaderboardBtn);
+
+        updateActive();
     }
 
     private void scrollLeft() {
         if (selectedIndex > 0) {
             selectedIndex--;
             animOffset = -(CARD_WIDTH + CARD_SPACING);
+            updateActive();
         }
     }
 
@@ -82,7 +104,15 @@ public class MinigameListScreen extends Screen {
         if (selectedIndex < all.size() - 1) {
             selectedIndex++;
             animOffset = (CARD_WIDTH + CARD_SPACING);
+            updateActive();
         }
+    }
+
+    private void updateActive() {
+        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+        Leaderboard leaderboard = all.get(selectedIndex).getLeaderboard();
+        leaderboardBtn.active=leaderboard!=null;
+        if (!leaderboardBtn.active&&all.get(selectedIndex).getId().equals("minesweeper")) leaderboardBtn.active = true;
     }
 
     private void updateCardScales(float offset) {

@@ -38,6 +38,19 @@
   "text.autoconfig.minigames/dino_ui.option.volume": "Громкость",
   "text.autoconfig.minigames/snake_ui.title": "Настройки змейки",
   "text.autoconfig.minigames/snake_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/snake_ui.option.randomFood": "Рандомная еда",
+
+  "text.autoconfig.minigames/minesweeper.title": "Настройки сапёра",
+  "text.autoconfig.minigames/minesweeper.option.soundsVolume": "Громкость",
+  "text.autoconfig.minigames/minesweeper.option.gridWidth": "Ширина поля",
+  "text.autoconfig.minigames/minesweeper.option.gridHeight": "Высота поля",
+  "text.autoconfig.minigames/minesweeper.option.mines": "Количество мин",
+  "text.autoconfig.minigames/minesweeper.option.enableAnimations": "Анимации включены",
+  "text.autoconfig.minigames/minesweeper.option.enableExplosionAnimation": "Анимации взрыва при поражении включены",
+
+  "text.autoconfig.minigames/sudoku_ui.title": "Настройки судоку",
+  "text.autoconfig.minigames/sudoku_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Сложность",
 
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
@@ -54,6 +67,29 @@
   "minigame.snake.title": "Змейка",
   "minigame.snake.score": "Счёт: ",
   "minigame.snake.best_score": "Лучший счёт: ",
+  "minigame.2048.condition": "Поле 4x4",
+
+  "minigame.sudoku.title": "Судоку",
+  "minigame.sudoku.win": "Победа",
+  "minigame.sudoku.condition.first": "Средняя сложность",
+
+  "minigame.bubble_shooter": "Бабл шутер",
+
+  "minigame.minesweeper.title": "Сапёр",
+  "minigame.minesweeper.leaderboard.name": "Лидерборд",
+  "minigame.minesweeper.leaderboard.mode.score": "Счёт",
+  "minigame.minesweeper.leaderboard.mode.time": "Время",
+  "minigame.minesweeper.leaderboard.play": "Играть",
+  "minigame.minesweeper.leaderboard.refresh": "Обновить",
+  "minigame.minesweeper.leaderboard.submit": "Выложить",
+  "minigame.minesweeper.leaderboard.category.all": "Все",
+  "minigame.minesweeper.second.suffix": "с",
+  "minigame.minesweeper.leaderboard.loading": "Загрузка...",
+  "minigame.minesweeper.leaderboard.error": "Ошибка:",
+  "minigame.minesweeper.leaderboard.mines": "Мин: ",
+  "minigame.minesweeper.leaderboard.version.script": "Версия лидерборда: %s",
+  "minigame.minesweeper.leaderboard.version.api": "Версия API мода: %s",
+  "minigame.minesweeper.leaderboard.version.update_mod": "Обновите мод!",
 
   "minigame.tetris.title": "Тетрис",
   "minigame.tetris.start": "Начать игру",
@@ -74,6 +110,9 @@
   "minigame.tetris.mode.instant": "Мгновенный",
   "minigame.tetris.mode.outline": "Контур",
   "minigame.tetris.mode.ghost": "Призрак",
+
+  "minigame.leaderboard": "Лидерборд",
+  "minigame.leaderboard.conditions": "Условия",
 
   "minigame.config.btn": "Открыть конфиг"
 }

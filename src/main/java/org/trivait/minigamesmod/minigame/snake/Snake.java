@@ -5,10 +5,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
+import org.trivait.minigamesmod.leaderboard.Leaderboard;
 
 public class Snake extends AbstractMinigame {
 
@@ -24,6 +26,11 @@ public class Snake extends AbstractMinigame {
     @Override
     public Class<? extends ConfigData> getVisibleConfigClass() {
         return SnakeVisibleConfig.class;
+    }
+
+    @Override
+    public @Nullable Leaderboard getLeaderboard() {
+        return new Leaderboard("Snake", null);
     }
 
     @Override
