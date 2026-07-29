@@ -34,6 +34,11 @@
   "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Хард-дроп",
   "text.autoconfig.minigames/tetris_ui.option.volume": "Громкость",
 
+  "text.autoconfig.minigames/dino_ui.title": "Настрйоки дино",
+  "text.autoconfig.minigames/dino_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/snake_ui.title": "Настройки змейки",
+  "text.autoconfig.minigames/snake_ui.option.volume": "Громкость",
+
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
   "minigame.restart": "Заново",
@@ -43,6 +48,12 @@
   "minigame.2048.best": "РЕКОРД",
   "minigame.2048.game_over": "Игра окончена!",
   "minigame.2048.win": "Победа!",
+
+  "minigame.dino.title": "Дино",
+
+  "minigame.snake.title": "Змейка",
+  "minigame.snake.score": "Счёт: ",
+  "minigame.snake.best_score": "Лучший счёт: ",
 
   "minigame.tetris.title": "Тетрис",
   "minigame.tetris.start": "Начать игру",

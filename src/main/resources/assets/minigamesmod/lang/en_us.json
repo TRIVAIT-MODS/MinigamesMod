@@ -34,6 +34,11 @@
   "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Hard drop",
   "text.autoconfig.minigames/tetris_ui.option.volume": "Volume",
 
+  "text.autoconfig.minigames/dino_ui.title": "Dino Settings",
+  "text.autoconfig.minigames/dino_ui.option.volume": "Volume",
+  "text.autoconfig.minigames/snake_ui.title": "Snake Settings",
+  "text.autoconfig.minigames/snake_ui.option.volume": "Volume",
+
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
   "minigame.tetris.mode.outline": "Outline",
@@ -41,6 +46,7 @@
 
   "screen.minigames.list.title": "Minigames",
   "screen.minigames.list.empty": "No minigames installed",
+
   "minigame.restart": "Restart",
   "minigame.2048.title": "2048",
   "minigame.2048.undo": "Undo",
@@ -48,6 +54,12 @@
   "minigame.2048.best": "BEST",
   "minigame.2048.game_over": "Game Over!",
   "minigame.2048.win": "You Win!",
+
+  "minigame.dino.title": "Dino",
+
+  "minigame.snake.title": "Snake",
+  "minigame.snake.score": "Score: ",
+  "minigame.snake.best_score": "Best score: ",
 
   "minigame.tetris.title": "Tetris",
   "minigame.tetris.start": "Start game",

@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
+import org.trivait.minigamesmod.gui.widget.ConfigButton;
 import org.trivait.minigamesmod.minigame.game2048.Game2048VisibleConfig;
 import org.trivait.minigamesmod.minigame.tetris.mino.*;
 
@@ -97,35 +98,25 @@ public class TetrisScreen extends Screen {
         ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
                 .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
         returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.return")));
-        returnButton.setDimensionsAndPosition(20, 20, 20, 20);
+        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
 
         ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> gameOver(), true)
                 .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
         restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 45, 20);
+        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
 
         ButtonWidget pauseButton = TextIconButtonWidget.builder(Text.empty(), button -> paused = !paused, true)
                 .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/pause"), 15, 15).build();
         pauseButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.pause")));
-        pauseButton.setDimensionsAndPosition(20, 20, 70, 20);
-
-        TextIconButtonWidget configBtn = TextIconButtonWidget.builder(
-                Text.empty(),
-                (button) -> {
-                    Screen cfgScreen = MinigameRegistry.openVisibleConfig(minigame, this);
-                    if (cfgScreen != null) this.client.setScreen(cfgScreen);
-                },
-                true
-        ).width(20).texture(Identifier.of(MinigamesMod.MOD_ID, "icon/config"), 18, 18).build();
-        configBtn.setPosition(95, 20);
+        pauseButton.setDimensionsAndPosition(20, 20, 60, 10);
 
         playButton.setPosition(this.width / 2 - 150 / 2, this.height / 2 - 20 / 2);
-        playButton.setDimensions(150, 20);
+        playButton.setDimensions(140, 10);
 
         this.addDrawableChild(returnButton);
         this.addDrawableChild(restartButton);
         this.addDrawableChild(pauseButton);
-        this.addDrawableChild(configBtn);
+        this.addDrawableChild(new ConfigButton(85, 10, minigame));
         this.addDrawableChild(playButton);
     }
 

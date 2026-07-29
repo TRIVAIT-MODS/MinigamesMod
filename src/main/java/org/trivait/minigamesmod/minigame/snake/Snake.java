@@ -1,4 +1,4 @@
-package org.trivait.minigamesmod.minigame.game2048;
+package org.trivait.minigamesmod.minigame.snake;
 
 import me.shedaniel.autoconfig.ConfigData;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,27 +9,26 @@ import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
-import org.trivait.minigamesmod.minigame.tetris.TetrisVisibleConfig;
 
-public class Game2048 extends AbstractMinigame {
+public class Snake extends AbstractMinigame {
 
-    public Game2048() {
-        super("2048", Text.literal("2048"), Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/2048_icon.png"));
+    public Snake() {
+        super("snake", Text.translatable("minigame.snake.title"), Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake_icon.png"));
     }
 
     @Override
     public Class<? extends ConfigData> getConfigClass() {
-        return Game2048Config.class;
+        return SnakeConfig.class;
     }
 
     @Override
     public Class<? extends ConfigData> getVisibleConfigClass() {
-        return Game2048VisibleConfig.class;
+        return SnakeVisibleConfig.class;
     }
 
     @Override
     public Screen createScreen(Screen parent) {
-        return new Game2048Screen(this, parent);
+        return new SnakeScreen(this, parent);
     }
 
     @Override
@@ -43,6 +42,6 @@ public class Game2048 extends AbstractMinigame {
     }
 
     private float vol() {
-        return PlayingSoundManager.vol(MinigameRegistry.getConfig(TetrisVisibleConfig.class).volume);
+        return MinigameRegistry.getConfig(SnakeVisibleConfig.class).volume / 100f;
     }
 }

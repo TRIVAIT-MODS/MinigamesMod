@@ -19,10 +19,6 @@ public interface MinigameDefinition {
 
     Screen createScreen(Screen parent);
 
-    default Set<MinigameTag> getTags() {
-        return Set.of();
-    }
-
     @Nullable
     default Class<? extends ConfigData> getConfigClass() {
         return null;

@@ -12,10 +12,11 @@ import org.trivait.minigamesmod.gui.MinigameListScreen;
 
 public class ConfigButton extends TextIconButtonWidget.IconOnly {
 
-    private static final Identifier TEXTURE = Identifier.of("minigamesmod", "icon/config");
+    private static final Identifier DEFAULT_TEXTURE = Identifier.of("minigamesmod", "icon/config");
+    private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/config_hover");
 
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
-        super(20, 20, Text.empty(), 16, 16, TEXTURE, button -> {
+        super(20, 20, Text.empty(), 20, 20, DEFAULT_TEXTURE, button -> {
             MinecraftClient client = MinecraftClient.getInstance();
             client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.currentScreen));
         }, null);
@@ -26,9 +27,10 @@ public class ConfigButton extends TextIconButtonWidget.IconOnly {
 
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        Identifier currentTexture = this.isSelected() ? HOVER_TEXTURE : DEFAULT_TEXTURE;
         super.renderWidget(context, mouseX, mouseY, delta);
         int i = this.getX() + this.getWidth() / 2 - this.textureWidth / 2;
         int j = this.getY() + this.getHeight() / 2 - this.textureHeight / 2;
-        context.drawGuiTexture(TEXTURE, i, j, this.textureWidth, this.textureHeight);
+        context.drawGuiTexture(currentTexture, i, j, this.textureWidth, this.textureHeight);
     }
 }

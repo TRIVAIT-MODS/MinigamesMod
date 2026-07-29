@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.config.Config;
 import org.trivait.minigamesmod.minigame.game2048.Game2048;
+import org.trivait.minigamesmod.minigame.pingpong.PingPong;
 import org.trivait.minigamesmod.minigame.tetris.Tetris;
+import org.trivait.minigamesmod.minigame.dino.GoogleDino;
+import org.trivait.minigamesmod.minigame.snake.Snake;
 
 public class MinigamesMod implements ClientModInitializer {
     public static final String MOD_ID = "minigamesmod";
@@ -23,5 +26,7 @@ public class MinigamesMod implements ClientModInitializer {
 
         MinigameRegistry.register(new Game2048());
         MinigameRegistry.register(new Tetris());
+        MinigameRegistry.register(new GoogleDino());
+        MinigameRegistry.register(new Snake());
     }
 }
