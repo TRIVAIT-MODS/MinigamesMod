@@ -2,6 +2,7 @@ package org.trivait.minigamesmod.minigame.snake;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -15,6 +16,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import org.joml.Matrix3x2fStack;
 import org.joml.Quaternionf;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -206,14 +208,14 @@ public class SnakeScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        MatrixStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.getMatrices();
 
         gameX = (this.width - GAME_WIDTH) / 2;
         gameY = (this.height - GAME_HEIGHT) / 2;
 
-        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
 
-        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
 
         for (int i = 0; i < snake.size(); i++) {
             renderSnakeSegment(context, matrices, gameX, gameY, i);
@@ -222,7 +224,7 @@ public class SnakeScreen extends Screen {
         int foodX = gameX + food[0] * CELL_SIZE;
         int foodY = gameY + food[1] * CELL_SIZE;
 
-        context.drawTexture(RenderLayer::getGuiTextured, currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         int textY = gameY - 20;
         int textX = gameX;
@@ -238,11 +240,11 @@ public class SnakeScreen extends Screen {
             int centerX = gameX + GAME_WIDTH / 2;
             int centerY = gameY + GAME_HEIGHT / 2;
 
-            matrices.push();
-            matrices.translate(centerX, centerY - 10, 0);
-            matrices.scale(1.5f, 1.5f, 1.5f);
+            matrices.pushMatrix();
+            matrices.translate(centerX, centerY - 10);
+            matrices.scale(1.5f, 1.5f);
             context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("§lGAME OVER"), 0, 0, Colors.RED);
-            matrices.pop();
+            matrices.popMatrix();
 
             context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("Score: " + score), centerX, centerY + 12, Colors.WHITE);
         }
@@ -254,7 +256,7 @@ public class SnakeScreen extends Screen {
         }
     }
 
-    private void renderSnakeSegment(DrawContext context, MatrixStack matrices, int gameX, int gameY, int segmentIndex) {
+    private void renderSnakeSegment(DrawContext context, Matrix3x2fStack matrices, int gameX, int gameY, int segmentIndex) {
         int[] segment = snake.get(segmentIndex);
         int x = gameX + segment[0] * CELL_SIZE;
         int y = gameY + segment[1] * CELL_SIZE;
@@ -288,13 +290,13 @@ public class SnakeScreen extends Screen {
         }
     }
 
-    private void drawRotatedTexture(DrawContext context, MatrixStack matrices, int x, int y, Identifier texture, int rotation) {
-        matrices.push();
-        matrices.translate(x + CELL_SIZE / 2.0, y + CELL_SIZE / 2.0, 0);
-        matrices.multiply(new Quaternionf().rotateZ((float)Math.toRadians(rotation)));
-        matrices.translate(-CELL_SIZE / 2.0, -CELL_SIZE / 2.0, 0);
-        context.drawTexture(RenderLayer::getGuiTextured, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        matrices.pop();
+    private void drawRotatedTexture(DrawContext context, Matrix3x2fStack matrices, int x, int y, Identifier texture, int rotation) {
+        matrices.pushMatrix();
+        matrices.translate((float) (x + CELL_SIZE / 2.0), (float) (y + CELL_SIZE / 2.0));
+        matrices.rotate(rotation);
+        matrices.translate((float) (-CELL_SIZE / 2.0), (float) (-CELL_SIZE / 2.0));
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        matrices.popMatrix();
     }
 
     private int getHeadRotation() {

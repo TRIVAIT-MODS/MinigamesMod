@@ -1,6 +1,7 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -24,7 +25,7 @@ public class ScoreboardVersionWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        ctx.drawTexture(RenderLayer::getGuiTextured, TEX_SCORE, getX(), getY(), 0, 0, SIZE, SIZE, SIZE, SIZE);
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, TEX_SCORE, getX(), getY(), 0, 0, SIZE, SIZE, SIZE, SIZE);
 
         if (isMouseOver(mouseX, mouseY)) {
             List<Text> tooltip = buildTooltip();

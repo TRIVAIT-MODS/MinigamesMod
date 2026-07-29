@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.dino;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,7 @@ public class Pterodactyl extends GameObject {
 
     @Override
     public void render(DrawContext ctx, float delta) {
-        ctx.drawTexture(RenderLayer::getGuiTextured, texture, (int) x, y - height, frame ? 0 : width, 0, width, height, (int) (184/2), height);
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, texture, (int) x, y - height, frame ? 0 : width, 0, width, height, (int) (184/2), height);
     }
 
     @Override

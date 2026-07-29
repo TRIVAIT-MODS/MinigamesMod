@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
@@ -37,6 +38,6 @@ public class ExplosionAnimation {
     public void render(DrawContext context) {
         if (done) return;
         int f = Math.min((int) (elapsed / TICKS_PER_FRAME), FRAMES - 1);
-        context.drawTexture(RenderLayer::getGuiTextured, TEXTURES[f], x, y, 0, 0, w, h, w, h);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURES[f], x, y, 0, 0, w, h, w, h);
     }
 }

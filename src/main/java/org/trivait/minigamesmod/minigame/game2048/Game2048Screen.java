@@ -334,11 +334,11 @@ public class Game2048Screen extends Screen {
         float scaleW = (float)(cell - 8) / (textW * scale > 0 ? textW : 1);
         if (scaleW < 1f) scale *= scaleW;
         var matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(x + cell / 2f, y + cell / 2f - (9f * scale) / 2f, 0);
-        matrices.scale(scale, scale, 1f);
+        matrices.pushMatrix();
+        matrices.translate(x + cell / 2f, y + cell / 2f - (9f * scale) / 2f);
+        matrices.scale(scale, scale);
         context.drawCenteredTextWithShadow(textRenderer, label, 0, 0, 0xFFFFFFFF);
-        matrices.pop();
+        matrices.popMatrix();
     }
 
     @Override

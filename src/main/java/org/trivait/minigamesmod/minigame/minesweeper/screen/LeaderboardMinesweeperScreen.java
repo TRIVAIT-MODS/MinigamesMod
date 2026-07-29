@@ -120,12 +120,12 @@ public class LeaderboardMinesweeperScreen extends MinesweeperScreen {
         Text label = Text.literal(text);
         int tw = textRenderer.getWidth(label);
 
-        ctx.getMatrices().push();
-        ctx.getMatrices().translate(width / 2f, 4f, 0);
-        ctx.getMatrices().scale(2f, 2f, 0);
-        ctx.getMatrices().translate(-tw / 2f, 0f, 0);
+        ctx.getMatrices().pushMatrix();
+        ctx.getMatrices().translate(width / 2f, 4f);
+        ctx.getMatrices().scale(2f, 2f);
+        ctx.getMatrices().translate(-tw / 2f, 0f);
         ctx.drawText(textRenderer, label, 0, 0, 0xFFFFFFFF, true);
-        ctx.getMatrices().pop();
+        ctx.getMatrices().popMatrix();
     }
 
     @Override
