@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.render.model.BlockModelPart;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.registry.Registries;
@@ -165,36 +166,31 @@ public abstract class Mino {
     }
     protected Identifier getRandomBlockTexture() {
         MinecraftClient client = MinecraftClient.getInstance();
-        Random random = new Random();
-        BlockState blockState;
+        net.minecraft.util.math.random.Random random = MinecraftClient.getInstance().textRenderer.random;
+        net.minecraft.block.Block block;
         List<BakedQuad> quads;
+        List<BlockModelPart> parts;
         SpriteContents texture;
-
+        BlockState blockState;
         while (true) {
-            net.minecraft.block.Block mcBlock = Registries.BLOCK.get(random.nextInt(Registries.BLOCK.size()));
-            blockState = mcBlock.getStateManager().getStates().get(random.nextInt(mcBlock.getStateManager().getStates().size()));
-
-            quads = client.getBlockRenderManager()
-                    .getModel(blockState)
-                    .getQuads(blockState, null, net.minecraft.util.math.random.Random.create());
-
-            if (!quads.isEmpty()) {
-                texture = quads.get(random.nextInt(quads.size())).getSprite().getContents();
-
+            block = Registries.BLOCK.get(new Random().nextInt(Registries.BLOCK.size()));
+            blockState = block.getStateManager().getStates().get(new Random().nextInt(block.getStateManager().getStates().size()));
+            parts = client.getBlockRenderManager().getModel(blockState).getParts(MinecraftClient.getInstance().textRenderer.random);
+            quads = parts.get(random.nextInt(parts.size())).getQuads(Direction.random(MinecraftClient.getInstance().textRenderer.random));
+            if (!(quads.isEmpty())) {
+                texture = quads.get(new Random().nextInt(quads.size())).sprite().getContents();
                 if (texture.getWidth() == 16 && texture.getHeight() == 16) {
-                    Optional<Resource> resource = client.getResourceManager().getResource(
-                            Identifier.of(texture.getId().getNamespace(), "textures/" + texture.getId().getPath() + ".png")
-                    );
-
-                    if (resource.isPresent()) {
+                    Optional<Resource> opR = client.getResourceManager().getResource(Identifier.of("textures/" + texture.getId().getPath() + ".png"));
+                    Resource resource = null;
+                    if (opR.isPresent()) resource = opR.get();
+                    if (resource != null) {
+                        BufferedImage image;
                         try {
-                            BufferedImage image = ImageIO.read(resource.get().getInputStream());
-
-                            if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0) {
-                                return texture.getId();
-                            }
-                        } catch (Exception ignored) {
-                        }
+                            image = ImageIO.read(resource.getInputStream());
+                            //if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0) return new TextureResource(Identifier.of(texture.getId().getNamespace().split(":")[0],"textures/" + texture.getId().getPath() + ".png"), image.getWidth(), image.getHeight());
+                            if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0) return texture.getId();
+                            //if (image.getRGB(0, 0) < 0 && image.getRGB(15, 0) < 0) return texture;
+                        } catch (Exception ignored) {}
                     }
                 }
             }

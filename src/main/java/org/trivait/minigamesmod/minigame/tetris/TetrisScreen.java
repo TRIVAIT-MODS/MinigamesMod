@@ -210,7 +210,7 @@ public class TetrisScreen extends Screen {
                             (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE : (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
                     HEIGHT - (int) (Block.SIZE * 2.5f));
         }
-        float frameDuration = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
+        float frameDuration = MinecraftClient.getInstance().getRenderTickCounter().getDynamicDeltaTicks();
         currentMino.update(frameDuration*3);
         animation+=frameDuration*3;
     }
@@ -318,7 +318,7 @@ public class TetrisScreen extends Screen {
 
         //draw destroying minos
         for (Block d : destroying) {
-            d.destroying += MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true)*3;
+            d.destroying += MinecraftClient.getInstance().getRenderTickCounter().getDynamicDeltaTicks()*3;
             if (d.destroying>9) d.destroying = 9;
             d.draw(context);
         }
