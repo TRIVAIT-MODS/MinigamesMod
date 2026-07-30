@@ -1,9 +1,9 @@
 package org.trivait.minigamesmod.mixin;
 
-import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,13 +13,13 @@ import org.trivait.minigamesmod.config.Config;
 import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
 import org.trivait.minigamesmod.gui.widget.MinigamesButton;
 
-@Mixin(GameMenuScreen.class)
-public abstract class GameMenuScreenMixin extends Screen {
-    protected GameMenuScreenMixin(Text title) {
+@Mixin(PauseScreen.class)
+public abstract class PauseScreenMixin extends Screen {
+    protected PauseScreenMixin(Component title) {
         super(title);
     }
 
-    @Inject(method = "initWidgets", at = @At("RETURN"))
+    @Inject(method = "createPauseMenu", at = @At("RETURN"))
     private void addMinigamesButton(CallbackInfo ci) {
         Config cfg = MinigamesMod.CONFIG;
         if (cfg.pauseMenuButtonPosition == null) {
@@ -28,8 +28,8 @@ public abstract class GameMenuScreenMixin extends Screen {
 
         MinigamesButton btn = new MinigamesButton(5, 5);
 
-        for (ButtonWidget button : this.children().stream().filter(e -> e instanceof ButtonWidget).map(e -> (ButtonWidget) e).toList()) {
-            if (button.getMessage().equals(Text.translatable("menu.returnToGame"))) {
+        for (Button button : this.children().stream().filter(e -> e instanceof Button).map(e -> (Button) e).toList()) {
+            if (button.getMessage().equals(Component.translatable("menu.returnToGame"))) {
                 int x = cfg.pauseMenuButtonPosition.getX(button.getX(), button.getWidth());
                 int y = cfg.pauseMenuButtonPosition.getY(button.getY());
                 btn = new MinigamesButton(x, y);
@@ -37,6 +37,6 @@ public abstract class GameMenuScreenMixin extends Screen {
             }
         }
 
-        this.addDrawableChild(btn);
+        this.addRenderableWidget(btn);
     }
 }

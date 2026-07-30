@@ -1,9 +1,10 @@
 package org.trivait.minigamesmod.api;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 
@@ -47,7 +48,7 @@ public final class MinigameRegistry {
     public static Screen openVisibleConfig(MinigameDefinition minigame, Screen parent) {
         Class<? extends ConfigData> cls = minigame.getVisibleConfigClass();
         if (cls == null) return null;
-        return AutoConfig.getConfigScreen(cls, parent).get();
+        return AutoConfigClient.getConfigScreen(cls, parent).get();
     }
 
     public static MinigameDefinition get(String id) {

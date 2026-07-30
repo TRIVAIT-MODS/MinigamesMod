@@ -1,18 +1,18 @@
 package org.trivait.minigamesmod.gui.widget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.api.MinigameDefinition;
 
-public class MinigameCardWidget extends ClickableWidget {
+public class MinigameCardWidget extends AbstractWidget {
 
     private static final int BORDER = 3;
     private static final int LABEL_HEIGHT = 16;
@@ -32,7 +32,7 @@ public class MinigameCardWidget extends ClickableWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         int cx = getX() + getWidth() / 2;
         int cy = getY() + getHeight() / 2;
 
@@ -41,17 +41,17 @@ public class MinigameCardWidget extends ClickableWidget {
         boolean hovered = mx >= getX() && mx < getX() + getWidth()
                        && my >= getY() && my < getY() + getHeight();
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(cx, cy);
-        context.getMatrices().scale(scale, scale);
-        context.getMatrices().translate(-cx, -cy);
+        context.pose().pushMatrix();
+        context.pose().translate(cx, cy);
+        context.pose().scale(scale, scale);
+        context.pose().translate(-cx, -cy);
 
         drawCard(context, hovered);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
-    private void drawCard(DrawContext context, boolean hovered) {
+    private void drawCard(GuiGraphicsExtractor context, boolean hovered) {
         int x = getX();
         int y = getY();
         int w = getWidth();
@@ -73,27 +73,27 @@ public class MinigameCardWidget extends ClickableWidget {
         context.fill(imgX, imgY, imgX + imgW, imgY + imgArea, 0xFF666666);
 
         if (icon != null) {
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
+            context.blit(RenderPipelines.GUI_TEXTURED, icon, imgX, imgY, 0, 0, imgW, imgArea, imgW, imgArea);
         } else {
-            TextRenderer tr = MinecraftClient.getInstance().textRenderer;
-            context.drawCenteredTextWithShadow(tr,
-                    Text.literal("?").styled(s -> s.withBold(true)),
+            Font tr = Minecraft.getInstance().font;
+            context.centeredText(tr,
+                    Component.literal("?").withStyle(s -> s.withBold(true)),
                     x + w / 2, imgY + imgArea / 2, 0xFFFFFFFF);
         }
 
-        TextRenderer tr = MinecraftClient.getInstance().textRenderer;
+        Font tr = Minecraft.getInstance().font;
         int labelY = y + h - LABEL_HEIGHT - BORDER + 2;
         context.fill(x + BORDER, labelY - 2, x + w - BORDER, y + h - BORDER, 0xCC333333);
-        context.drawCenteredTextWithShadow(tr, Text.literal(minigame.getDisplayName().getString()).styled(style -> style.withBold(true)), x + w / 2, labelY+1, 0xFFFFFFFF);
+        context.centeredText(tr, Component.literal(minigame.getDisplayName().getString()).withStyle(style -> style.withBold(true)), x + w / 2, labelY+1, 0xFFFFFFFF);
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         onClick.run();
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        appendDefaultNarrations(builder);
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
+        defaultButtonNarrationText(builder);
     }
 }

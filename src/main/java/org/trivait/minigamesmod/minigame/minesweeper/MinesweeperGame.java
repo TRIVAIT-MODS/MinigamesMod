@@ -1,9 +1,9 @@
 package org.trivait.minigamesmod.minigame.minesweeper;
 
 import me.shedaniel.autoconfig.ConfigData;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
@@ -17,8 +17,8 @@ public class MinesweeperGame extends AbstractMinigame {
 
     public MinesweeperGame() {
         super("minesweeper",
-                Text.translatable("minigame.minesweeper.title"),
-                Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper_icon.png"));
+                Component.translatable("minigame.minesweeper.title"),
+                Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper_icon.png"));
     }
 
     public static SavedGame getSavedGame() { return savedGame; }

@@ -1,17 +1,17 @@
 package org.trivait.minigamesmod.minigame.tetris;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum HardDropMode {
-    OFF(0, Text.translatable("minigame.tetris.mode.off")),
-    INSTANT(1, Text.translatable("minigame.tetris.mode.instant")),
-    OUTLINE(2, Text.translatable("minigame.tetris.mode.outline")),
-    GHOST(3, Text.translatable("minigame.tetris.mode.ghost"));
+    OFF(0, Component.translatable("minigame.tetris.mode.off")),
+    INSTANT(1, Component.translatable("minigame.tetris.mode.instant")),
+    OUTLINE(2, Component.translatable("minigame.tetris.mode.outline")),
+    GHOST(3, Component.translatable("minigame.tetris.mode.ghost"));
 
     public int mode;
-    public Text name;
+    public Component name;
 
-    HardDropMode(int mode, Text name) {
+    HardDropMode(int mode, Component name) {
         this.mode = mode;
         this.name = name;
     }

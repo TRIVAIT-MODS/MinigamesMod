@@ -1,11 +1,11 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
 import org.trivait.minigamesmod.minigame.minesweeper.game.GameMode;
@@ -22,16 +22,16 @@ public class TimeLeaderboardScreen extends Screen {
     private BoardCategory boardCategory = BoardCategory.S8x8;
     private LeaderboardCache CACHE = new LeaderboardCache();
 
-    private ButtonWidget c8x8Button;
-    private ButtonWidget c16x16Button;
-    private ButtonWidget c26x18Button;
+    private Button c8x8Button;
+    private Button c16x16Button;
+    private Button c26x18Button;
 
-    private ButtonWidget playButton;
+    private Button playButton;
 
     private ScoreboardVersionWidget versionWidget;
 
     public TimeLeaderboardScreen(Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.parent = parent;
         SheetsApi.fetchScriptVersionAsync();
     }
@@ -49,53 +49,53 @@ public class TimeLeaderboardScreen extends Screen {
         int groupH = 3 * 20 + 2 * (btnSpacing - 20) + 10 + 24;
         int groupY = (height - groupH) / 2;
 
-        this.c8x8Button = ButtonWidget.builder(Text.literal("8x8"), b -> {
+        this.c8x8Button = Button.builder(Component.literal("8x8"), b -> {
             boardCategory = BoardCategory.S8x8;
             leaderboard.setCategory(boardCategory);
             b.active = false;
             c16x16Button.active = true;
             c26x18Button.active = true;
-        }).tooltip(Tooltip.of(Text.translatable("minigame.minesweeper.leaderboard.mines").append(Text.literal("" + BoardCategory.S8x8.mines)))).dimensions(btnX, groupY, btnW, 20).build();
-        this.addDrawableChild(c8x8Button);
+        }).tooltip(Tooltip.create(Component.translatable("minigame.minesweeper.leaderboard.mines").append(Component.literal("" + BoardCategory.S8x8.mines)))).bounds(btnX, groupY, btnW, 20).build();
+        this.addRenderableWidget(c8x8Button);
 
         c8x8Button.active=false;
 
-        this.c16x16Button = ButtonWidget.builder(Text.literal("16x16"), b -> {
+        this.c16x16Button = Button.builder(Component.literal("16x16"), b -> {
             boardCategory = BoardCategory.S16x16;
             leaderboard.setCategory(boardCategory);
             b.active = false;
             c8x8Button.active = true;
             c26x18Button.active = true;
-        }).tooltip(Tooltip.of(Text.translatable("minigame.minesweeper.leaderboard.mines").append(Text.literal("" + BoardCategory.S16x16.mines)))).dimensions(btnX, groupY + btnSpacing, btnW, 20).build();
-        this.addDrawableChild(c16x16Button);
+        }).tooltip(Tooltip.create(Component.translatable("minigame.minesweeper.leaderboard.mines").append(Component.literal("" + BoardCategory.S16x16.mines)))).bounds(btnX, groupY + btnSpacing, btnW, 20).build();
+        this.addRenderableWidget(c16x16Button);
 
-        this.c26x18Button = ButtonWidget.builder(Text.literal("26x18"), b -> {
+        this.c26x18Button = Button.builder(Component.literal("26x18"), b -> {
             boardCategory = BoardCategory.S26x18;
             leaderboard.setCategory(boardCategory);
             b.active = false;
             c16x16Button.active = true;
             c8x8Button.active = true;
-        }).tooltip(Tooltip.of(Text.translatable("minigame.minesweeper.leaderboard.mines").append(Text.literal("" + BoardCategory.S26x18.mines)))).dimensions(btnX, groupY + btnSpacing * 2, btnW, 20).build();
-        this.addDrawableChild(c26x18Button);
+        }).tooltip(Tooltip.create(Component.translatable("minigame.minesweeper.leaderboard.mines").append(Component.literal("" + BoardCategory.S26x18.mines)))).bounds(btnX, groupY + btnSpacing * 2, btnW, 20).build();
+        this.addRenderableWidget(c26x18Button);
 
-        this.playButton = ButtonWidget.builder(Text.translatable("minigame.minesweeper.leaderboard.play").setStyle(Style.EMPTY.withBold(true)), button -> {
-            client.setScreen(new LeaderboardMinesweeperScreen(
+        this.playButton = Button.builder(Component.translatable("minigame.minesweeper.leaderboard.play").setStyle(Style.EMPTY.withBold(true)), button -> {
+            minecraft.setScreen(new LeaderboardMinesweeperScreen(
                     boardCategory.toGameSettings(),
                     GameMode.LEADERBOARD_TIME,
                     ((MinesweeperGame) MinigameRegistry.get("minesweeper")),
                     this,
                     boardCategory
             ));
-        }).dimensions(btnX-2, groupY + btnSpacing * 2 + 30, btnW+4, 24).build();
-        this.addDrawableChild(playButton);
+        }).bounds(btnX-2, groupY + btnSpacing * 2 + 30, btnW+4, 24).build();
+        this.addRenderableWidget(playButton);
 
-        this.addDrawableChild(leaderboard);
-        this.addDrawableChild(versionWidget);
+        this.addRenderableWidget(leaderboard);
+        this.addRenderableWidget(versionWidget);
         refresh();
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == 294) {
             refresh();
         }
@@ -109,8 +109,8 @@ public class TimeLeaderboardScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        super.close();
-        this.client.setScreen(parent);
+    public void onClose() {
+        super.onClose();
+        this.minecraft.setScreen(parent);
     }
 }

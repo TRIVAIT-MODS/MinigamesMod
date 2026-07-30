@@ -1,15 +1,15 @@
 package org.trivait.minigamesmod.api;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvent;
 
 public class PlayingSoundManager {
     public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(soundEvent, pitch, volume));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
     }
     public static void playSound(SoundEvent soundEvent) {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(soundEvent, 1, 1));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1, 1));
     }
 
     public static float vol(int volumeConfig) {

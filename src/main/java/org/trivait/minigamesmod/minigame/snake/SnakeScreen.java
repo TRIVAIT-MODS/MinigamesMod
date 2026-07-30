@@ -1,30 +1,25 @@
 package org.trivait.minigamesmod.minigame.snake;
 
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.CommonColors;
 import org.joml.Matrix3x2fStack;
-import org.joml.Quaternionf;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
-import org.trivait.minigamesmod.minigame.dino.GoogleDino;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,31 +49,31 @@ public class SnakeScreen extends Screen {
     private Random random;
 
     private static final Identifier[] FOODS = {
-            Identifier.ofVanilla("textures/item/apple.png"),
-            Identifier.ofVanilla("textures/item/bread.png"),
-            Identifier.ofVanilla("textures/item/carrot.png"),
-            Identifier.ofVanilla("textures/item/baked_potato.png"),
-            Identifier.ofVanilla("textures/item/cooked_beef.png"),
-            Identifier.ofVanilla("textures/item/cooked_chicken.png"),
-            Identifier.ofVanilla("textures/item/cooked_porkchop.png"),
-            Identifier.ofVanilla("textures/item/cooked_mutton.png"),
-            Identifier.ofVanilla("textures/item/cooked_rabbit.png"),
-            Identifier.ofVanilla("textures/item/cooked_cod.png"),
-            Identifier.ofVanilla("textures/item/cooked_salmon.png"),
-            Identifier.ofVanilla("textures/item/beetroot.png"),
-            Identifier.ofVanilla("textures/item/melon_slice.png"),
-            Identifier.ofVanilla("textures/item/pumpkin_pie.png"),
-            Identifier.ofVanilla("textures/item/cookie.png"),
-            Identifier.ofVanilla("textures/item/suspicious_stew.png"),
-            Identifier.ofVanilla("textures/item/rabbit_stew.png"),
-            Identifier.ofVanilla("textures/item/mushroom_stew.png"),
-            Identifier.ofVanilla("textures/item/beetroot_soup.png")
+            Identifier.withDefaultNamespace("textures/item/apple.png"),
+            Identifier.withDefaultNamespace("textures/item/bread.png"),
+            Identifier.withDefaultNamespace("textures/item/carrot.png"),
+            Identifier.withDefaultNamespace("textures/item/baked_potato.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_beef.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_chicken.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_porkchop.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_mutton.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_rabbit.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_cod.png"),
+            Identifier.withDefaultNamespace("textures/item/cooked_salmon.png"),
+            Identifier.withDefaultNamespace("textures/item/beetroot.png"),
+            Identifier.withDefaultNamespace("textures/item/melon_slice.png"),
+            Identifier.withDefaultNamespace("textures/item/pumpkin_pie.png"),
+            Identifier.withDefaultNamespace("textures/item/cookie.png"),
+            Identifier.withDefaultNamespace("textures/item/suspicious_stew.png"),
+            Identifier.withDefaultNamespace("textures/item/rabbit_stew.png"),
+            Identifier.withDefaultNamespace("textures/item/mushroom_stew.png"),
+            Identifier.withDefaultNamespace("textures/item/beetroot_soup.png")
     };
 
-    private Identifier currentFoodTexture = Identifier.ofVanilla("textures/item/apple.png");
+    private Identifier currentFoodTexture = Identifier.withDefaultNamespace("textures/item/apple.png");
 
     public SnakeScreen(Snake minigame, Screen parent) {
-        super(Text.literal("Snake"));
+        super(Component.literal("Snake"));
         this.minigame = minigame;
         this.parent = parent;
         this.random = new Random();
@@ -126,31 +121,31 @@ public class SnakeScreen extends Screen {
         if (config.randomFood) {
             currentFoodTexture = FOODS[random.nextInt(FOODS.length)];
         } else {
-            currentFoodTexture = Identifier.ofVanilla("textures/item/apple.png");
+            currentFoodTexture = Identifier.withDefaultNamespace("textures/item/apple.png");
         }
     }
 
     @Override
     protected void init() {
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.return")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.onClose(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.return")));
+        returnButton.setRectangle(20, 20, 10, 10);
 
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> initGame(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> initGame(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
 
-        ButtonWidget pauseButton = TextIconButtonWidget.builder(Text.empty(), button -> gamePaused = !gamePaused, true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/pause"), 15, 15).build();
-        pauseButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.pause")));
-        pauseButton.setDimensionsAndPosition(20, 20, 60, 10);
+        Button pauseButton = SpriteIconButton.builder(Component.empty(), button -> gamePaused = !gamePaused, true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/pause"), 15, 15).build();
+        pauseButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.pause")));
+        pauseButton.setRectangle(20, 20, 60, 10);
 
-        this.addDrawableChild(returnButton);
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(pauseButton);
-        this.addDrawableChild(new ConfigButton(85, 10, minigame));
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(pauseButton);
+        this.addRenderableWidget(new ConfigButton(85, 10, minigame));
     }
 
     @Override
@@ -188,7 +183,7 @@ public class SnakeScreen extends Screen {
 
         if (grow) {
             score++;
-            PlayingSoundManager.playSound(SoundEvents.ENTITY_PLAYER_BURP, 1, vol());
+            PlayingSoundManager.playSound(SoundEvents.PLAYER_BURP, 1, vol());
             spawnFood();
         } else {
             snake.remove(snake.size() - 1);
@@ -197,27 +192,27 @@ public class SnakeScreen extends Screen {
 
     private void endGame() {
         gameOver = true;
-        minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score, true);
+        minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), score, true);
         SnakeConfig config = MinigameRegistry.getConfig(SnakeConfig.class);
         if (score > config.snakeHighScore) {
             config.snakeHighScore = score;
             AutoConfig.getConfigHolder(SnakeConfig.class).save();
         }
-        PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1, vol());
+        PlayingSoundManager.playSound(SoundEvents.VILLAGER_NO, 1, vol());
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
 
-        Matrix3x2fStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.pose();
 
         gameX = (this.width - GAME_WIDTH) / 2;
         gameY = (this.height - GAME_HEIGHT) / 2;
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
 
         for (int i = 0; i < snake.size(); i++) {
             renderSnakeSegment(context, matrices, gameX, gameY, i);
@@ -226,17 +221,17 @@ public class SnakeScreen extends Screen {
         int foodX = gameX + food[0] * CELL_SIZE;
         int foodY = gameY + food[1] * CELL_SIZE;
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        context.blit(RenderPipelines.GUI_TEXTURED, currentFoodTexture, foodX, foodY, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         int textY = gameY - 20;
         int textX = gameX;
 
-        context.drawTextWithShadow(this.textRenderer, Text.translatable("minigame.snake.score").append("" + score), textX, textY, Colors.WHITE);
+        context.text(this.font, Component.translatable("minigame.snake.score").append("" + score), textX, textY, CommonColors.WHITE);
 
-        textX = textX+textRenderer.getWidth(Text.translatable("minigame.snake.score").append("" + score).getString()+3);
+        textX = textX+ font.width(Component.translatable("minigame.snake.score").append("" + score).getString()+3);
 
         SnakeConfig config = MinigameRegistry.getConfig(SnakeConfig.class);
-        context.drawTextWithShadow(this.textRenderer, Text.translatable("minigame.snake.best_score").append("" + config.snakeHighScore), textX, textY, Colors.WHITE);
+        context.text(this.font, Component.translatable("minigame.snake.best_score").append("" + config.snakeHighScore), textX, textY, CommonColors.WHITE);
 
         if (gameOver) {
             int centerX = gameX + GAME_WIDTH / 2;
@@ -245,20 +240,20 @@ public class SnakeScreen extends Screen {
             matrices.pushMatrix();
             matrices.translate(centerX, centerY - 10);
             matrices.scale(1.5f, 1.5f);
-            context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("§lGAME OVER"), 0, 0, Colors.RED);
+            context.centeredText(this.font, Component.literal("§lGAME OVER"), 0, 0, CommonColors.RED);
             matrices.popMatrix();
 
-            context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("Score: " + score), centerX, centerY + 12, Colors.WHITE);
+            context.centeredText(this.font, Component.literal("Score: " + score), centerX, centerY + 12, CommonColors.WHITE);
         }
 
         if (gamePaused) {
             int centerX = gameX + GAME_WIDTH / 2;
             int centerY = gameY + GAME_HEIGHT / 2;
-            context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("PAUSED"), centerX, centerY - 5, Colors.YELLOW);
+            context.centeredText(this.font, Component.literal("PAUSED"), centerX, centerY - 5, CommonColors.YELLOW);
         }
     }
 
-    private void renderSnakeSegment(DrawContext context, Matrix3x2fStack matrices, int gameX, int gameY, int segmentIndex) {
+    private void renderSnakeSegment(GuiGraphicsExtractor context, Matrix3x2fStack matrices, int gameX, int gameY, int segmentIndex) {
         int[] segment = snake.get(segmentIndex);
         int x = gameX + segment[0] * CELL_SIZE;
         int y = gameY + segment[1] * CELL_SIZE;
@@ -266,11 +261,11 @@ public class SnakeScreen extends Screen {
         if (segmentIndex == 0) {
             int headRotation = getHeadRotation();
             drawRotatedTexture(context, matrices, x, y,
-                Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake3.png"), headRotation);
+                Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake3.png"), headRotation);
         } else if (segmentIndex == snake.size() - 1) {
             int tailRotation = getTailRotation();
             drawRotatedTexture(context, matrices, x, y,
-                Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake2.png"), tailRotation);
+                Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake2.png"), tailRotation);
         } else {
             int[] prevSegment = snake.get(segmentIndex - 1);
             int[] nextSegment = snake.get(segmentIndex + 1);
@@ -283,21 +278,21 @@ public class SnakeScreen extends Screen {
             if (isstraight(prevDx, prevDy, nextDx, nextDy)) {
                 int bodyRotation = getBodyRotation(prevDx, prevDy, nextDx, nextDy);
                 drawRotatedTexture(context, matrices, x, y,
-                    Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake1.png"), bodyRotation);
+                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake1.png"), bodyRotation);
             } else {
                 int turnRotation = getTurnRotation(prevDx, prevDy, nextDx, nextDy);
                 drawRotatedTexture(context, matrices, x, y,
-                    Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake/snake4.png"), turnRotation);
+                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake4.png"), turnRotation);
             }
         }
     }
 
-    private void drawRotatedTexture(DrawContext context, Matrix3x2fStack matrices, int x, int y, Identifier texture, int rotation) {
+    private void drawRotatedTexture(GuiGraphicsExtractor context, Matrix3x2fStack matrices, int x, int y, Identifier texture, int rotation) {
         matrices.pushMatrix();
         matrices.translate((float) (x + CELL_SIZE / 2.0), (float) (y + CELL_SIZE / 2.0));
         matrices.rotate((float) Math.toRadians(rotation));
         matrices.translate((float) (-CELL_SIZE / 2.0), (float) (-CELL_SIZE / 2.0));
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        context.blit(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
         matrices.popMatrix();
     }
 
@@ -348,9 +343,9 @@ public class SnakeScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == 256 && this.shouldCloseOnEsc()) {
-            this.close();
+            this.onClose();
             return true;
         }
 
@@ -365,7 +360,7 @@ public class SnakeScreen extends Screen {
                     nextDirection[0] = 0;
                     nextDirection[1] = -1;
                 }
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 264, 83 -> {
@@ -373,7 +368,7 @@ public class SnakeScreen extends Screen {
                     nextDirection[0] = 0;
                     nextDirection[1] = 1;
                 }
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 263, 65 -> {
@@ -381,7 +376,7 @@ public class SnakeScreen extends Screen {
                     nextDirection[0] = -1;
                     nextDirection[1] = 0;
                 }
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 262, 68 -> {
@@ -389,7 +384,7 @@ public class SnakeScreen extends Screen {
                     nextDirection[0] = 1;
                     nextDirection[1] = 0;
                 }
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 32 -> {
@@ -401,7 +396,7 @@ public class SnakeScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (gameOver) {
             initGame();
             return false;
@@ -410,8 +405,8 @@ public class SnakeScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        this.client.setScreen(parent);
+    public void onClose() {
+        this.minecraft.setScreen(parent);
     }
 
     private float vol() {

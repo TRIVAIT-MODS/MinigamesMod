@@ -2,16 +2,16 @@ package org.trivait.minigamesmod.minigame.game2048;
 
 import com.sun.jna.platform.win32.GL;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -59,7 +59,7 @@ public class Game2048Screen extends Screen {
     }
 
     public Game2048Screen(Game2048 minigame, Screen parent) {
-        super(Text.translatable("minigame.2048.title"));
+        super(Component.translatable("minigame.2048.title"));
         this.minigame = minigame;
         this.parent = parent;
     }
@@ -107,20 +107,20 @@ public class Game2048Screen extends Screen {
     }
 
     private void rebuildButtons() {
-        clearChildren();
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.2048.undo")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
+        clearWidgets();
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.onClose(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.2048.undo")));
+        returnButton.setRectangle(20, 20, 10, 10);
 
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> game2048Init(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> game2048Init(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
 
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(returnButton);
-        this.addDrawableChild(new ConfigButton(60, 10, minigame));
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(new ConfigButton(60, 10, minigame));
     }
 
     private void game2048Init() {
@@ -151,26 +151,26 @@ public class Game2048Screen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (gameOver) return super.keyPressed(input);
         int dr = 0, dc = 0;
         Random random = new Random();
         switch (input.key()) {
             case GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_W -> {
                 dr = -1;
-                PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
+                PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
             case GLFW.GLFW_KEY_DOWN, GLFW.GLFW_KEY_S -> {
                 dr = 1;
-                PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
+                PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
             case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_A -> {
                 dc = -1;
-                PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
+                PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
             case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_D -> {
                 dc = 1;
-                PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
+                PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
             default -> {
                 return super.keyPressed(input);
@@ -184,7 +184,7 @@ public class Game2048Screen extends Screen {
                 minigame.onLose();
                 Game2048VisibleConfig cfg = MinigameRegistry.getConfig(Game2048VisibleConfig.class);
                 if (cfg.gridSize == 4) {
-                    minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), (int) score, true);
+                    minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), (int) score, true);
                 }
             }
         }
@@ -245,7 +245,7 @@ public class Game2048Screen extends Screen {
                         won = true;
                         saveBestScore();
                         minigame.onWin();
-                        minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), (int) score, true);
+                        minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), (int) score, true);
                     }
                 } else {
                     grid[tr][tc] = grid[r][c];
@@ -310,7 +310,7 @@ public class Game2048Screen extends Screen {
                 (int)(ab + (bb - ab) * t);
     }
 
-    private void fillRoundedRect(DrawContext context, int x, int y, int w, int h, int r, int color) {
+    private void fillRoundedRect(GuiGraphicsExtractor context, int x, int y, int w, int h, int r, int color) {
         context.fill(x + r, y, x + w - r, y + h, color);
         context.fill(x, y + r, x + r, y + h - r, color);
         context.fill(x + w - r, y + r, x + w, y + h - r, color);
@@ -326,25 +326,25 @@ public class Game2048Screen extends Screen {
         }
     }
 
-    private void drawTile(DrawContext context, int val, int x, int y, int cell, int color) {
+    private void drawTile(GuiGraphicsExtractor context, int val, int x, int y, int cell, int color) {
         fillRoundedRect(context, x, y, cell, cell, 4, color);
         String label = String.valueOf(val);
         float targetH = cell * 0.42f;
         float scale = targetH / 9f;
-        int textW = textRenderer.getWidth(label);
+        int textW = font.width(label);
         float scaleW = (float)(cell - 8) / (textW * scale > 0 ? textW : 1);
         if (scaleW < 1f) scale *= scaleW;
-        var matrices = context.getMatrices();
+        var matrices = context.pose();
         matrices.pushMatrix();
         matrices.translate(x + cell / 2f, y + cell / 2f - (9f * scale) / 2f);
         matrices.scale(scale, scale);
-        context.drawCenteredTextWithShadow(textRenderer, label, 0, 0, 0xFFFFFFFF);
+        context.centeredText(font, label, 0, 0, 0xFFFFFFFF);
         matrices.popMatrix();
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
         int cell = cellSize();
         int bw = boardW();
         int bx = boardX(), by = boardY();
@@ -416,20 +416,20 @@ public class Game2048Screen extends Screen {
         int sx = bx + sbW+8, sy = by - sbH - 6;
 
         fillRoundedRect(context, sx, sy, sbW, sbH, 4, 0xFFBBADA0);
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("minigame.2048.score"), sx + sbW / 2, sy + 4, 0xFFEEE4DA);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal(String.valueOf(score)), sx + sbW / 2, sy + 16, 0xFFFFFFFF);
+        context.centeredText(font, Component.translatable("minigame.2048.score"), sx + sbW / 2, sy + 4, 0xFFEEE4DA);
+        context.centeredText(font, Component.literal(String.valueOf(score)), sx + sbW / 2, sy + 16, 0xFFFFFFFF);
 
         int bsX = bx;
         fillRoundedRect(context, bsX, sy, sbW, sbH, 4, 0xFFBBADA0);
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("minigame.2048.best"), bsX + sbW / 2, sy + 4, 0xFFEEE4DA);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal(String.valueOf(best)), bsX + sbW / 2, sy + 16, 0xFFFFFFFF);
+        context.centeredText(font, Component.translatable("minigame.2048.best"), bsX + sbW / 2, sy + 4, 0xFFEEE4DA);
+        context.centeredText(font, Component.literal(String.valueOf(best)), bsX + sbW / 2, sy + 16, 0xFFFFFFFF);
 
         if (gameOver || won) {
             context.fill(bx, by, bx + bw, by + bw, 0xAA776E65);
-            Text msg = gameOver ? Text.translatable("minigame.2048.game_over") : Text.translatable("minigame.2048.win");
+            Component msg = gameOver ? Component.translatable("minigame.2048.game_over") : Component.translatable("minigame.2048.win");
             int msgColor = gameOver ? 0xFFFF4444 : 0xFF44FF88;
-            context.drawCenteredTextWithShadow(textRenderer, msg, this.width / 2, by + bw / 2 - 10, msgColor);
-            context.drawCenteredTextWithShadow(textRenderer, Text.literal(String.valueOf(score)), this.width / 2, by + bw / 2 + 4, 0xFFFFFFFF);
+            context.centeredText(font, msg, this.width / 2, by + bw / 2 - 10, msgColor);
+            context.centeredText(font, Component.literal(String.valueOf(score)), this.width / 2, by + bw / 2 + 4, 0xFFFFFFFF);
         }
     }
 
@@ -438,13 +438,13 @@ public class Game2048Screen extends Screen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         minigame.onStop();
-        this.client.setScreen(parent);
+        this.minecraft.setScreen(parent);
     }
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 }

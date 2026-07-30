@@ -1,18 +1,16 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperScreen;
-import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperVisibleConfig;
 import org.trivait.minigamesmod.minigame.minesweeper.game.GameBoard;
 import org.trivait.minigamesmod.minigame.minesweeper.game.GameMode;
 import org.trivait.minigamesmod.minigame.minesweeper.game.GameSettings;
-import org.trivait.minigamesmod.minigame.minesweeper.game.SavedGame;
 import org.trivait.minigamesmod.minigame.minesweeper.leaderboard.BoardCategory;
 import org.trivait.minigamesmod.minigame.minesweeper.leaderboard.SheetsApi;
 
@@ -32,7 +30,7 @@ public class LeaderboardMinesweeperScreen extends MinesweeperScreen {
         super(settings, lbMode, minigame, parent);
         this.lbMode = lbMode;
         this.category = category;
-        this.playerName = MinecraftClient.getInstance().getSession().getUsername();
+        this.playerName = Minecraft.getInstance().getUser().getName();
         MinesweeperGame.setSavedGame(null);
     }
 
@@ -102,12 +100,12 @@ public class LeaderboardMinesweeperScreen extends MinesweeperScreen {
     }
 
     @Override
-    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        super.render(ctx, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor ctx, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(ctx, mouseX, mouseY, delta);
         drawTopCounter(ctx);
     }
 
-    private void drawTopCounter(DrawContext ctx) {
+    private void drawTopCounter(GuiGraphicsExtractor ctx) {
         String text;
         if (lbMode == GameMode.LEADERBOARD_TIME) {
             int secs = elapsedMs / 1000;
@@ -117,20 +115,20 @@ public class LeaderboardMinesweeperScreen extends MinesweeperScreen {
             text = String.valueOf(winCount);
         }
 
-        Text label = Text.literal(text);
-        int tw = textRenderer.getWidth(label);
+        Component label = Component.literal(text);
+        int tw = font.width(label);
 
-        ctx.getMatrices().pushMatrix();
-        ctx.getMatrices().translate(width / 2f, 4f);
-        ctx.getMatrices().scale(2f, 2f);
-        ctx.getMatrices().translate(-tw / 2f, 0f);
-        ctx.drawText(textRenderer, label, 0, 0, 0xFFFFFFFF, true);
-        ctx.getMatrices().popMatrix();
+        ctx.pose().pushMatrix();
+        ctx.pose().translate(width / 2f, 4f);
+        ctx.pose().scale(2f, 2f);
+        ctx.pose().translate(-tw / 2f, 0f);
+        ctx.text(font, label, 0, 0, 0xFFFFFFFF, true);
+        ctx.pose().popMatrix();
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void onClose() {
+        super.onClose();
         ((MinesweeperGame) MinigameRegistry.get("minesweeper")).createScreen(new MinigameListScreen(null), GameMode.DEFAULT);
     }
 }

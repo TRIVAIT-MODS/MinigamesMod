@@ -1,22 +1,22 @@
 package org.trivait.minigamesmod.minigame.dino;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector4d;
@@ -34,13 +34,13 @@ public class GoogleDinoScreen extends Screen {
 
     private static final int GUI_WIDTH = 350;
     private static final int GUI_HEIGHT = 197;
-    private static final Identifier GUI_TEXTURE = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino/gui.png");
+    private static final Identifier GUI_TEXTURE = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/gui.png");
     private static final int GAME_WIDTH = GUI_WIDTH-16;
     private static final int GAME_HEIGHT = GUI_HEIGHT-16;
 
     private static final int ROAD_WIDTH = 2400;
     private static final int ROAD_HEIGHT = 24;
-    private static final Identifier ROAD_TEXTURE = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino/road.png");
+    private static final Identifier ROAD_TEXTURE = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/road.png");
 
     private float speed = 20;
     private int score = 0;
@@ -63,26 +63,26 @@ public class GoogleDinoScreen extends Screen {
     private int cloudSpawnDelay = 18;
 
     public GoogleDinoScreen(GoogleDino minigame, Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.parent = parent;
         this.minigame = minigame;
     }
 
     @Override
     protected void init() {
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.2048.undo")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.onClose(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.2048.undo")));
+        returnButton.setRectangle(20, 20, 10, 10);
 
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> restart(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> restart(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
 
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(returnButton);
-        this.addDrawableChild(new ConfigButton(60, 10, minigame));
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(new ConfigButton(60, 10, minigame));
 
         dino = new Dino((height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17, (height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17);
     }
@@ -97,7 +97,7 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         int keyCode = input.key();
 
         if (keyCode==GLFW.GLFW_KEY_SPACE||keyCode==GLFW.GLFW_KEY_UP) {
@@ -111,7 +111,7 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
+    public boolean keyReleased(KeyEvent input) {
         int keyCode = input.key();
         if (keyCode==GLFW.GLFW_KEY_LEFT_SHIFT||keyCode==GLFW.GLFW_KEY_LEFT_CONTROL||keyCode==GLFW.GLFW_KEY_DOWN||keyCode==GLFW.GLFW_KEY_S) {
             dino.crouching = false;
@@ -120,12 +120,12 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        this.selected = null;
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        this.lastNarratable = null;
         setFocused(null);
-        TextRenderer tr = MinecraftClient.getInstance().textRenderer;
-        Matrix3x2fStack matrices = context.getMatrices();
+        Font tr = Minecraft.getInstance().font;
+        Matrix3x2fStack matrices = context.pose();
 
         int guiX = (width-GUI_WIDTH)/2;
         int guiY = (height-GUI_HEIGHT)/2;
@@ -151,7 +151,7 @@ public class GoogleDinoScreen extends Screen {
             road2X=road1X+ROAD_WIDTH;
         }
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
+        context.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
         context.fill(guiX+8, guiY+8, guiX+8+GAME_WIDTH, guiY+8+GAME_HEIGHT, -1);
 
         renderObjects(context, delta, guiX+8, guiY+8);
@@ -160,26 +160,26 @@ public class GoogleDinoScreen extends Screen {
         int scoreHI = MinigameRegistry.getConfig(GoogleDinoConfig.class).score;
         String formattedHIscore = String.format("%05d", scoreHI);
 
-        int textWidth = (int) (tr.getWidth("HI " + formattedHIscore + " " + formattedScore) * 1.5F);
+        int textWidth = (int) (tr.width("HI " + formattedHIscore + " " + formattedScore) * 1.5F);
         int textX = guiX + 8 + GAME_WIDTH - textWidth - 24;
         int textY = guiY + 8 + 4;
 
         matrices.pushMatrix();
         matrices.translate(textX, textY);
         matrices.scale(1.5F, 1.5F);
-        context.drawText(tr, Text.literal("HI " + formattedHIscore).styled(style -> style.withBold(true).withColor(0x909191)).append(Text.literal(" " + formattedScore).styled(style -> style.withBold(true).withColor(0xACACAC))), 0, 0, 0xFFFFFFFF, false);
+        context.text(tr, Component.literal("HI " + formattedHIscore).withStyle(style -> style.withBold(true).withColor(0x909191)).append(Component.literal(" " + formattedScore).withStyle(style -> style.withBold(true).withColor(0xACACAC))), 0, 0, 0xFFFFFFFF, false);
         matrices.popMatrix();
 
         if (!gameRunning) {
             String overText = "Game over!";
-            int overWidth = (int) (tr.getWidth(overText) * 2.0F);
+            int overWidth = (int) (tr.width(overText) * 2.0F);
             int overX = guiX + 8 + (GAME_WIDTH - overWidth) / 2;
             int overY = guiY + 8 + GAME_HEIGHT / 2 - 10;
 
             matrices.pushMatrix();
             matrices.translate(overX-10, overY);
             matrices.scale(2.0F, 2.0F);
-            context.drawText(tr, Text.literal(overText).styled(style -> style.withBold(true).withColor(0x909191)), 0, 0, 0xFFFFFFFF, false);
+            context.text(tr, Component.literal(overText).withStyle(style -> style.withBold(true).withColor(0x909191)), 0, 0, 0xFFFFFFFF, false);
             matrices.popMatrix();
         }
     }
@@ -224,7 +224,7 @@ public class GoogleDinoScreen extends Screen {
         speed = 20 + Math.min(score * 0.0025f, 18f);
     }
 
-    private void renderObjects(DrawContext ctx, float delta, int gameX, int gameY) {
+    private void renderObjects(GuiGraphicsExtractor ctx, float delta, int gameX, int gameY) {
         ctx.enableScissor(gameX, gameY, gameX+GAME_WIDTH, gameY+GAME_HEIGHT);
         renderRoad(ctx, gameX, gameY);
 
@@ -239,13 +239,13 @@ public class GoogleDinoScreen extends Screen {
         ctx.disableScissor();
     }
 
-    private void renderRoad(DrawContext ctx, int gameX, int gameY) {
+    private void renderRoad(GuiGraphicsExtractor ctx, int gameX, int gameY) {
         int y = gameY+GAME_HEIGHT-4-ROAD_HEIGHT;
         int x = (int) (gameX+road1X);
 
-        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.blit(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
         x = (int) (gameX+road2X);
-        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
+        ctx.blit(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
     }
 
     private void spawnObstacle(int gameX, int gameY) {
@@ -290,16 +290,16 @@ public class GoogleDinoScreen extends Screen {
                 if (score > config.score) {
                     config.score = score;
                 }
-                PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1, GoogleDino.vol());
+                PlayingSoundManager.playSound(SoundEvents.VILLAGER_NO, 1, GoogleDino.vol());
                 gameRunning = false;
-                minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score, true);
+                minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), score, true);
                 return;
             }
         }
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         boolean handled = super.mouseClicked(click, doubled);
         dino.jump();
         if (!gameRunning && click.button() == 0 && !handled) {
@@ -310,8 +310,8 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        super.close();
-        MinecraftClient.getInstance().setScreen(parent);
+    public void onClose() {
+        super.onClose();
+        Minecraft.getInstance().setScreen(parent);
     }
 }

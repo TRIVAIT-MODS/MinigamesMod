@@ -1,9 +1,9 @@
 package org.trivait.minigamesmod.api;
 
 import me.shedaniel.autoconfig.ConfigData;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.leaderboard.Leaderboard;
 
@@ -13,7 +13,7 @@ public interface MinigameDefinition {
 
     String getId();
 
-    Text getDisplayName();
+    Component getDisplayName();
 
     @Nullable
     Identifier getIcon();

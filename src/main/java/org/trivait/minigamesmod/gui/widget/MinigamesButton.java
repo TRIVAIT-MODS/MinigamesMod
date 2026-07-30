@@ -1,26 +1,24 @@
 package org.trivait.minigamesmod.gui.widget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
 
-public class MinigamesButton extends TextIconButtonWidget.IconOnly {
+public class MinigamesButton extends SpriteIconButton.CenteredIcon {
 
-    private static final Identifier DEFAULT_TEXTURE = Identifier.of("minigamesmod", "icon/button");
-    private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/button_hover");
+    private static final Identifier DEFAULT_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button");
+    private static final Identifier HOVER_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button_hover");
 
     public MinigamesButton(int x, int y) {
-        super(20, 20, net.minecraft.text.Text.empty(), 16, 16, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            client.setScreen(new MinigameListScreen(client.currentScreen));
-        }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        super(20, 20, net.minecraft.network.chat.Component.empty(), 16, 16, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+            Minecraft client = Minecraft.getInstance();
+            client.setScreen(new MinigameListScreen(client.screen));
+        }, null, Button.DEFAULT_NARRATION);
         this.setX(x);
         this.setY(y);
     }

@@ -1,52 +1,52 @@
 package org.trivait.minigamesmod.gui.widget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardInfoWidget extends ClickableWidget {
+public class LeaderboardInfoWidget extends AbstractWidget {
 
     private static final int SIZE = 20;
-    private static final Identifier TEX_SCORE = Identifier.ofVanilla("textures/gui/sprites/icon/info.png");
+    private static final Identifier TEX_SCORE = Identifier.withDefaultNamespace("textures/gui/sprites/icon/info.png");
 
     private Leaderboard leaderboard;
 
     public LeaderboardInfoWidget(int x, int y, Leaderboard leaderboard) {
-        super(x, y, SIZE, SIZE, Text.empty());
+        super(x, y, SIZE, SIZE, Component.empty());
         this.leaderboard = leaderboard;
     }
 
     @Override
-    protected void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, TEX_SCORE, getX(), getY(), 0, 0, SIZE, SIZE, SIZE, SIZE);
+    public void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        context.blit(RenderPipelines.GUI_TEXTURED, TEX_SCORE, getX(), getY(), 0, 0, SIZE, SIZE, SIZE, SIZE);
 
         if (isMouseOver(mouseX, mouseY)) {
-            List<Text> tooltip = buildTooltip();
-            ctx.drawTooltip(MinecraftClient.getInstance().textRenderer, tooltip, mouseX, mouseY);
+            List<Component> tooltip = buildTooltip();
+            context.setComponentTooltipForNextFrame(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
         }
     }
 
-    private List<Text> buildTooltip() {
-        List<Text> lines = new ArrayList<>();
+    private List<Component> buildTooltip() {
+        List<Component> lines = new ArrayList<>();
         String scriptVer = SheetsApi.getScriptVersion() != null ? SheetsApi.getScriptVersion() : "?";
         String apiVer = SheetsApi.SCOREBOARD_API_VERSION;
-        lines.add(Text.translatable("minigame.minesweeper.leaderboard.version.script", scriptVer));
-        lines.add(Text.translatable("minigame.minesweeper.leaderboard.version.api", apiVer));
+        lines.add(Component.translatable("minigame.minesweeper.leaderboard.version.script", scriptVer));
+        lines.add(Component.translatable("minigame.minesweeper.leaderboard.version.api", apiVer));
         if (SheetsApi.isVersionMismatch()) {
-            lines.add(Text.translatable("minigame.minesweeper.leaderboard.version.update_mod").styled(s -> s.withColor(0xFF5555)));
+            lines.add(Component.translatable("minigame.minesweeper.leaderboard.version.update_mod").withStyle(s -> s.withColor(0xFF5555)));
         }
         if (leaderboard.getConditions()!=null) {
-            lines.add(Text.translatable("minigame.leaderboard.conditions").styled(style -> style.withBold(true)));
+            lines.add(Component.translatable("minigame.leaderboard.conditions").withStyle(style -> style.withBold(true)));
             lines.addAll(leaderboard.getConditions());
         }
 
@@ -54,5 +54,5 @@ public class LeaderboardInfoWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    protected void updateWidgetNarration(NarrationElementOutput builder) {}
 }

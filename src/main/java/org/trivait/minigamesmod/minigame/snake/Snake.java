@@ -1,10 +1,10 @@
 package org.trivait.minigamesmod.minigame.snake;
 
 import me.shedaniel.autoconfig.ConfigData;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
@@ -15,7 +15,7 @@ import org.trivait.minigamesmod.leaderboard.Leaderboard;
 public class Snake extends AbstractMinigame {
 
     public Snake() {
-        super("snake", Text.translatable("minigame.snake.title"), Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/snake_icon.png"));
+        super("snake", Component.translatable("minigame.snake.title"), Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake_icon.png"));
     }
 
     @Override
@@ -40,12 +40,12 @@ public class Snake extends AbstractMinigame {
 
     @Override
     public void onLose() {
-        PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1, vol());
+        PlayingSoundManager.playSound(SoundEvents.VILLAGER_NO, 1, vol());
     }
 
     @Override
     public void onWin() {
-        PlayingSoundManager.playSound(SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST, 1, vol());
+        PlayingSoundManager.playSound(SoundEvents.FIREWORK_ROCKET_BLAST, 1, vol());
     }
 
     private float vol() {

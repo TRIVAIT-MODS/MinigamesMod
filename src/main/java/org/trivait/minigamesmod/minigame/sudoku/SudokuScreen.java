@@ -1,18 +1,18 @@
 package org.trivait.minigamesmod.minigame.sudoku;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -32,7 +32,7 @@ public class SudokuScreen extends Screen {
     private static int[][] savedSolution = null;
 
     public SudokuScreen(Screen parent, Sudoku sudoku) {
-        super(Text.literal("Sudoku"));
+        super(Component.literal("Sudoku"));
         this.parent = parent;
         if (savedGrid == null) {
             initNewGame();
@@ -44,19 +44,19 @@ public class SudokuScreen extends Screen {
 
     @Override
     protected void init() {
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.2048.undo")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.onClose(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.2048.undo")));
+        returnButton.setRectangle(20, 20, 10, 10);
 
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> resetGame(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> resetGame(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
 
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(returnButton);
-        this.addDrawableChild(new ConfigButton(60, 10, minigame));
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(new ConfigButton(60, 10, minigame));
     }
 
     private void initNewGame() {
@@ -88,29 +88,29 @@ public class SudokuScreen extends Screen {
         }
         won = true;
         if (MinigameRegistry.getConfig(SudokuVisibleConfig.class).difficulty == Difficulty.MEDIUM) {
-            minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), 1, false);
+            minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), 1, false);
         }
         PlayingSoundManager.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, vol());
     }
 
     @Override
-    public void close() {
-        if (this.client != null) {
-            this.client.setScreen(this.parent);
+    public void onClose() {
+        if (this.minecraft != null) {
+            this.minecraft.setScreen(this.parent);
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
         int boardSize = 9 * 16;
         int startX = (this.width - boardSize) / 2;
         int startY = (this.height - boardSize) / 2;
 
         if (won) {
-            Text winText = Text.translatable("minigame.sudoku.win").formatted(Formatting.GREEN, Formatting.BOLD);
-            int winWidth = this.textRenderer.getWidth(winText);
-            context.drawText(this.textRenderer, winText, (this.width - winWidth) / 2, startY - 20, 0xFF00FF00, true);
+            Component winText = Component.translatable("minigame.sudoku.win").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD);
+            int winWidth = this.font.width(winText);
+            context.text(this.font, winText, (this.width - winWidth) / 2, startY - 20, 0xFF00FF00, true);
         }
 
         context.fill(startX, startY, startX + boardSize, startY + boardSize, 0xFFFFFFFF);
@@ -127,13 +127,13 @@ public class SudokuScreen extends Screen {
                 int val = savedGrid[r][c];
                 if (val != 0) {
                     String text = String.valueOf(val);
-                    int textWidth = this.textRenderer.getWidth(text);
+                    int textWidth = this.font.width(text);
                     int textX = x + (16 - textWidth) / 2;
                     int textY = y + (16 - 8) / 2;
                     if (savedInitial[r][c]) {
-                        context.drawText(this.textRenderer, Text.literal(text).copy().formatted(Formatting.BLUE, Formatting.BOLD), textX, textY, 0xFF0000FF, false);
+                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLUE, ChatFormatting.BOLD), textX, textY, 0xFF0000FF, false);
                     } else {
-                        context.drawText(this.textRenderer, Text.literal(text).copy().formatted(Formatting.BLACK, Formatting.ITALIC), textX, textY, 0xFF000000, false);
+                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLACK, ChatFormatting.ITALIC), textX, textY, 0xFF000000, false);
                     }
                 }
             }
@@ -148,7 +148,7 @@ public class SudokuScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (won) return super.mouseClicked(click, doubled);
         int boardSize = 9 * 16;
         int startX = (this.width - boardSize) / 2;
@@ -168,14 +168,14 @@ public class SudokuScreen extends Screen {
             if (!savedInitial[r][c]) {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                     savedGrid[r][c] = (savedGrid[r][c] % 9) + 1;
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                 } else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
                     savedGrid[r][c] = savedGrid[r][c] - 1;
                     if (savedGrid[r][c] < 0) {
                         savedGrid[r][c] = 9;
                     }
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                 }
             }
@@ -191,13 +191,13 @@ public class SudokuScreen extends Screen {
             if (!savedInitial[selectedRow][selectedCol]) {
                 if (verticalAmount > 0) {
                     savedGrid[selectedRow][selectedCol] = (savedGrid[selectedRow][selectedCol] % 9) + 1;
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 } else if (verticalAmount < 0) {
                     savedGrid[selectedRow][selectedCol] = savedGrid[selectedRow][selectedCol] - 1;
                     if (savedGrid[selectedRow][selectedCol] < 0) {
                         savedGrid[selectedRow][selectedCol] = 9;
                     }
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 }
                 checkWinCondition();
                 return true;
@@ -207,9 +207,9 @@ public class SudokuScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
-            this.close();
+            this.onClose();
             return true;
         }
         if (won) return super.keyPressed(input);
@@ -217,12 +217,12 @@ public class SudokuScreen extends Screen {
             if (!savedInitial[selectedRow][selectedCol]) {
                 if (input.key() >= GLFW.GLFW_KEY_1 && input.key() <= GLFW.GLFW_KEY_9) {
                     savedGrid[selectedRow][selectedCol] = input.key() - GLFW.GLFW_KEY_1 + 1;
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                     return true;
                 } else if (input.key() == GLFW.GLFW_KEY_0 || input.key() == GLFW.GLFW_KEY_BACKSPACE || input.key() == GLFW.GLFW_KEY_DELETE) {
                     savedGrid[selectedRow][selectedCol] = 0;
-                    PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
+                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                     return true;
                 }

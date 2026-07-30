@@ -1,11 +1,11 @@
 package org.trivait.minigamesmod.minigame.dino;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector4d;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
@@ -19,9 +19,9 @@ public class Dino {
     public boolean crouching = false;
     public int tickCounter = 0;
 
-    private static final Identifier DEFAULT = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino/dino.png");
-    private static final Identifier RUN = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino/dino_running.png");
-    private static final Identifier CROUCH = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino/dino_crouching.png");
+    private static final Identifier DEFAULT = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/dino.png");
+    private static final Identifier RUN = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/dino_running.png");
+    private static final Identifier CROUCH = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/dino_crouching.png");
 
     private static final int WIDTH = 88/2;
     private static final int WIDTH_CROUCH = 118/2;
@@ -36,18 +36,18 @@ public class Dino {
         this.road = road;
     }
 
-    public void render(DrawContext ctx, float delta, int x) {
+    public void render(GuiGraphicsExtractor ctx, float delta, int x) {
         Vector4d box = getBox(x);
 
         switch (getDinoState()) {
             case RUN -> {
-                ctx.drawTexture(RenderPipelines.GUI_TEXTURED, RUN, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH, 0, WIDTH, HEIGHT, WIDTH * 2, HEIGHT);
+                ctx.blit(RenderPipelines.GUI_TEXTURED, RUN, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH, 0, WIDTH, HEIGHT, WIDTH * 2, HEIGHT);
             }
             case CROUCH -> {
-                ctx.drawTexture(RenderPipelines.GUI_TEXTURED, CROUCH, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH_CROUCH, 0, WIDTH_CROUCH, HEIGHT_CROUCH, WIDTH_CROUCH * 2, HEIGHT_CROUCH);
+                ctx.blit(RenderPipelines.GUI_TEXTURED, CROUCH, (int) box.x, (int) box.y, runFrame ? 0 : WIDTH_CROUCH, 0, WIDTH_CROUCH, HEIGHT_CROUCH, WIDTH_CROUCH * 2, HEIGHT_CROUCH);
             }
             case NONE -> {
-                ctx.drawTexture(RenderPipelines.GUI_TEXTURED, DEFAULT, (int) box.x, (int) box.y, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
+                ctx.blit(RenderPipelines.GUI_TEXTURED, DEFAULT, (int) box.x, (int) box.y, 0, 0, WIDTH, HEIGHT, WIDTH, HEIGHT);
             }
         }
     }
@@ -77,7 +77,7 @@ public class Dino {
         if (y >= road && !crouching) {
             velocityY = JUMP_VELOCITY;
 
-            PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, GoogleDino.vol());
+            PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, GoogleDino.vol());
         }
     }
 

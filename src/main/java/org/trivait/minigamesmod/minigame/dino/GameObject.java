@@ -1,7 +1,7 @@
 package org.trivait.minigamesmod.minigame.dino;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector4d;
 
 public abstract class GameObject {
@@ -24,7 +24,7 @@ public abstract class GameObject {
         return collidable;
     }
 
-    public abstract void render(DrawContext ctx, float delta);
+    public abstract void render(GuiGraphicsExtractor ctx, float delta);
     public void tick() {
 
     }

@@ -1,28 +1,22 @@
 package org.trivait.minigamesmod.minigame.minesweeper;
 
-import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import org.joml.Matrix3x2fStack;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
 import org.trivait.minigamesmod.minigame.minesweeper.game.*;
-import org.trivait.minigamesmod.minigame.minesweeper.screen.SelectLeaderboardScreen;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.DigitDisplayWidget;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.ExplosionAnimation;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.SmileyButtonWidget;
@@ -32,25 +26,25 @@ import java.util.List;
 
 public class MinesweeperScreen extends Screen {
 
-    private static final Identifier TEX_FLAG     = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/flag.png");
-    private static final Identifier TEX_BARRIER  = Identifier.ofVanilla("textures/item/barrier.png");
-    private static final Identifier TEX_TNT_SIDE = Identifier.ofVanilla("textures/block/tnt_side.png");
+    private static final Identifier TEX_FLAG     = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/flag.png");
+    private static final Identifier TEX_BARRIER  = Identifier.withDefaultNamespace("textures/item/barrier.png");
+    private static final Identifier TEX_TNT_SIDE = Identifier.withDefaultNamespace("textures/block/tnt_side.png");
 
-    private static final Text[] ADJ_TEXT = {
-        Text.empty(),
-        Text.literal("1").styled(s -> s.withBold(true)),
-        Text.literal("2").styled(s -> s.withBold(true)),
-        Text.literal("3").styled(s -> s.withBold(true)),
-        Text.literal("4").styled(s -> s.withBold(true)),
-        Text.literal("5").styled(s -> s.withBold(true)),
-        Text.literal("6").styled(s -> s.withBold(true)),
-        Text.literal("7").styled(s -> s.withBold(true)),
-        Text.literal("8").styled(s -> s.withBold(true)),
+    private static final Component[] ADJ_TEXT = {
+        Component.empty(),
+        Component.literal("1").withStyle(s -> s.withBold(true)),
+        Component.literal("2").withStyle(s -> s.withBold(true)),
+        Component.literal("3").withStyle(s -> s.withBold(true)),
+        Component.literal("4").withStyle(s -> s.withBold(true)),
+        Component.literal("5").withStyle(s -> s.withBold(true)),
+        Component.literal("6").withStyle(s -> s.withBold(true)),
+        Component.literal("7").withStyle(s -> s.withBold(true)),
+        Component.literal("8").withStyle(s -> s.withBold(true)),
     };
 
     private static final int TOP_BAR_H = 28;
 
-    private final MinecraftClient mc = MinecraftClient.getInstance();
+    private final Minecraft mc = Minecraft.getInstance();
     private final GameSettings newGameSettings;
     private final SavedGame initialSave;
 
@@ -68,13 +62,13 @@ public class MinesweeperScreen extends Screen {
 
     public final GameMode gameMode;
 
-    private ButtonWidget leaderboardButton;
+    private Button leaderboardButton;
 
     private MinesweeperGame minigame;
     private Screen parent;
 
     public MinesweeperScreen(GameSettings settings, GameMode gameMode, MinesweeperGame minigame, Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.newGameSettings = settings;
         this.initialSave = null;
         this.gameMode = gameMode;
@@ -83,7 +77,7 @@ public class MinesweeperScreen extends Screen {
     }
 
     public MinesweeperScreen(SavedGame savedGame, GameMode gameMode, MinesweeperGame minigame, Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.newGameSettings = null;
         this.initialSave = savedGame;
         this.gameMode = gameMode;
@@ -126,20 +120,20 @@ public class MinesweeperScreen extends Screen {
         topBarX = gridX;
         topBarY = Math.max(10, gridY - TOP_BAR_H - 6);
 
-        this.clearChildren();
+        this.clearWidgets();
 
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.close(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.2048.undo")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.onClose(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.2048.undo")));
+        returnButton.setRectangle(20, 20, 10, 10);
 
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> resetGame(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> resetGame(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
 
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(returnButton);
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(returnButton);
 
         int smileSize = Math.max(18, Math.min(26, TOP_BAR_H - 2));
         smileyBtn = new SmileyButtonWidget(
@@ -148,7 +142,7 @@ public class MinesweeperScreen extends Screen {
             smileSize,
             this::resetGame
         );
-        this.addDrawableChild(smileyBtn);
+        this.addRenderableWidget(smileyBtn);
 
         minesDisplay = new DigitDisplayWidget(3);
         timerDisplay = new DigitDisplayWidget(3);
@@ -158,7 +152,7 @@ public class MinesweeperScreen extends Screen {
 
         if (gameMode == GameMode.DEFAULT) {
 
-            this.addDrawableChild(new ConfigButton(60, 10, minigame));
+            this.addRenderableWidget(new ConfigButton(60, 10, minigame));
         }
     }
 
@@ -179,12 +173,12 @@ public class MinesweeperScreen extends Screen {
         return new GameBoard.SoundCallback() {
             MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
             public void onReveal() {
-                mc.getSoundManager().play(PositionedSoundInstance.ui(
-                    SoundEvents.BLOCK_DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(
+                    SoundEvents.DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
             }
             public void onExplode(int cellX, int cellY) {
-                mc.getSoundManager().play(PositionedSoundInstance.ui(
-                    SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 0.7f, (float) cfg.soundsVolume /100));
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(
+                    SoundEvents.GENERIC_EXPLODE.value(), 0.7f, (float) cfg.soundsVolume /100));
                 if (cfg.enableExplosionAnimation) {
                     int cx = gridX + cellX * cellSize + cellSize / 2;
                     int cy = gridY + cellY * cellSize + cellSize / 2;
@@ -192,16 +186,16 @@ public class MinesweeperScreen extends Screen {
                 }
             }
             public void onWin() {
-                mc.getSoundManager().play(PositionedSoundInstance.ui(
-                    SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST, 0.8f, (float) cfg.soundsVolume /100));
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(
+                    SoundEvents.FIREWORK_ROCKET_BLAST, 0.8f, (float) cfg.soundsVolume /100));
             }
         };
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (board != null) MinesweeperGame.setSavedGame(board.toSavedGame());
-        super.close();
+        super.onClose();
         if (parent!=null) mc.setScreen(parent);
     }
 
@@ -222,7 +216,7 @@ public class MinesweeperScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         int button = click.button();
 
         MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
@@ -238,8 +232,8 @@ public class MinesweeperScreen extends Screen {
         if (gx < 0 || gx >= board.w || gy < 0 || gy >= board.h)
             return super.mouseClicked(click, doubled);
 
-        mc.getSoundManager().play(PositionedSoundInstance.ui(
-            SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(), 0.20f, (float) cfg.soundsVolume /100));
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(
+            SoundEvents.NOTE_BLOCK_HAT.value(), 0.20f, (float) cfg.soundsVolume /100));
 
         Cell c = board.grid[gy][gx];
 
@@ -264,8 +258,8 @@ public class MinesweeperScreen extends Screen {
                 board.elapsedSeconds = 0;
             }
             if (!cfg.enableAnimations) {
-                mc.getSoundManager().play(PositionedSoundInstance.ui(
-                    SoundEvents.BLOCK_DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(
+                    SoundEvents.DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
             }
             board.startRevealWave(gx, gy, cfg.enableAnimations);
             MinesweeperGame.setSavedGame(board.toSavedGame());
@@ -276,15 +270,15 @@ public class MinesweeperScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
         if (board == null) return;
         drawTopBar(context);
         drawGrid(context, mouseX, mouseY);
         explosions.forEach(e -> e.render(context));
     }
 
-    private void drawTopBar(DrawContext context) {
+    private void drawTopBar(GuiGraphicsExtractor context) {
         int barY2 = topBarY + TOP_BAR_H;
         int barX2 = topBarX + topBarW;
         int hx1 = smileyBtn.getX(), hx2 = hx1 + smileyBtn.getWidth();
@@ -307,9 +301,9 @@ public class MinesweeperScreen extends Screen {
         timerDisplay.render(context);
     }
 
-    private void drawGrid(DrawContext context, int mouseX, int mouseY) {
-        Matrix3x2fStack matrices = context.getMatrices();
-        double scaleFactor = mc.getWindow().getScaleFactor();
+    private void drawGrid(GuiGraphicsExtractor context, int mouseX, int mouseY) {
+        Matrix3x2fStack matrices = context.pose();
+        double scaleFactor = mc.getWindow().getGuiScale();
         MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
         float uiScale = cellSize / 24f;
         float textScale = Math.max(0.70f, Math.min(1.30f, uiScale * 1.05f));
@@ -367,28 +361,28 @@ public class MinesweeperScreen extends Screen {
         }
     }
 
-    private void drawCellContent(DrawContext context, Cell c, int cx, int cy, int texSize, float textScale) {
+    private void drawCellContent(GuiGraphicsExtractor context, Cell c, int cx, int cy, int texSize, float textScale) {
 
-        Matrix3x2fStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.pose();
         if (c.revealed) {
             if (c.mine && !board.won) {
                 Identifier tex = (c.flagged && !board.alive) ? TEX_FLAG : TEX_TNT_SIDE;
-                context.drawTexture(RenderPipelines.GUI_TEXTURED, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
+                context.blit(RenderPipelines.GUI_TEXTURED, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
             } else if (c.adjacent > 0) {
-                Text numText = ADJ_TEXT[c.adjacent];
+                Component numText = ADJ_TEXT[c.adjacent];
                 int color = getAdjColor(c.adjacent);
                 matrices.pushMatrix();
                 matrices.translate(cx, cy);
                 if (textScale != 1.0f) matrices.scale(textScale, textScale);
                 matrices.translate(
-                    -mc.textRenderer.getWidth(numText) / 2f,
-                    -mc.textRenderer.fontHeight / 2f);
-                context.drawText(mc.textRenderer, numText, 0, 0, color, false);
+                    -mc.font.width(numText) / 2f,
+                    -mc.font.lineHeight / 2f);
+                context.text(mc.font, numText, 0, 0, color, false);
                 matrices.popMatrix();
             }
         } else if (c.flagged) {
             Identifier tex = (!board.alive && !board.won && !c.mine) ? TEX_BARRIER : TEX_FLAG;
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
+            context.blit(RenderPipelines.GUI_TEXTURED, tex, cx - texSize / 2, cy - texSize / 2, 0, 0, texSize, texSize, texSize, texSize);
         }
     }
 
@@ -414,5 +408,5 @@ public class MinesweeperScreen extends Screen {
     }
 
     @Override
-    public boolean shouldPause() { return false; }
+    public boolean isPauseScreen() { return false; }
 }

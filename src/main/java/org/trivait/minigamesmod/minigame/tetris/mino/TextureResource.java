@@ -1,6 +1,6 @@
 package org.trivait.minigamesmod.minigame.tetris.mino;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class TextureResource {
     public final Identifier texture;

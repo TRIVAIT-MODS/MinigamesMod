@@ -1,22 +1,22 @@
 package org.trivait.minigamesmod.config.util;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum MainMenuButtonPosition {
-    LEFT_SINGLEPLAYER(ButtonSide.LEFT, ButtonRow.SINGLEPLAYER, Text.translatable("config.minigames.main_menu_button_position.left_singleplayer")),
-    LEFT_MULTIPLAYER(ButtonSide.LEFT, ButtonRow.MULTIPLAYER, Text.translatable("config.minigames.main_menu_button_position.left_multiplayer")),
-    LEFT_REALMS(ButtonSide.LEFT, ButtonRow.REALMS, Text.translatable("config.minigames.main_menu_button_position.left_realms")),
-    LEFT_MODS(ButtonSide.LEFT, ButtonRow.MODS, Text.translatable("config.minigames.main_menu_button_position.left_mods")),
-    RIGHT_SINGLEPLAYER(ButtonSide.RIGHT, ButtonRow.SINGLEPLAYER, Text.translatable("config.minigames.main_menu_button_position.right_singleplayer")),
-    RIGHT_MULTIPLAYER(ButtonSide.RIGHT, ButtonRow.MULTIPLAYER, Text.translatable("config.minigames.main_menu_button_position.right_multiplayer")),
-    RIGHT_REALMS(ButtonSide.RIGHT, ButtonRow.REALMS, Text.translatable("config.minigames.main_menu_button_position.right_realms")),
-    RIGHT_MODS(ButtonSide.RIGHT, ButtonRow.MODS, Text.translatable("config.minigames.main_menu_button_position.right_mods"));
+    LEFT_SINGLEPLAYER(ButtonSide.LEFT, ButtonRow.SINGLEPLAYER, Component.translatable("config.minigames.main_menu_button_position.left_singleplayer")),
+    LEFT_MULTIPLAYER(ButtonSide.LEFT, ButtonRow.MULTIPLAYER, Component.translatable("config.minigames.main_menu_button_position.left_multiplayer")),
+    LEFT_REALMS(ButtonSide.LEFT, ButtonRow.REALMS, Component.translatable("config.minigames.main_menu_button_position.left_realms")),
+    LEFT_MODS(ButtonSide.LEFT, ButtonRow.MODS, Component.translatable("config.minigames.main_menu_button_position.left_mods")),
+    RIGHT_SINGLEPLAYER(ButtonSide.RIGHT, ButtonRow.SINGLEPLAYER, Component.translatable("config.minigames.main_menu_button_position.right_singleplayer")),
+    RIGHT_MULTIPLAYER(ButtonSide.RIGHT, ButtonRow.MULTIPLAYER, Component.translatable("config.minigames.main_menu_button_position.right_multiplayer")),
+    RIGHT_REALMS(ButtonSide.RIGHT, ButtonRow.REALMS, Component.translatable("config.minigames.main_menu_button_position.right_realms")),
+    RIGHT_MODS(ButtonSide.RIGHT, ButtonRow.MODS, Component.translatable("config.minigames.main_menu_button_position.right_mods"));
 
     private final ButtonSide side;
     private final ButtonRow row;
-    private final Text displayName;
+    private final Component displayName;
 
-    MainMenuButtonPosition(ButtonSide side, ButtonRow row, Text displayName) {
+    MainMenuButtonPosition(ButtonSide side, ButtonRow row, Component displayName) {
         this.side = side;
         this.row = row;
         this.displayName = displayName;

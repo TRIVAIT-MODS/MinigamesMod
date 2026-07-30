@@ -1,14 +1,14 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 
 public class DigitDisplayWidget {
 
-    private static final Identifier TEX_DIGITS = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/digits.png");
+    private static final Identifier TEX_DIGITS = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/digits.png");
 
     private static final int DIGIT_W  = 14;
     private static final int DIGIT_H  = 23;
@@ -40,7 +40,7 @@ public class DigitDisplayWidget {
         return DIGIT_H;
     }
 
-    public void render(DrawContext context) {
+    public void render(GuiGraphicsExtractor context) {
         int[] out = new int[digits];
         int v = value;
         for (int i = digits - 1; i >= 0; i--) {
@@ -50,7 +50,7 @@ public class DigitDisplayWidget {
         for (int i = 0; i < digits; i++) {
             int dx = x + i * (DIGIT_W + GAP);
             int u  = out[i] * DIGIT_W;
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEX_DIGITS, dx, y, u, 0, DIGIT_W, DIGIT_H, SHEET_W, DIGIT_H);
+            context.blit(RenderPipelines.GUI_TEXTURED, TEX_DIGITS, dx, y, u, 0, DIGIT_W, DIGIT_H, SHEET_W, DIGIT_H);
         }
     }
 }

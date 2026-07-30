@@ -1,8 +1,8 @@
 package org.trivait.minigamesmod.mixin;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,7 +14,7 @@ import org.trivait.minigamesmod.gui.widget.MinigamesButton;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
-    protected TitleScreenMixin(Text title) {
+    protected TitleScreenMixin(Component title) {
         super(title);
     }
 
@@ -24,7 +24,7 @@ public abstract class TitleScreenMixin extends Screen {
         if (cfg.mainMenuButtonPosition == null) {
             cfg.mainMenuButtonPosition = MainMenuButtonPosition.RIGHT_MULTIPLAYER;
         }
-        this.addDrawableChild(new MinigamesButton(
+        this.addRenderableWidget(new MinigamesButton(
                 cfg.mainMenuButtonPosition.getX(this.width),
                 cfg.mainMenuButtonPosition.getY(this.height)
         ));

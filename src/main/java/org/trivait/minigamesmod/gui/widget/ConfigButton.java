@@ -1,31 +1,29 @@
 package org.trivait.minigamesmod.gui.widget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
 
-public class ConfigButton extends TextIconButtonWidget.IconOnly {
+public class ConfigButton extends SpriteIconButton.CenteredIcon {
 
-    private static final Identifier DEFAULT_TEXTURE = Identifier.of("minigamesmod", "icon/config");
-    private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/config_hover");
+    private static final Identifier DEFAULT_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/config");
+    private static final Identifier HOVER_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/config_hover");
 
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
-        super(20, 20, net.minecraft.text.Text.empty(), 20, 20, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.currentScreen));
-        }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
-        this.setTooltip(Tooltip.of(net.minecraft.text.Text.translatable("minigame.config.btn")));
+        super(20, 20, net.minecraft.network.chat.Component.empty(), 20, 20, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+            Minecraft client = Minecraft.getInstance();
+            client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.screen));
+        }, null, Button.DEFAULT_NARRATION);
+        this.setTooltip(Tooltip.create(net.minecraft.network.chat.Component.translatable("minigame.config.btn")));
         this.setX(x);
         this.setY(y);
     }

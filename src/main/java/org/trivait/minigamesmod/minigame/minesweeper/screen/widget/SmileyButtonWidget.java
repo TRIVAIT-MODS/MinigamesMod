@@ -1,21 +1,20 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 
-public class SmileyButtonWidget extends ClickableWidget {
+public class SmileyButtonWidget extends AbstractWidget {
 
-    private static final Identifier TEX_PLAYING = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_playing.png");
-    private static final Identifier TEX_WIN     = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_win.png");
-    private static final Identifier TEX_LOSE    = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_lose.png");
-    private static final Identifier TEX_HOVER   = Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_hover.png");
+    private static final Identifier TEX_PLAYING = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_playing.png");
+    private static final Identifier TEX_WIN     = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_win.png");
+    private static final Identifier TEX_LOSE    = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_lose.png");
+    private static final Identifier TEX_HOVER   = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/minesweeper/smiley_hover.png");
 
     public enum State { PLAYING, WIN, LOSE }
 
@@ -24,7 +23,7 @@ public class SmileyButtonWidget extends ClickableWidget {
     private State state = State.PLAYING;
 
     public SmileyButtonWidget(int x, int y, int size, Runnable onPress) {
-        super(x, y, size, size, Text.empty());
+        super(x, y, size, size, Component.empty());
         this.onPress = onPress;
     }
 
@@ -33,7 +32,7 @@ public class SmileyButtonWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         int x = getX(), y = getY(), w = width, h = height;
         boolean hovered = isHovered();
 
@@ -53,27 +52,27 @@ public class SmileyButtonWidget extends ClickableWidget {
         int offset = pressed ? 1 : 0;
         int ix = x + pad + offset, iy = y + pad + offset;
         int iw = Math.max(1, w - pad * 2), ih = Math.max(1, h - pad * 2);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, tex, ix, iy, 0, 0, iw, ih, iw, ih);
+        context.blit(RenderPipelines.GUI_TEXTURED, tex, ix, iy, 0, 0, iw, ih, iw, ih);
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         if (active) onPress.run();
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!active || click.button() != 0 || !isMouseOver(click.x(), click.y())) return false;
         pressed = true;
         return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (click.button() == 0) pressed = false;
         return super.mouseReleased(click);
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    protected void updateWidgetNarration(NarrationElementOutput builder) {}
 }

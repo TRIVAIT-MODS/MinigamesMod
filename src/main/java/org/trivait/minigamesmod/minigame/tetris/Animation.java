@@ -1,9 +1,8 @@
 package org.trivait.minigamesmod.minigame.tetris;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 
 public class Animation {
@@ -25,11 +24,11 @@ public class Animation {
         this.frame = 0;
     }
 
-    public void draw(DrawContext context) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "animation/" + animation + "/" + (int) frame + ".png"), x, y, 0, 0, width, height, width, height);
+    public void draw(GuiGraphicsExtractor context) {
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "animation/" + animation + "/" + (int) frame + ".png"), x, y, 0, 0, width, height, width, height);
     }
 
-    public void draw(DrawContext context, int x, int y) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of(MinigamesMod.MOD_ID, "animation/" + animation + "/" + (int) frame + ".png"), x, y, 0, 0, width, height, width, height);
+    public void draw(GuiGraphicsExtractor context, int x, int y) {
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "animation/" + animation + "/" + (int) frame + ".png"), x, y, 0, 0, width, height, width, height);
     }
 }

@@ -1,10 +1,10 @@
 package org.trivait.minigamesmod.minigame.dino;
 
 import me.shedaniel.autoconfig.ConfigData;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.AbstractMinigame;
@@ -21,7 +21,7 @@ import java.util.List;
 public class GoogleDino extends AbstractMinigame {
 
     public GoogleDino() {
-        super("google_dino", Text.translatable("minigame.dino.title"), Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/dino_icon.png"));
+        super("google_dino", Component.translatable("minigame.dino.title"), Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino_icon.png"));
     }
 
     @Override

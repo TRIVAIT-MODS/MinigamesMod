@@ -1,12 +1,12 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import org.trivait.minigamesmod.minigame.minesweeper.game.GameMode;
 import org.trivait.minigamesmod.minigame.minesweeper.leaderboard.BoardCategory;
 import org.trivait.minigamesmod.minigame.minesweeper.leaderboard.LeaderboardCache;
@@ -14,7 +14,7 @@ import org.trivait.minigamesmod.minigame.minesweeper.leaderboard.LeaderboardEntr
 
 import java.util.List;
 
-public class LeaderboardWidget extends ClickableWidget {
+public class LeaderboardWidget extends AbstractWidget {
 
     private static final int BG        = 0xCC1A1A1A;
     private static final int BORDER    = 0xFF555555;
@@ -43,7 +43,7 @@ public class LeaderboardWidget extends ClickableWidget {
 
     public LeaderboardWidget(int x, int y, int width, int height,
                              LeaderboardCache cache, GameMode gameMode, BoardCategory category) {
-        super(x, y, width, height, Text.empty());
+        super(x, y, width, height, Component.empty());
         this.cache = cache;
         this.gameMode = gameMode;
         this.category = category;
@@ -55,9 +55,9 @@ public class LeaderboardWidget extends ClickableWidget {
     public BoardCategory getCategory() { return category; }
 
     @Override
-    protected void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor ctx, int mouseX, int mouseY, float delta) {
         int x = getX(), y = getY(), w = width, h = height;
-        var mc = MinecraftClient.getInstance();
+        var mc = Minecraft.getInstance();
 
         ctx.fill(x, y, x + w, y + h, BG);
         ctx.fill(x, y,         x + w, y + 1,     BORDER);
@@ -67,21 +67,21 @@ public class LeaderboardWidget extends ClickableWidget {
 
         ctx.fill(x + 1, y + 1, x + w - 1, y + HEADER_H + 1, HEADER_BG);
         String modeLabel = gameMode == GameMode.LEADERBOARD_TIME
-                ? Text.translatable("minigame.minesweeper.leaderboard.mode.time").getString()
-                : Text.translatable("minigame.minesweeper.leaderboard.mode.score").getString();
+                ? Component.translatable("minigame.minesweeper.leaderboard.mode.time").getString()
+                : Component.translatable("minigame.minesweeper.leaderboard.mode.score").getString();
         String catLabel = category != null ? category.label : "";
-        ctx.drawText(mc.textRenderer, modeLabel + " - " + catLabel, x + PAD_X, y + 4, COLOR_WHITE, false);
+        ctx.text(mc.font, modeLabel + " - " + catLabel, x + PAD_X, y + 4, COLOR_WHITE, false);
 
         int listY = y + HEADER_H + 2;
         int listH = h - HEADER_H - 2;
 
         LeaderboardCache.State state = cache.getState(gameMode);
         if (state == LeaderboardCache.State.LOADING || state == LeaderboardCache.State.IDLE) {
-            drawCentered(ctx, mc, Text.translatable("minigame.minesweeper.leaderboard.loading").getString(), x, listY, w, listH, 0xFFAAAAAA);
+            drawCentered(ctx, mc, Component.translatable("minigame.minesweeper.leaderboard.loading").getString(), x, listY, w, listH, 0xFFAAAAAA);
             return;
         }
         if (state == LeaderboardCache.State.ERROR) {
-            drawCentered(ctx, mc, Text.translatable("minigame.minesweeper.leaderboard.error").getString() + cache.getError(gameMode), x, listY, w, listH, 0xFFFF5555);
+            drawCentered(ctx, mc, Component.translatable("minigame.minesweeper.leaderboard.error").getString() + cache.getError(gameMode), x, listY, w, listH, 0xFFFF5555);
             return;
         }
 
@@ -103,7 +103,7 @@ public class LeaderboardWidget extends ClickableWidget {
         int rowW = w - 2 - (needsScrollbar ? SB_W + 2 : 0);
 
         boolean isTime = gameMode == GameMode.LEADERBOARD_TIME;
-        int rankW = mc.textRenderer.getWidth("00. ");
+        int rankW = mc.font.width("00. ");
 
         float renderOffset = SMOOTH ? smoothScrollOffset : scrollOffset;
         int baseRow = (int) renderOffset;
@@ -124,16 +124,16 @@ public class LeaderboardWidget extends ClickableWidget {
             int placeColor = placeColor(rank);
             boolean top3 = rank <= 3;
 
-            MutableText rankText = Text.literal(rank + ".").styled(s -> s.withBold(top3));
-            ctx.drawText(mc.textRenderer, rankText, x + PAD_X, rowY + 2, placeColor, false);
+            MutableComponent rankText = Component.literal(rank + ".").withStyle(s -> s.withBold(top3));
+            ctx.text(mc.font, rankText, x + PAD_X, rowY + 2, placeColor, false);
 
-            MutableText nameText = Text.literal(entry.name()).styled(s -> s.withBold(true));
-            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            MutableComponent nameText = Component.literal(entry.name()).withStyle(s -> s.withBold(true));
+            ctx.text(mc.font, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
 
-            String suffix = isTime ? Text.translatable("minigame.minesweeper.second.suffix").getString() : "";
-            MutableText valueText = Text.literal(entry.value() + suffix).styled(s -> s.withBold(true));
-            int vx = x + 1 + rowW - PAD_X - mc.textRenderer.getWidth(valueText);
-            ctx.drawText(mc.textRenderer, valueText, vx, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            String suffix = isTime ? Component.translatable("minigame.minesweeper.second.suffix").getString() : "";
+            MutableComponent valueText = Component.literal(entry.value() + suffix).withStyle(s -> s.withBold(true));
+            int vx = x + 1 + rowW - PAD_X - mc.font.width(valueText);
+            ctx.text(mc.font, valueText, vx, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
         }
 
         ctx.disableScissor();
@@ -158,9 +158,9 @@ public class LeaderboardWidget extends ClickableWidget {
         };
     }
 
-    private void drawCentered(DrawContext ctx, MinecraftClient mc, String text, int x, int y, int w, int h, int color) {
-        int tw = mc.textRenderer.getWidth(text);
-        ctx.drawText(mc.textRenderer, text, x + (w - tw) / 2, y + (h - mc.textRenderer.fontHeight) / 2, color, false);
+    private void drawCentered(GuiGraphicsExtractor ctx, Minecraft mc, String text, int x, int y, int w, int h, int color) {
+        int tw = mc.font.width(text);
+        ctx.text(mc.font, text, x + (w - tw) / 2, y + (h - mc.font.lineHeight) / 2, color, false);
     }
 
     @Override
@@ -184,5 +184,5 @@ public class LeaderboardWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    protected void updateWidgetNarration(NarrationElementOutput builder) {}
 }

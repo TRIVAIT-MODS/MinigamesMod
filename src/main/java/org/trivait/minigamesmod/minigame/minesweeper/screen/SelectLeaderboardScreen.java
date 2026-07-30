@@ -1,7 +1,7 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.ScoreSelectWidget;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.TimeSelectWidget;
 
@@ -9,7 +9,7 @@ public class SelectLeaderboardScreen extends Screen {
     private final Screen parent;
 
     public SelectLeaderboardScreen(Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.parent = parent;
     }
 
@@ -24,13 +24,13 @@ public class SelectLeaderboardScreen extends Screen {
         ScoreSelectWidget scoreSelectWidget = new ScoreSelectWidget(startX, y, w, w, parent);
         TimeSelectWidget timeSelectWidget = new TimeSelectWidget(startX + w + 14, y, w, w, parent);
 
-        this.addDrawableChild(scoreSelectWidget);
-        this.addDrawableChild(timeSelectWidget);
+        this.addRenderableWidget(scoreSelectWidget);
+        this.addRenderableWidget(timeSelectWidget);
     }
 
     @Override
-    public void close() {
-        super.close();
-        this.client.setScreen(parent);
+    public void onClose() {
+        super.onClose();
+        this.minecraft.setScreen(parent);
     }
 }

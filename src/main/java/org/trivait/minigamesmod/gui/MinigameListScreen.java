@@ -1,12 +1,12 @@
 package org.trivait.minigamesmod.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.api.MinigameDefinition;
@@ -33,10 +33,10 @@ public class MinigameListScreen extends Screen {
     private final List<MinigameCardWidget> cards = new ArrayList<>();
     private final List<ArrowButtonWidget> arrows = new ArrayList<>();
 
-    private ButtonWidget leaderboardBtn;
+    private Button leaderboardBtn;
 
     public MinigameListScreen(@Nullable Screen parent) {
-        super(Text.translatable("screen.minigames.list.title"));
+        super(Component.translatable("screen.minigames.list.title"));
         this.parent = parent;
     }
 
@@ -53,10 +53,10 @@ public class MinigameListScreen extends Screen {
             int cx = centerX + (i - selectedIndex) * (CARD_WIDTH + CARD_SPACING) - CARD_WIDTH / 2;
             MinigameCardWidget card = new MinigameCardWidget(cx, cardY, CARD_WIDTH, CARD_HEIGHT, mg, () -> {
                 mg.onStart();
-                this.client.setScreen(mg.createScreen(this));
+                this.minecraft.setScreen(mg.createScreen(this));
             });
             cards.add(card);
-            this.addDrawableChild(card);
+            this.addRenderableWidget(card);
         }
 
         updateCardScales(0f);
@@ -69,26 +69,26 @@ public class MinigameListScreen extends Screen {
         arrows.add(leftArrow);
         arrows.add(rightArrow);
 
-        this.addDrawableChild(leftArrow);
-        this.addDrawableChild(rightArrow);
+        this.addRenderableWidget(leftArrow);
+        this.addRenderableWidget(rightArrow);
 
-        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.back"), b -> this.close())
-                .dimensions(this.width / 2 - 50, this.height - 28, 100, 20)
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), b -> this.onClose())
+                .bounds(this.width / 2 - 50, this.height - 28, 100, 20)
                 .build());
 
-        leaderboardBtn = ButtonWidget.builder(
-                Text.translatable("minigame.leaderboard"),
+        leaderboardBtn = Button.builder(
+                Component.translatable("minigame.leaderboard"),
                 (b) -> {
                     Leaderboard leaderboard = all.get(selectedIndex).getLeaderboard();
                     b.active=leaderboard!=null;
                     if (leaderboard!=null) {
-                        MinecraftClient.getInstance().setScreen(new LeaderboardScreen(leaderboard, this));
+                        Minecraft.getInstance().setScreen(new LeaderboardScreen(leaderboard, this));
                     } else if (all.get(selectedIndex).getId().equals("minesweeper")) {
-                        MinecraftClient.getInstance().setScreen(new SelectLeaderboardScreen(this));
+                        Minecraft.getInstance().setScreen(new SelectLeaderboardScreen(this));
                     }
                 }
-        ).dimensions(width/2-35, height/2+70, 70, 20).build();
-        this.addDrawableChild(leaderboardBtn);
+        ).bounds(width/2-35, height/2+70, 70, 20).build();
+        this.addRenderableWidget(leaderboardBtn);
 
         updateActive();
     }
@@ -134,7 +134,7 @@ public class MinigameListScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         for (ArrowButtonWidget arrow : arrows) {
             if (arrow.isMouseOver(click.x(), click.y())) {
                 return arrow.mouseClicked(click, doubled);
@@ -144,18 +144,18 @@ public class MinigameListScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         if (Math.abs(animOffset) > 0.5f) {
             animOffset *= (1f - ANIM_SPEED);
         } else {
             animOffset = 0f;
         }
         updateCardScales(animOffset);
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 14, -1);
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        context.centeredText(this.font, this.title, this.width / 2, 14, -1);
 
         if (cards.isEmpty()) {
-            context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("screen.minigames.list.empty"), this.width / 2, this.height / 2 - 10, 0xFF888888);
+            context.centeredText(this.font, Component.translatable("screen.minigames.list.empty"), this.width / 2, this.height / 2 - 10, 0xFF888888);
         }
     }
 
@@ -167,7 +167,7 @@ public class MinigameListScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == GLFW.GLFW_KEY_LEFT) {
             scrollLeft();
         }
@@ -178,16 +178,16 @@ public class MinigameListScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
+    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractBackground(context, mouseX, mouseY, delta);
         int cardY = this.height / 2 - CARD_HEIGHT / 2 - 10;
-        context.drawHorizontalLine(0, this.width, cardY - 4, -1);
-        context.drawHorizontalLine(0, this.width, cardY + CARD_HEIGHT + 4, -1);
+        context.horizontalLine(0, this.width, cardY - 4, -1);
+        context.horizontalLine(0, this.width, cardY + CARD_HEIGHT + 4, -1);
         context.fill(0, cardY - 4, this.width, cardY + CARD_HEIGHT + 8, 0x30FFFFFF);
     }
 
     @Override
-    public void close() {
-        this.client.setScreen(parent);
+    public void onClose() {
+        this.minecraft.setScreen(parent);
     }
 }

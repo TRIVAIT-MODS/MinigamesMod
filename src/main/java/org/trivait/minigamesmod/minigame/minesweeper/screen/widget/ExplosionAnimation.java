@@ -1,9 +1,9 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import org.trivait.minigamesmod.MinigamesMod;
 
 public class ExplosionAnimation {
@@ -12,7 +12,7 @@ public class ExplosionAnimation {
     private static final Identifier[] TEXTURES = new Identifier[FRAMES];
     static {
         for (int i = 0; i < FRAMES; i++)
-            TEXTURES[i] = Identifier.of(MinigamesMod.MOD_ID, "animation/explosion/" + i + ".png");
+            TEXTURES[i] = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "animation/explosion/" + i + ".png");
     }
 
     private static final float ASPECT = 16f / 9f;
@@ -35,9 +35,9 @@ public class ExplosionAnimation {
         if (elapsed >= FRAMES * TICKS_PER_FRAME) done = true;
     }
 
-    public void render(DrawContext context) {
+    public void render(GuiGraphicsExtractor context) {
         if (done) return;
         int f = Math.min((int) (elapsed / TICKS_PER_FRAME), FRAMES - 1);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURES[f], x, y, 0, 0, w, h, w, h);
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURES[f], x, y, 0, 0, w, h, w, h);
     }
 }

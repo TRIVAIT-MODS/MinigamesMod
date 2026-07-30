@@ -1,23 +1,21 @@
 package org.trivait.minigamesmod.minigame.tetris;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.CommonColors;
 import org.jetbrains.annotations.NotNull;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
-import org.trivait.minigamesmod.minigame.tetris.mino.Block;
-import org.trivait.minigamesmod.minigame.tetris.mino.Mino;
 import org.trivait.minigamesmod.minigame.tetris.mino.*;
 
 import java.awt.*;
@@ -56,7 +54,7 @@ public class TetrisScreen extends Screen {
 
     public static boolean isNewHighScore = false;
 
-    public static Text onScreenText;
+    public static Component onScreenText;
     public static int onScreenTextColour;
     public static int onScreenTextOpacity = 0;
 
@@ -70,13 +68,13 @@ public class TetrisScreen extends Screen {
     private Tetris tetris;
 
     public TetrisScreen(Screen parent, Tetris tetris) {
-        super(Text.of("Tetris Screen"));
+        super(Component.nullToEmpty("Tetris Screen"));
         this.parent = parent;
         this.tetris = tetris;
         this.init();
     }
 
-    ButtonWidget playButton = ButtonWidget.builder(Text.translatable("minigame.tetris.start").withColor(Colors.YELLOW), button -> reset()).build();
+    Button playButton = Button.builder(Component.translatable("minigame.tetris.start").withColor(CommonColors.YELLOW), button -> reset()).build();
 
     @Override
     protected void init() {
@@ -90,27 +88,27 @@ public class TetrisScreen extends Screen {
 
         hardDrop = MinigameRegistry.getConfig(TetrisVisibleConfig.class).hardDrop.mode;
 
-        ButtonWidget returnButton = TextIconButtonWidget.builder(Text.empty(), button -> this.client.setScreen(this.parent), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
-        returnButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.return")));
-        returnButton.setDimensionsAndPosition(20, 20, 10, 10);
-        ButtonWidget restartButton = TextIconButtonWidget.builder(Text.empty(), button -> gameOver(), true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
-        restartButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.restart")));
-        restartButton.setDimensionsAndPosition(20, 20, 35, 10);
-        ButtonWidget pauseButton = TextIconButtonWidget.builder(Text.empty(), button -> paused = !paused, true)
-                .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/pause"), 15, 15).build();
-        pauseButton.setTooltip(Tooltip.of(Text.translatable("minigame.tetris.pause")));
-        pauseButton.setDimensionsAndPosition(20, 20, 60, 10);
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.minecraft.setScreen(this.parent), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
+        returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.return")));
+        returnButton.setRectangle(20, 20, 10, 10);
+        Button restartButton = SpriteIconButton.builder(Component.empty(), button -> gameOver(), true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
+        restartButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.restart")));
+        restartButton.setRectangle(20, 20, 35, 10);
+        Button pauseButton = SpriteIconButton.builder(Component.empty(), button -> paused = !paused, true)
+                .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/pause"), 15, 15).build();
+        pauseButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.pause")));
+        pauseButton.setRectangle(20, 20, 60, 10);
 
         playButton.setPosition(this.width / 2 - 150 / 2, this.height / 2 - 20 / 2);
-        playButton.setDimensions(150, 20);
+        playButton.setSize(150, 20);
 
-        this.addDrawableChild(returnButton);
-        this.addDrawableChild(restartButton);
-        this.addDrawableChild(pauseButton);
-        this.addDrawableChild(new ConfigButton(85, 10, tetris));
-        this.addDrawableChild(playButton);
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(restartButton);
+        this.addRenderableWidget(pauseButton);
+        this.addRenderableWidget(new ConfigButton(85, 10, tetris));
+        this.addRenderableWidget(playButton);
     }
 
     public void reset() {
@@ -121,7 +119,7 @@ public class TetrisScreen extends Screen {
         dropInterval = 60;
         onScreenTextOpacity = 60;
         onScreenTextColour = 0;
-        onScreenText = Text.empty();
+        onScreenText = Component.empty();
         animation = (animation % 30) * 10;
         isNewHighScore = false;
 
@@ -147,7 +145,7 @@ public class TetrisScreen extends Screen {
             reset();
         }
         if (!currentMino.active) {
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("block.stone.place")), 1.5F, vol()));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.stone.place")), 1.5F, vol()));
             score += 10;
 
             staticBlocks.add(currentMino.b[0]);
@@ -165,9 +163,9 @@ public class TetrisScreen extends Screen {
             if (lines > 0) {
                 combo++;
                 if (combo > 1) {
-                    onScreenText = Text.translatable("minigame.tetris.combo").append(" x"+combo);
+                    onScreenText = Component.translatable("minigame.tetris.combo").append(" x"+combo);
                     onScreenTextOpacity = 30;
-                    onScreenTextColour = (combo > 3 ? Colors.RED : (combo > 2 ? Colors.YELLOW : Colors.WHITE));
+                    onScreenTextColour = (combo > 3 ? CommonColors.RED : (combo > 2 ? CommonColors.YELLOW : CommonColors.WHITE));
                     score += 50 * (combo - 1);
                 }
             } else combo = 0;
@@ -176,9 +174,9 @@ public class TetrisScreen extends Screen {
                 case 2: score += 300; break;
                 case 3: score += 500; break;
                 case 4: score += 800;
-                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("entity.generic.explode")), 0.8F, vol()));
+                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("entity.generic.explode")), 0.8F, vol()));
                     animations.add(new Animation(this.width/2 - width/2, currentMino.b[2].y, width, height, "explosion", 20));
-                    onScreenText = Text.translatable("minigame.tetris.tetris");
+                    onScreenText = Component.translatable("minigame.tetris.tetris");
                     onScreenTextColour = 11141290;
                     onScreenTextOpacity = 30;
                     break;
@@ -212,13 +210,13 @@ public class TetrisScreen extends Screen {
                             (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE : (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
                     HEIGHT - (int) (Block.SIZE * 2.5f));
         }
-        float frameDuration = MinecraftClient.getInstance().getRenderTickCounter().getDynamicDeltaTicks();
+        float frameDuration = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
         currentMino.update(frameDuration*3);
         animation+=frameDuration*3;
     }
 
     private void gameOver() {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("entity.pig.ambient")), 1.0F, vol()));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("entity.pig.ambient")), 1.0F, vol()));
         isNewHighScore = score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore;
         active = false;
     }
@@ -231,7 +229,7 @@ public class TetrisScreen extends Screen {
         if (count < gridX) {
             return false;
         }
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("block.deepslate.break")), 1.0F, vol()));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.deepslate.break")), 1.0F, vol()));
         linesCleared++;
         for (Block block : staticBlocks) {
             if (block.y == y) {
@@ -266,29 +264,29 @@ public class TetrisScreen extends Screen {
         return mino;
     }
 
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (active) super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        if (active) super.extractRenderState(context, mouseX, mouseY, delta);
         //called here as this is run quite frequently
         if (!paused && active) manager();
         if (paused) {
             upPressed = downPressed = leftPressed = rightPressed = spacePressed = false;
         }
-        float scale = switch (MinecraftClient.getInstance().options.getGuiScale().getValue()) {
+        float scale = switch (Minecraft.getInstance().options.guiScale().get()) {
             case 4 -> 0.8f;
             case 1 -> 3f;
             case 2 -> 1.6f;
             default -> 1;
         };
-        context.getMatrices().pushMatrix();
-        context.getMatrices().scale(scale, scale);
-        float offsetX = context.getScaledWindowWidth() * (1 - scale) / (2f * scale);
-        float offsetY = context.getScaledWindowHeight() * (1 - scale) / (2f * scale);
-        context.getMatrices().translate(offsetX, offsetY);
+        context.pose().pushMatrix();
+        context.pose().scale(scale, scale);
+        float offsetX = context.guiWidth() * (1 - scale) / (2f * scale);
+        float offsetY = context.guiHeight() * (1 - scale) / (2f * scale);
+        context.pose().translate(offsetX, offsetY);
 
         //draw border
 
-        context.drawHorizontalLine(leftX - 1, rightX, topY - 1 + Block.SIZE * 3, new Color(1, 0, 0, 0.3f).getRGB());
-        context.drawStrokedRectangle(leftX - 1, topY - 1, WIDTH + 2, HEIGHT + 2, Colors.WHITE);
+        context.horizontalLine(leftX - 1, rightX, topY - 1 + Block.SIZE * 3, new Color(1, 0, 0, 0.3f).getRGB());
+        context.outline(leftX - 1, topY - 1, WIDTH + 2, HEIGHT + 2, CommonColors.WHITE);
 
         //draw moving mino
         if (currentMino!= null) {
@@ -299,19 +297,19 @@ public class TetrisScreen extends Screen {
 
 
         //draw next mino
-        context.drawStrokedRectangle(rightX + Block.SIZE - 1, bottomY - nextHEIGHT + 1, nextWIDTH + 2, nextHEIGHT, Colors.WHITE);
-        Text nextText = Text.translatable("minigame.tetris.next");
-        context.drawText(this.textRenderer, nextText, rightX + Block.SIZE * 2,
-                bottomY - nextHEIGHT + Block.SIZE/2, Colors.WHITE, true);
+        context.outline(rightX + Block.SIZE - 1, bottomY - nextHEIGHT + 1, nextWIDTH + 2, nextHEIGHT, CommonColors.WHITE);
+        Component nextText = Component.translatable("minigame.tetris.next");
+        context.text(this.font, nextText, rightX + Block.SIZE * 2,
+                bottomY - nextHEIGHT + Block.SIZE/2, CommonColors.WHITE, true);
         if (nextMino!= null) nextMino.draw(context);
 
         //draw score
-        Text scoreText = Text.translatable("minigame.tetris.score").append(": " + score);
-        context.drawText(this.textRenderer, scoreText, rightX + Block.SIZE * 2,
-                topY + Block.SIZE, Colors.WHITE, true);
-        Text linesText = Text.translatable("minigame.tetris.lines").append(": " + linesCleared);
-        context.drawText(this.textRenderer, linesText, rightX + Block.SIZE * 2,
-                topY + Block.SIZE + 10, Colors.WHITE, true);
+        Component scoreText = Component.translatable("minigame.tetris.score").append(": " + score);
+        context.text(this.font, scoreText, rightX + Block.SIZE * 2,
+                topY + Block.SIZE, CommonColors.WHITE, true);
+        Component linesText = Component.translatable("minigame.tetris.lines").append(": " + linesCleared);
+        context.text(this.font, linesText, rightX + Block.SIZE * 2,
+                topY + Block.SIZE + 10, CommonColors.WHITE, true);
 
         //draw static minos
         for (Block block : staticBlocks) {
@@ -320,7 +318,7 @@ public class TetrisScreen extends Screen {
 
         //draw destroying minos
         for (Block d : destroying) {
-            d.destroying += MinecraftClient.getInstance().getRenderTickCounter().getDynamicDeltaTicks()*3;
+            d.destroying += Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks()*3;
             if (d.destroying>9) d.destroying = 9;
             d.draw(context);
         }
@@ -335,16 +333,16 @@ public class TetrisScreen extends Screen {
         animations.removeIf(an -> an.frame > an.frames);
 
         //draw paused text
-        Text pausedText = Text.translatable("minigame.tetris.paused");
-        if (paused&&active) context.drawText(this.textRenderer, pausedText, this.width / 2 - (3 * pausedText.getString().length()),
-                this.height / 2 - 7, Colors.WHITE, true);
+        Component pausedText = Component.translatable("minigame.tetris.paused");
+        if (paused&&active) context.text(this.font, pausedText, this.width / 2 - (3 * pausedText.getString().length()),
+                this.height / 2 - 7, CommonColors.WHITE, true);
 
         //draw combo and tetris texts
         if (onScreenTextOpacity > 0) {
             Color base = new Color(onScreenTextColour, false);
             float alpha = Math.clamp(onScreenTextOpacity/10f,0,1);
             Color color = new Color(base.getRed()/255f, base.getGreen()/255f, base.getBlue()/255f, alpha);
-            context.drawText(this.textRenderer, onScreenText, this.width / 2 - onScreenText.getString().length(), this.height / 2, color.getRGB(), true);
+            context.text(this.font, onScreenText, this.width / 2 - onScreenText.getString().length(), this.height / 2, color.getRGB(), true);
             onScreenTextOpacity--;
         }
 
@@ -352,33 +350,33 @@ public class TetrisScreen extends Screen {
         //draw play button if not active
         playButton.visible = !active;
         if (!active) {
-            Color black = new Color(Colors.BLACK);
+            Color black = new Color(CommonColors.BLACK);
             context.fill(leftX - 1, topY - 1, leftX - 1 + WIDTH + 2, topY -1 + HEIGHT + 2, new Color(black.getRed(), black.getGreen(), black.getBlue(), 0.75f).getRGB());
-            super.render(context, mouseX, mouseY, delta);
+            super.extractRenderState(context, mouseX, mouseY, delta);
             if (currentMino != null) {
-                Text finalScoreText = Text.translatable("minigame.tetris.score").append(": " + score).withColor(Colors.LIGHT_YELLOW);
-                context.drawText(this.textRenderer, finalScoreText, this.width / 2 - (finalScoreText.getString().length() * 3),
-                        this.height / 2 - 35, Colors.WHITE, true);
-                Text linesClearedText = Text.translatable("minigame.tetris.lines").append(": " + linesCleared).withColor(Colors.LIGHT_YELLOW);
-                context.drawText(this.textRenderer, linesClearedText, this.width / 2 - (linesClearedText.getString().length() * 3),
-                        this.height / 2 - 25, Colors.WHITE, true);
-                Text highScoreClearedText;
+                Component finalScoreText = Component.translatable("minigame.tetris.score").append(": " + score).withColor(CommonColors.SOFT_YELLOW);
+                context.text(this.font, finalScoreText, this.width / 2 - (finalScoreText.getString().length() * 3),
+                        this.height / 2 - 35, CommonColors.WHITE, true);
+                Component linesClearedText = Component.translatable("minigame.tetris.lines").append(": " + linesCleared).withColor(CommonColors.SOFT_YELLOW);
+                context.text(this.font, linesClearedText, this.width / 2 - (linesClearedText.getString().length() * 3),
+                        this.height / 2 - 25, CommonColors.WHITE, true);
+                Component highScoreClearedText;
                 if (score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore) {
                     MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore = score;
                 }
-                highScoreClearedText = Text.translatable(isNewHighScore ? "minigame.tetris.new_hight_score" : "minigame.tetris.hight_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(Colors.YELLOW);
-                if (MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore > 0) context.drawText(this.textRenderer, highScoreClearedText, this.width / 2 - (highScoreClearedText.getString().length() * 3),
-                        this.height / 2 + 25, Colors.WHITE, true);
+                highScoreClearedText = Component.translatable(isNewHighScore ? "minigame.tetris.new_hight_score" : "minigame.tetris.hight_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(CommonColors.YELLOW);
+                if (MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore > 0) context.text(this.font, highScoreClearedText, this.width / 2 - (highScoreClearedText.getString().length() * 3),
+                        this.height / 2 + 25, CommonColors.WHITE, true);
             }
         }
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
     @Override
-    public boolean keyPressed(@NotNull KeyInput input) {
+    public boolean keyPressed(@NotNull KeyEvent input) {
         int keyCode = input.key();
         if (keyCode == 256 && this.shouldCloseOnEsc()) {
-            this.close();
+            this.onClose();
             return true;
         } else {
             switch (keyCode) {

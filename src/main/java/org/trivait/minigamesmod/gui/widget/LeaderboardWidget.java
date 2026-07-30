@@ -1,19 +1,19 @@
 package org.trivait.minigamesmod.gui.widget;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.leaderboard.LeaderboardEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardWidget extends ClickableWidget {
+public class LeaderboardWidget extends AbstractWidget {
 
     private static final int BG        = 0xCC1A1A1A;
     private static final int BORDER    = 0xFF555555;
@@ -45,7 +45,7 @@ public class LeaderboardWidget extends ClickableWidget {
     private float scrollTarget = 0f;
 
     public LeaderboardWidget(int x, int y, int width, int height, Leaderboard leaderboard) {
-        super(x, y, width, height, Text.empty());
+        super(x, y, width, height, Component.empty());
         this.leaderboard = leaderboard;
         refresh();
     }
@@ -55,7 +55,7 @@ public class LeaderboardWidget extends ClickableWidget {
         error = null;
 
         leaderboard.getEntries().whenComplete((list, throwable) ->
-                MinecraftClient.getInstance().execute(() -> {
+                Minecraft.getInstance().execute(() -> {
                     if (throwable != null) {
                         System.out.println("[LeaderboardWidget] ERROR:");
                         throwable.printStackTrace();
@@ -75,8 +75,8 @@ public class LeaderboardWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        MinecraftClient mc = MinecraftClient.getInstance();
+    public void extractWidgetRenderState(GuiGraphicsExtractor ctx, int mouseX, int mouseY, float delta) {
+        Minecraft mc = Minecraft.getInstance();
 
         int x = getX();
         int y = getY();
@@ -91,7 +91,7 @@ public class LeaderboardWidget extends ClickableWidget {
 
         ctx.fill(x + 1, y + 1, x + w - 1, y + HEADER_H + 1, HEADER_BG);
 
-        ctx.drawText(mc.textRenderer, Text.literal("Leaderboard"), x + PAD_X, y + 4, COLOR_WHITE, false);
+        ctx.text(mc.font, Component.literal("Leaderboard"), x + PAD_X, y + 4, COLOR_WHITE, false);
 
         int listY = y + HEADER_H + 2;
         int listH = h - HEADER_H - 2;
@@ -127,7 +127,7 @@ public class LeaderboardWidget extends ClickableWidget {
 
         ctx.enableScissor(x + 1, listY, x + 1 + rowW, y + h - 2);
 
-        int rankW = mc.textRenderer.getWidth("00. ");
+        int rankW = mc.font.width("00. ");
 
         for (int i = 0; i < visibleRows + 2 && i + baseRow < entries.size(); i++) {
 
@@ -143,19 +143,19 @@ public class LeaderboardWidget extends ClickableWidget {
             int placeColor = placeColor(rank);
             boolean top3 = rank <= 3;
 
-            MutableText rankText = Text.literal(rank + ".").styled(s -> s.withBold(top3));
+            MutableComponent rankText = Component.literal(rank + ".").withStyle(s -> s.withBold(top3));
 
-            ctx.drawText(mc.textRenderer, rankText, x + PAD_X, rowY + 2, placeColor, false);
+            ctx.text(mc.font, rankText, x + PAD_X, rowY + 2, placeColor, false);
 
-            MutableText nameText = Text.literal(entry.name()).styled(s -> s.withBold(true));
+            MutableComponent nameText = Component.literal(entry.name()).withStyle(s -> s.withBold(true));
 
-            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            ctx.text(mc.font, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
 
-            MutableText valueText = Text.literal(String.valueOf(entry.value())).styled(s -> s.withBold(true));
+            MutableComponent valueText = Component.literal(String.valueOf(entry.value())).withStyle(s -> s.withBold(true));
 
-            int vx = x + 1 + rowW - PAD_X - mc.textRenderer.getWidth(valueText);
+            int vx = x + 1 + rowW - PAD_X - mc.font.width(valueText);
 
-            ctx.drawText(mc.textRenderer, valueText, vx, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            ctx.text(mc.font, valueText, vx, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
         }
 
         ctx.disableScissor();
@@ -185,10 +185,10 @@ public class LeaderboardWidget extends ClickableWidget {
         };
     }
 
-    private void drawCentered(DrawContext ctx, MinecraftClient mc, String text, int x, int y, int w, int h, int color) {
-        int tw = mc.textRenderer.getWidth(text);
+    private void drawCentered(GuiGraphicsExtractor ctx, Minecraft mc, String text, int x, int y, int w, int h, int color) {
+        int tw = mc.font.width(text);
 
-        ctx.drawText(mc.textRenderer, text, x + (w - tw) / 2, y + (h - mc.textRenderer.fontHeight) / 2, color, false);
+        ctx.text(mc.font, text, x + (w - tw) / 2, y + (h - mc.font.lineHeight) / 2, color, false);
     }
 
     @Override
@@ -215,6 +215,6 @@ public class LeaderboardWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
     }
 }
