@@ -1,11 +1,13 @@
 package org.trivait.minigamesmod.minigame.sudoku;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -146,11 +148,15 @@ public class SudokuScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (won) return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (won) return super.mouseClicked(click, doubled);
         int boardSize = 9 * 16;
         int startX = (this.width - boardSize) / 2;
         int startY = (this.height - boardSize) / 2;
+
+        double mouseX = click.x();
+        double mouseY = click.y();
+        int button = click.button();
 
         if (mouseX >= startX && mouseX < startX + boardSize && mouseY >= startY && mouseY < startY + boardSize) {
             int c = (int) ((mouseX - startX) / 16);
@@ -175,7 +181,7 @@ public class SudokuScreen extends Screen {
             }
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
@@ -201,20 +207,20 @@ public class SudokuScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
             this.close();
             return true;
         }
-        if (won) return super.keyPressed(keyCode, scanCode, modifiers);
+        if (won) return super.keyPressed(input);
         if (selectedRow >= 0 && selectedRow < 9 && selectedCol >= 0 && selectedCol < 9) {
             if (!savedInitial[selectedRow][selectedCol]) {
-                if (keyCode >= GLFW.GLFW_KEY_1 && keyCode <= GLFW.GLFW_KEY_9) {
-                    savedGrid[selectedRow][selectedCol] = keyCode - GLFW.GLFW_KEY_1 + 1;
+                if (input.key() >= GLFW.GLFW_KEY_1 && input.key() <= GLFW.GLFW_KEY_9) {
+                    savedGrid[selectedRow][selectedCol] = input.key() - GLFW.GLFW_KEY_1 + 1;
                     PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                     return true;
-                } else if (keyCode == GLFW.GLFW_KEY_0 || keyCode == GLFW.GLFW_KEY_BACKSPACE || keyCode == GLFW.GLFW_KEY_DELETE) {
+                } else if (input.key() == GLFW.GLFW_KEY_0 || input.key() == GLFW.GLFW_KEY_BACKSPACE || input.key() == GLFW.GLFW_KEY_DELETE) {
                     savedGrid[selectedRow][selectedCol] = 0;
                     PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
@@ -222,7 +228,7 @@ public class SudokuScreen extends Screen {
                 }
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     public float vol() {

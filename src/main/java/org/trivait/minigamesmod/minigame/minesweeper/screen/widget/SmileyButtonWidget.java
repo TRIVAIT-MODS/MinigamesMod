@@ -1,6 +1,7 @@
 package org.trivait.minigamesmod.minigame.minesweeper.screen.widget;
 
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -56,21 +57,21 @@ public class SmileyButtonWidget extends ClickableWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(Click click, boolean doubled) {
         if (active) onPress.run();
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!active || button != 0 || !isMouseOver(mouseX, mouseY)) return false;
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (!active || click.button() != 0 || !isMouseOver(click.x(), click.y())) return false;
         pressed = true;
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0) pressed = false;
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(Click click) {
+        if (click.button() == 0) pressed = false;
+        return super.mouseReleased(click);
     }
 
     @Override

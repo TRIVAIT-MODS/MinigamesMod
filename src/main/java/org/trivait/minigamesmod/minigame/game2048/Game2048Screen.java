@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -150,11 +151,11 @@ public class Game2048Screen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (gameOver) return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyInput input) {
+        if (gameOver) return super.keyPressed(input);
         int dr = 0, dc = 0;
         Random random = new Random();
-        switch (keyCode) {
+        switch (input.key()) {
             case GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_W -> {
                 dr = -1;
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
@@ -172,7 +173,7 @@ public class Game2048Screen extends Screen {
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
             default -> {
-                return super.keyPressed(keyCode, scanCode, modifiers);
+                return super.keyPressed(input);
             }
         }
         if (slide(dr, dc)) {

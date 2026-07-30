@@ -3,12 +3,14 @@ package org.trivait.minigamesmod.minigame.dino;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvent;
@@ -95,7 +97,9 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
+        int keyCode = input.key();
+
         if (keyCode==GLFW.GLFW_KEY_SPACE||keyCode==GLFW.GLFW_KEY_UP) {
             dino.jump();
         }
@@ -103,16 +107,16 @@ public class GoogleDinoScreen extends Screen {
             dino.crouching = true;
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
+        int keyCode = input.key();
         if (keyCode==GLFW.GLFW_KEY_LEFT_SHIFT||keyCode==GLFW.GLFW_KEY_LEFT_CONTROL||keyCode==GLFW.GLFW_KEY_DOWN||keyCode==GLFW.GLFW_KEY_S) {
             dino.crouching = false;
         }
-
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(input);
     }
 
     @Override
@@ -295,10 +299,10 @@ public class GoogleDinoScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean handled = super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        boolean handled = super.mouseClicked(click, doubled);
         dino.jump();
-        if (!gameRunning && button == 0 && !handled) {
+        if (!gameRunning && click.button() == 0 && !handled) {
             restart();
             return true;
         }

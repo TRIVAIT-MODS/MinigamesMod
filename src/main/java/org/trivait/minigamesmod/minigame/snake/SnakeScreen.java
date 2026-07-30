@@ -3,11 +3,13 @@ package org.trivait.minigamesmod.minigame.snake;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -293,7 +295,7 @@ public class SnakeScreen extends Screen {
     private void drawRotatedTexture(DrawContext context, Matrix3x2fStack matrices, int x, int y, Identifier texture, int rotation) {
         matrices.pushMatrix();
         matrices.translate((float) (x + CELL_SIZE / 2.0), (float) (y + CELL_SIZE / 2.0));
-        matrices.rotate(rotation);
+        matrices.rotate((float) Math.toRadians(rotation));
         matrices.translate((float) (-CELL_SIZE / 2.0), (float) (-CELL_SIZE / 2.0));
         context.drawTexture(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE);
         matrices.popMatrix();
@@ -346,8 +348,8 @@ public class SnakeScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256 && this.shouldCloseOnEsc()) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.key() == 256 && this.shouldCloseOnEsc()) {
             this.close();
             return true;
         }
@@ -357,7 +359,7 @@ public class SnakeScreen extends Screen {
             return true;
         }
 
-        switch (keyCode) {
+        switch (input.key()) {
             case 265, 87 -> {
                 if (direction[1] != 1 && nextDirection[1] != 1) {
                     nextDirection[0] = 0;
@@ -395,17 +397,16 @@ public class SnakeScreen extends Screen {
                 return true;
             }
         }
-
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         if (gameOver) {
             initGame();
             return false;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override

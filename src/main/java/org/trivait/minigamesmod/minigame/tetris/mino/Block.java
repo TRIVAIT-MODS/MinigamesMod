@@ -3,43 +3,52 @@ package org.trivait.minigamesmod.minigame.tetris.mino;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.text.MutableText;
+import net.minecraft.util.Atlases;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.trivait.minigamesmod.minigame.tetris.TetrisScreen;
 
 import java.awt.*;
 
 public class Block {
+
     public int x, y;
     public static int SIZE = 16;
     public Identifier texture;
+    public MutableText name;
     public String mino;
     public float destroying;
 
-    public Block (Identifier t, String mino) {
-        this.texture = t;
+    public Block(Identifier texture, MutableText name, String mino) {
+        this.texture = texture;
+        this.name = name;
         this.destroying = -1;
         this.mino = mino;
     }
 
-    public void draw(DrawContext context) {
-        Identifier texture = this.texture;
+    public void draw(@NotNull DrawContext context) {
 
-        Color color = new Color(1F, 1F, 1F, destroying==-1?1:1 - ((int) destroying * 0.1f));
-        Identifier atlas = Identifier.ofVanilla("textures/atlas/blocks.png");
-        Sprite sprite = MinecraftClient.getInstance().getSpriteAtlas(atlas).apply(texture);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.left_x + x, TetrisScreen.top_y + y, Block.SIZE, Block.SIZE, color.getRGB());
+        Color color = new Color(1F, 1F, 1F, destroying == -1 ? 1 : 1 - ((int) destroying * 0.1f));
+        Sprite sprite = MinecraftClient.getInstance().getAtlasManager().getAtlasTexture(Atlases.BLOCKS).getSprite(texture);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.leftX + x, TetrisScreen.topY + y, Block.SIZE, Block.SIZE, color.getRGB());
         if ((int) destroying != -1) {
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("textures/block/destroy_stage_" + (int) destroying + ".png"), TetrisScreen.left_x + x, TetrisScreen.top_y + y, 0, Block.SIZE * (int) (TetrisScreen.animation / 30f), Block.SIZE, Block.SIZE, Block.SIZE, Block.SIZE);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("textures/block/destroy_stage_" + (int) destroying + ".png"), TetrisScreen.leftX + x, TetrisScreen.topY + y, 0, Block.SIZE * (int) (TetrisScreen.animation / 30f), Block.SIZE, Block.SIZE, Block.SIZE, Block.SIZE);
+        }
+
+        if (TetrisScreen.paused && TetrisScreen.active) {
+            double mouseX = MinecraftClient.getInstance().mouse.getX() / MinecraftClient.getInstance().getWindow().getScaleFactor();
+            double mouseY = MinecraftClient.getInstance().mouse.getY() / MinecraftClient.getInstance().getWindow().getScaleFactor();
+
+            if (mouseX >= TetrisScreen.leftX + x && mouseX < TetrisScreen.leftX + x + SIZE && mouseY >= TetrisScreen.topY + y && mouseY < TetrisScreen.topY + y + SIZE) {
+                context.drawTooltip(MinecraftClient.getInstance().textRenderer, name, (int) mouseX, (int) mouseY);
+            }
         }
     }
 
-    public void draw(DrawContext context, int yOffset) {
-        Identifier texture = this.texture;
-
-        Identifier atlas = Identifier.ofVanilla("textures/atlas/blocks.png");
-        Sprite sprite = MinecraftClient.getInstance().getSpriteAtlas(atlas).apply(texture);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.left_x + x, TetrisScreen.top_y + y + yOffset, Block.SIZE, Block.SIZE, new Color(1, 1, 1, 0.3f).getRGB());
+    public void draw(@NotNull DrawContext context, int yOffset) {
+        Sprite sprite = MinecraftClient.getInstance().getAtlasManager().getAtlasTexture(Atlases.BLOCKS).getSprite(texture);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.leftX + x, TetrisScreen.topY + y + yOffset, Block.SIZE, Block.SIZE, new Color(1, 1, 1, 0.3f).getRGB());
     }
 }

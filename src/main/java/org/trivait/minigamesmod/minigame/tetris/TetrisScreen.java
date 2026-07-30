@@ -6,11 +6,13 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
@@ -34,10 +36,10 @@ public class TetrisScreen extends Screen {
     public static final int nextWIDTH = Block.SIZE * 4;
     public static final int nextHEIGHT = Block.SIZE * 5;
 
-    public static int left_x;
-    public static int right_x;
-    public static int top_y;
-    public static int bottom_y;
+    public static int leftX;
+    public static int rightX;
+    public static int topY;
+    public static int bottomY;
 
     public static boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, paused, active = false;
     public static int hardDrop;
@@ -79,10 +81,10 @@ public class TetrisScreen extends Screen {
     @Override
     protected void init() {
         //main play area frame
-        left_x = this.width / 2 - WIDTH / 2;
-        right_x = left_x + WIDTH;
-        top_y = this.height / 2 - HEIGHT / 2;
-        bottom_y = top_y + HEIGHT;
+        leftX = this.width / 2 - WIDTH / 2;
+        rightX = leftX + WIDTH;
+        topY = this.height / 2 - HEIGHT / 2;
+        bottomY = topY + HEIGHT;
 
         paused = true;
 
@@ -285,8 +287,8 @@ public class TetrisScreen extends Screen {
 
         //draw border
 
-        context.drawHorizontalLine(left_x - 1, right_x, top_y - 1 + Block.SIZE * 3, new Color(1, 0, 0, 0.3f).getRGB());
-        context.drawBorder(left_x - 1, top_y - 1, WIDTH + 2, HEIGHT + 2, Colors.WHITE);
+        context.drawHorizontalLine(leftX - 1, rightX, topY - 1 + Block.SIZE * 3, new Color(1, 0, 0, 0.3f).getRGB());
+        context.drawStrokedRectangle(leftX - 1, topY - 1, WIDTH + 2, HEIGHT + 2, Colors.WHITE);
 
         //draw moving mino
         if (currentMino!= null) {
@@ -297,19 +299,19 @@ public class TetrisScreen extends Screen {
 
 
         //draw next mino
-        context.drawBorder(right_x + Block.SIZE - 1, bottom_y - nextHEIGHT + 1, nextWIDTH + 2, nextHEIGHT, Colors.WHITE);
+        context.drawStrokedRectangle(rightX + Block.SIZE - 1, bottomY - nextHEIGHT + 1, nextWIDTH + 2, nextHEIGHT, Colors.WHITE);
         Text nextText = Text.translatable("minigame.tetris.next");
-        context.drawText(this.textRenderer, nextText, right_x + Block.SIZE * 2,
-                bottom_y - nextHEIGHT + Block.SIZE/2, Colors.WHITE, true);
+        context.drawText(this.textRenderer, nextText, rightX + Block.SIZE * 2,
+                bottomY - nextHEIGHT + Block.SIZE/2, Colors.WHITE, true);
         if (nextMino!= null) nextMino.draw(context);
 
         //draw score
         Text scoreText = Text.translatable("minigame.tetris.score").append(": " + score);
-        context.drawText(this.textRenderer, scoreText, right_x + Block.SIZE * 2,
-                top_y + Block.SIZE, Colors.WHITE, true);
+        context.drawText(this.textRenderer, scoreText, rightX + Block.SIZE * 2,
+                topY + Block.SIZE, Colors.WHITE, true);
         Text linesText = Text.translatable("minigame.tetris.lines").append(": " + linesCleared);
-        context.drawText(this.textRenderer, linesText, right_x + Block.SIZE * 2,
-                top_y + Block.SIZE + 10, Colors.WHITE, true);
+        context.drawText(this.textRenderer, linesText, rightX + Block.SIZE * 2,
+                topY + Block.SIZE + 10, Colors.WHITE, true);
 
         //draw static minos
         for (Block block : staticBlocks) {
@@ -326,7 +328,7 @@ public class TetrisScreen extends Screen {
 
         //draw explosions
         for (Animation a : animations) {
-            if (a.animation.equals("explosion")) a.draw(context, this.width/2 - a.width/2, top_y + a.y - a.height/2);
+            if (a.animation.equals("explosion")) a.draw(context, this.width/2 - a.width/2, topY + a.y - a.height/2);
             else a.draw(context);
             a.frame += 1f;
         }
@@ -351,7 +353,7 @@ public class TetrisScreen extends Screen {
         playButton.visible = !active;
         if (!active) {
             Color black = new Color(Colors.BLACK);
-            context.fill(left_x - 1, top_y - 1, left_x - 1 + WIDTH + 2, top_y -1 + HEIGHT + 2, new Color(black.getRed(), black.getGreen(), black.getBlue(), 0.75f).getRGB());
+            context.fill(leftX - 1, topY - 1, leftX - 1 + WIDTH + 2, topY -1 + HEIGHT + 2, new Color(black.getRed(), black.getGreen(), black.getBlue(), 0.75f).getRGB());
             super.render(context, mouseX, mouseY, delta);
             if (currentMino != null) {
                 Text finalScoreText = Text.translatable("minigame.tetris.score").append(": " + score).withColor(Colors.LIGHT_YELLOW);
@@ -373,17 +375,30 @@ public class TetrisScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(@NotNull KeyInput input) {
+        int keyCode = input.key();
         if (keyCode == 256 && this.shouldCloseOnEsc()) {
             this.close();
             return true;
         } else {
             switch (keyCode) {
-                case 262, 68: rightPressed = true; break;
-                case 263, 65: leftPressed = true; break;
-                case 264, 83: downPressed = true; break;
-                case 265, 87: upPressed = true; break;
-                case 32: spacePressed = true; break;
+                case 262, 68:
+                    rightPressed = true;
+                    break;
+                case 263, 65:
+                    leftPressed = true;
+                    break;
+                case 264, 83:
+                    downPressed = true;
+                    break;
+                case 265, 87:
+                    upPressed = true;
+                    break;
+                case 32:
+                    spacePressed = true;
+                    break;
+                default:
+                    return false;
             }
         }
 

@@ -3,6 +3,7 @@ package org.trivait.minigamesmod.minigame.minesweeper;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -155,12 +156,7 @@ public class MinesweeperScreen extends Screen {
         minesDisplay.setPosition(topBarX + 6, dispY);
         timerDisplay.setPosition(topBarX + topBarW - 6 - timerDisplay.getWidth(), dispY);
 
-        leaderboardButton = ButtonWidget.builder(Text.translatable("minigame.minesweeper.leaderboard.name").setStyle(Style.EMPTY.withBold(true).withColor(Formatting.YELLOW)), (b) -> {
-            client.setScreen(new SelectLeaderboardScreen(this));
-        }).dimensions(5, height-20-5, 100, 20).build();
-
         if (gameMode == GameMode.DEFAULT) {
-            this.addDrawableChild(leaderboardButton);
 
             this.addDrawableChild(new ConfigButton(60, 10, minigame));
         }
@@ -226,19 +222,21 @@ public class MinesweeperScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        int button = click.button();
+
         MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
-        if (board == null) return super.mouseClicked(mouseX, mouseY, button);
+        if (board == null) return super.mouseClicked(click, doubled);
 
         if (!board.alive || board.won) {
             if (button == 0) { resetGame(); return true; }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(click, doubled);
         }
 
-        int gx = (int) Math.floor((mouseX - gridX) / (double) cellSize);
-        int gy = (int) Math.floor((mouseY - gridY) / (double) cellSize);
+        int gx = (int) Math.floor((click.x() - gridX) / (double) cellSize);
+        int gy = (int) Math.floor((click.y() - gridY) / (double) cellSize);
         if (gx < 0 || gx >= board.w || gy < 0 || gy >= board.h)
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(click, doubled);
 
         mc.getSoundManager().play(PositionedSoundInstance.master(
             SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(), 0.20f, (float) cfg.soundsVolume /100));
@@ -274,7 +272,7 @@ public class MinesweeperScreen extends Screen {
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override

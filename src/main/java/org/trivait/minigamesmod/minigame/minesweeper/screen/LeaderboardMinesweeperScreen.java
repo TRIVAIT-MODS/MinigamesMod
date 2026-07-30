@@ -32,7 +32,7 @@ public class LeaderboardMinesweeperScreen extends MinesweeperScreen {
         super(settings, lbMode, minigame, parent);
         this.lbMode = lbMode;
         this.category = category;
-        this.playerName = MinecraftClient.getInstance().getGameProfile().getName();
+        this.playerName = MinecraftClient.getInstance().getSession().getUsername();
         MinesweeperGame.setSavedGame(null);
     }
 

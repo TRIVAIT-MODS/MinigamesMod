@@ -3,6 +3,7 @@ package org.trivait.minigamesmod.minigame.minesweeper.screen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -95,12 +96,12 @@ public class ScoreLeaderboardScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 294) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.key() == 294) {
             refresh();
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     private void refresh() {
