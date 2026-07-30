@@ -219,6 +219,7 @@ public class TetrisScreen extends Screen {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("entity.pig.ambient")), 1.0F, vol()));
         isNewHighScore = score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore;
         active = false;
+        tetris.getLeaderboard().doPost(minecraft.getGameProfile().name(), score, true);
     }
 
     private boolean checkClear(int y) {

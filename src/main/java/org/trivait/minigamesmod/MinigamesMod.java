@@ -42,7 +42,7 @@ public class MinigamesMod implements ClientModInitializer {
 
         MinigamesButton btn = new MinigamesButton(0, 0);
 
-        IconButtons.addTitleScreenButton(btn, () -> CONFIG.mainMenuButtonPosition==MainMenuButtonPosition.ICON_BUTTON);
-        IconButtons.addPauseScreenButton(btn, () -> CONFIG.pauseMenuButtonPosition==PauseMenuButtonPosition.ICON_BUTTON);
+        IconButtons.addTitleScreenButton(btn, () -> CONFIG.mainMenuButtonPosition==MainMenuButtonPosition.ICON_BUTTON&&CONFIG.mainMenuButton);
+        IconButtons.addPauseScreenButton(btn, () -> CONFIG.pauseMenuButtonPosition==PauseMenuButtonPosition.ICON_BUTTON&&CONFIG.pauseMenuButton);
     }
 }

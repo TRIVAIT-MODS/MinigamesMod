@@ -53,7 +53,7 @@ public abstract class TitleScreenMixin extends Screen {
             );
         }
 
-        if (!cfg.mainMenuButtonPosition.equals(MainMenuButtonPosition.ICON_BUTTON)) {
+        if (!cfg.mainMenuButtonPosition.equals(MainMenuButtonPosition.ICON_BUTTON) && cfg.mainMenuButton) {
             this.addRenderableWidget(btn);
         }
     }
