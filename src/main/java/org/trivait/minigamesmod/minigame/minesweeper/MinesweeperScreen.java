@@ -86,18 +86,6 @@ public class MinesweeperScreen extends Screen {
         this.gameMode = gameMode;
         this.minigame = minigame;
         this.parent = parent;
-
-        if (gameMode == GameMode.DEFAULT) {
-            MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
-
-            GameSettings normalizedSettings = new GameSettings(cfg.gridWidth, cfg.gridHeight, cfg.mines);
-
-            if (board.w != normalizedSettings.width() || board.h != normalizedSettings.height() || board.mines != normalizedSettings.mines()) {
-
-                MinesweeperGame.setSavedGame(null);
-                mc.setScreen(((MinesweeperGame) MinigameRegistry.get("minesweeper")).createScreen(parent, GameMode.DEFAULT));
-            }
-        }
     }
 
     @Override
@@ -172,7 +160,7 @@ public class MinesweeperScreen extends Screen {
     protected void resetGame() {
         MinesweeperGame.setSavedGame(null);
         explosions.clear();
-        board = new GameBoard(newGameSettings != null ? newGameSettings : defaultSettings());
+        board = new GameBoard(new GameSettings(MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridWidth, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridHeight, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).mines));
         board.setSoundCallback(makeSoundCallback());
         this.init();
     }
