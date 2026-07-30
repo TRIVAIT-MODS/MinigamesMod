@@ -153,13 +153,7 @@ public class MinesweeperScreen extends Screen {
         minesDisplay.setPosition(topBarX + 6, dispY);
         timerDisplay.setPosition(topBarX + topBarW - 6 - timerDisplay.getWidth(), dispY);
 
-        leaderboardButton = ButtonWidget.builder(Text.translatable("minigame.minesweeper.leaderboard.name").setStyle(Style.EMPTY.withBold(true).withColor(Formatting.YELLOW)), (b) -> {
-            client.setScreen(new SelectLeaderboardScreen(this));
-        }).dimensions(5, height-20-5, 100, 20).build();
-
         if (gameMode == GameMode.DEFAULT) {
-            this.addDrawableChild(leaderboardButton);
-
             this.addDrawableChild(new ConfigButton(60, 10, minigame));
         }
     }
@@ -172,7 +166,7 @@ public class MinesweeperScreen extends Screen {
     protected void resetGame() {
         MinesweeperGame.setSavedGame(null);
         explosions.clear();
-        board = new GameBoard(newGameSettings != null ? newGameSettings : defaultSettings());
+        board = new GameBoard(new GameSettings(MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridWidth, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridHeight, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).mines));
         board.setSoundCallback(makeSoundCallback());
         this.init();
     }

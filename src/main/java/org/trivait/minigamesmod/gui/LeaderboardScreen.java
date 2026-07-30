@@ -26,7 +26,7 @@ public class LeaderboardScreen extends Screen {
         int heightWidget = Math.max(height - 40 * 2, 210);
 
         this.addDrawableChild(new LeaderboardWidget(width/2-widthWidget/2, height/2-heightWidget/2, widthWidget, heightWidget, leaderboard));
-        this.addDrawableChild(new LeaderboardInfoWidget(width-5-20, 5, leaderboard));
+        this.addDrawableChild(new LeaderboardInfoWidget(width-8-20, 5, leaderboard));
     }
 
     @Override
