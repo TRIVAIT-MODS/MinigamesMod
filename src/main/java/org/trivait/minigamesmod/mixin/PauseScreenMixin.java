@@ -36,7 +36,8 @@ public abstract class PauseScreenMixin extends Screen {
                 break;
             }
         }
-
-        this.addRenderableWidget(btn);
+        if (cfg.pauseMenuButton) {
+            this.addRenderableWidget(btn);
+        }
     }
 }
