@@ -113,7 +113,7 @@ public abstract class Mino {
         b[2].y = tempB[2].y;
         b[3].x = tempB[3].x;
         b[3].y = tempB[3].y;
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(BUTTON_CLICK, 2.0F, vol()));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(BUTTON_CLICK, 2.0F, vol()));
     }
 
     public void getDirection1() {
@@ -235,7 +235,7 @@ public abstract class Mino {
                     }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(BUTTON_CLICK, 2.0F, vol()));
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(BUTTON_CLICK, 2.0F, vol()));
                     for (Block block : b) {
                         block.x -= Block.SIZE;
                     }
@@ -260,7 +260,7 @@ public abstract class Mino {
                     }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(BUTTON_CLICK, 2.0F, vol()));
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(BUTTON_CLICK, 2.0F, vol()));
                     for (Block block : b) {
                         block.x += Block.SIZE;
                     }
@@ -299,7 +299,7 @@ public abstract class Mino {
                     }
                 }
                 if (proceed) {
-                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(BUTTON_CLICK, 2.0F, vol()));
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(BUTTON_CLICK, 2.0F, vol()));
                     for (Block block : b) {
                         block.y += Block.SIZE;
                     }
@@ -310,7 +310,7 @@ public abstract class Mino {
             TetrisScreen.downPressed = false;
         }
         if (TetrisScreen.spacePressed && TetrisScreen.hardDrop > 0) {
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("entity.wind_charge.wind_burst")), 1.0F, vol() / 2));
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("entity.wind_charge.wind_burst")), 1.0F, vol() / 2));
             int drop = getDropOffset();
             TetrisScreen.animations.add(new HardDropAnimation(b[0].x, b[0].y, 27, drop, 10));
             b[0].y += drop;

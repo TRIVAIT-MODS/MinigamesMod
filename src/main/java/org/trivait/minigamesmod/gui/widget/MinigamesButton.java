@@ -17,7 +17,7 @@ public class MinigamesButton extends TextIconButtonWidget.IconOnly {
     private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/button_hover");
 
     public MinigamesButton(int x, int y) {
-        super(20, 20, Text.empty(), 16, 16, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.text.Text.empty(), 16, 16, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             MinecraftClient client = MinecraftClient.getInstance();
             client.setScreen(new MinigameListScreen(client.currentScreen));
         }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);

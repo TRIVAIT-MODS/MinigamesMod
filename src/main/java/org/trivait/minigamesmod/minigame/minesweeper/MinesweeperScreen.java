@@ -179,11 +179,11 @@ public class MinesweeperScreen extends Screen {
         return new GameBoard.SoundCallback() {
             MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
             public void onReveal() {
-                mc.getSoundManager().play(PositionedSoundInstance.master(
+                mc.getSoundManager().play(PositionedSoundInstance.ui(
                     SoundEvents.BLOCK_DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
             }
             public void onExplode(int cellX, int cellY) {
-                mc.getSoundManager().play(PositionedSoundInstance.master(
+                mc.getSoundManager().play(PositionedSoundInstance.ui(
                     SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 0.7f, (float) cfg.soundsVolume /100));
                 if (cfg.enableExplosionAnimation) {
                     int cx = gridX + cellX * cellSize + cellSize / 2;
@@ -192,7 +192,7 @@ public class MinesweeperScreen extends Screen {
                 }
             }
             public void onWin() {
-                mc.getSoundManager().play(PositionedSoundInstance.master(
+                mc.getSoundManager().play(PositionedSoundInstance.ui(
                     SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST, 0.8f, (float) cfg.soundsVolume /100));
             }
         };
@@ -238,7 +238,7 @@ public class MinesweeperScreen extends Screen {
         if (gx < 0 || gx >= board.w || gy < 0 || gy >= board.h)
             return super.mouseClicked(click, doubled);
 
-        mc.getSoundManager().play(PositionedSoundInstance.master(
+        mc.getSoundManager().play(PositionedSoundInstance.ui(
             SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(), 0.20f, (float) cfg.soundsVolume /100));
 
         Cell c = board.grid[gy][gx];
@@ -264,7 +264,7 @@ public class MinesweeperScreen extends Screen {
                 board.elapsedSeconds = 0;
             }
             if (!cfg.enableAnimations) {
-                mc.getSoundManager().play(PositionedSoundInstance.master(
+                mc.getSoundManager().play(PositionedSoundInstance.ui(
                     SoundEvents.BLOCK_DEEPSLATE_BREAK, 0.25f, (float) cfg.soundsVolume /100));
             }
             board.startRevealWave(gx, gy, cfg.enableAnimations);

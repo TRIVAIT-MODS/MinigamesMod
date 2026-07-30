@@ -21,11 +21,11 @@ public class ConfigButton extends TextIconButtonWidget.IconOnly {
     private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/config_hover");
 
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
-        super(20, 20, Text.empty(), 20, 20, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.text.Text.empty(), 20, 20, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             MinecraftClient client = MinecraftClient.getInstance();
             client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.currentScreen));
         }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
-        this.setTooltip(Tooltip.of(Text.translatable("minigame.config.btn")));
+        this.setTooltip(Tooltip.of(net.minecraft.text.Text.translatable("minigame.config.btn")));
         this.setX(x);
         this.setY(y);
     }

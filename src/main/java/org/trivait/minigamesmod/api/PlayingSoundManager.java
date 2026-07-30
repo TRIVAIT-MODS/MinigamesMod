@@ -6,10 +6,10 @@ import net.minecraft.sound.SoundEvent;
 
 public class PlayingSoundManager {
     public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(soundEvent, pitch, volume));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(soundEvent, pitch, volume));
     }
     public static void playSound(SoundEvent soundEvent) {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(soundEvent, 1, 1));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(soundEvent, 1, 1));
     }
 
     public static float vol(int volumeConfig) {

@@ -147,7 +147,7 @@ public class TetrisScreen extends Screen {
             reset();
         }
         if (!currentMino.active) {
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.stone.place")), 1.5F, vol()));
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("block.stone.place")), 1.5F, vol()));
             score += 10;
 
             staticBlocks.add(currentMino.b[0]);
@@ -176,7 +176,7 @@ public class TetrisScreen extends Screen {
                 case 2: score += 300; break;
                 case 3: score += 500; break;
                 case 4: score += 800;
-                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("entity.generic.explode")), 0.8F, vol()));
+                    MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("entity.generic.explode")), 0.8F, vol()));
                     animations.add(new Animation(this.width/2 - width/2, currentMino.b[2].y, width, height, "explosion", 20));
                     onScreenText = Text.translatable("minigame.tetris.tetris");
                     onScreenTextColour = 11141290;
@@ -218,7 +218,7 @@ public class TetrisScreen extends Screen {
     }
 
     private void gameOver() {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("entity.pig.ambient")), 1.0F, vol()));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("entity.pig.ambient")), 1.0F, vol()));
         isNewHighScore = score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore;
         active = false;
     }
@@ -231,7 +231,7 @@ public class TetrisScreen extends Screen {
         if (count < gridX) {
             return false;
         }
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.deepslate.break")), 1.0F, vol()));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(SoundEvent.of(Identifier.ofVanilla("block.deepslate.break")), 1.0F, vol()));
         linesCleared++;
         for (Block block : staticBlocks) {
             if (block.y == y) {
