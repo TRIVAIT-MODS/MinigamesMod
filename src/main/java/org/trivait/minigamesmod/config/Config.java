@@ -9,8 +9,8 @@ import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
 public class Config implements ConfigData {
 
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public MainMenuButtonPosition mainMenuButtonPosition = MainMenuButtonPosition.RIGHT_MULTIPLAYER;
+    public MainMenuButtonPosition mainMenuButtonPosition = MainMenuButtonPosition.ICON_BUTTON;
 
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public PauseMenuButtonPosition pauseMenuButtonPosition = PauseMenuButtonPosition.RIGHT_NEXT_ROW;
+    public PauseMenuButtonPosition pauseMenuButtonPosition = PauseMenuButtonPosition.ICON_BUTTON;
 }

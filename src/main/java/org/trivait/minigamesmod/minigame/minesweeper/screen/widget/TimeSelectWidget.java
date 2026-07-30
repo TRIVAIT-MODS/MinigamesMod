@@ -69,7 +69,7 @@ public class TimeSelectWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        Minecraft.getInstance().setScreen(new TimeLeaderboardScreen(this.parent));
+        Minecraft.getInstance().gui.setScreen(new TimeLeaderboardScreen(this.parent));
 
         return super.mouseClicked(click, doubled);
     }

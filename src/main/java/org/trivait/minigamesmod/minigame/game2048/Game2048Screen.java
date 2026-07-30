@@ -440,7 +440,7 @@ public class Game2048Screen extends Screen {
     @Override
     public void onClose() {
         minigame.onStop();
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 
     @Override

@@ -7,12 +7,11 @@ public enum PauseMenuButtonPosition {
     LEFT_NEXT_ROW(ButtonSide.LEFT, PauseRowOffset.NEXT, Component.translatable("config.minigames.pause_menu_button_position.left_next_row")),
     LEFT_2_ROWS_DOWN(ButtonSide.LEFT, PauseRowOffset.TWO_DOWN, Component.translatable("config.minigames.pause_menu_button_position.left_2_rows_down")),
     LEFT_3_ROWS_DOWN(ButtonSide.LEFT, PauseRowOffset.THREE_DOWN, Component.translatable("config.minigames.pause_menu_button_position.left_3_rows_down")),
-    LEFT_4_ROWS_DOWN(ButtonSide.LEFT, PauseRowOffset.FOUR_DOWN, Component.translatable("config.minigames.pause_menu_button_position.left_4_rows_down")),
     RIGHT_SAME_ROW(ButtonSide.RIGHT, PauseRowOffset.SAME, Component.translatable("config.minigames.pause_menu_button_position.right_same_row")),
     RIGHT_NEXT_ROW(ButtonSide.RIGHT, PauseRowOffset.NEXT, Component.translatable("config.minigames.pause_menu_button_position.right_next_row")),
     RIGHT_2_ROWS_DOWN(ButtonSide.RIGHT, PauseRowOffset.TWO_DOWN, Component.translatable("config.minigames.pause_menu_button_position.right_2_rows_down")),
     RIGHT_3_ROWS_DOWN(ButtonSide.RIGHT, PauseRowOffset.THREE_DOWN, Component.translatable("config.minigames.pause_menu_button_position.right_3_rows_down")),
-    RIGHT_4_ROWS_DOWN(ButtonSide.RIGHT, PauseRowOffset.FOUR_DOWN, Component.translatable("config.minigames.pause_menu_button_position.right_4_rows_down"));
+    ICON_BUTTON(ButtonSide.RIGHT, PauseRowOffset.THREE_DOWN, Component.translatable("config.minigames.pause_menu_button_position.icon_button"));
 
     private final ButtonSide side;
     private final PauseRowOffset rowOffset;

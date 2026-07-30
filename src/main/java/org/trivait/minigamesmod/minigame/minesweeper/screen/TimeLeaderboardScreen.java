@@ -79,7 +79,7 @@ public class TimeLeaderboardScreen extends Screen {
         this.addRenderableWidget(c26x18Button);
 
         this.playButton = Button.builder(Component.translatable("minigame.minesweeper.leaderboard.play").setStyle(Style.EMPTY.withBold(true)), button -> {
-            minecraft.setScreen(new LeaderboardMinesweeperScreen(
+            minecraft.gui.setScreen(new LeaderboardMinesweeperScreen(
                     boardCategory.toGameSettings(),
                     GameMode.LEADERBOARD_TIME,
                     ((MinesweeperGame) MinigameRegistry.get("minesweeper")),
@@ -111,6 +111,6 @@ public class TimeLeaderboardScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 }

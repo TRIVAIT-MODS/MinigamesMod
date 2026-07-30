@@ -32,6 +32,6 @@ public class LeaderboardScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        Minecraft.getInstance().setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
     }
 }

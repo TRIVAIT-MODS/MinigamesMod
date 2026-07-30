@@ -5,8 +5,12 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.trivait.iba.api.IconButtons;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.config.Config;
+import org.trivait.minigamesmod.config.util.MainMenuButtonPosition;
+import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
+import org.trivait.minigamesmod.gui.widget.MinigamesButton;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
 import org.trivait.minigamesmod.minigame.game2048.Game2048;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
@@ -35,5 +39,10 @@ public class MinigamesMod implements ClientModInitializer {
         MinigameRegistry.register(new Snake());
         MinigameRegistry.register(new MinesweeperGame());
         MinigameRegistry.register(new Sudoku());
+
+        MinigamesButton btn = new MinigamesButton(0, 0);
+
+        IconButtons.addTitleScreenButton(btn, () -> CONFIG.mainMenuButtonPosition==MainMenuButtonPosition.ICON_BUTTON);
+        IconButtons.addPauseScreenButton(btn, () -> CONFIG.pauseMenuButtonPosition==PauseMenuButtonPosition.ICON_BUTTON);
     }
 }

@@ -36,7 +36,8 @@ public abstract class PauseScreenMixin extends Screen {
                 break;
             }
         }
-
-        this.addRenderableWidget(btn);
+        if (cfg.pauseMenuButtonPosition!=PauseMenuButtonPosition.ICON_BUTTON) {
+            this.addRenderableWidget(btn);
+        }
     }
 }

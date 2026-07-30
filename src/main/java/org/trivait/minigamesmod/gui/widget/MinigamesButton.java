@@ -15,10 +15,10 @@ public class MinigamesButton extends SpriteIconButton.CenteredIcon {
     private static final Identifier HOVER_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button_hover");
 
     public MinigamesButton(int x, int y) {
-        super(20, 20, net.minecraft.network.chat.Component.empty(), 16, 16, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.network.chat.Component.empty(), 16, 16, 0, 0, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             Minecraft client = Minecraft.getInstance();
-            client.setScreen(new MinigameListScreen(client.screen));
-        }, null, Button.DEFAULT_NARRATION);
+            client.gui.setScreen(new MinigameListScreen(client.gui.screen()));
+        }, null, Button.DEFAULT_NARRATION, false);
         this.setX(x);
         this.setY(y);
     }

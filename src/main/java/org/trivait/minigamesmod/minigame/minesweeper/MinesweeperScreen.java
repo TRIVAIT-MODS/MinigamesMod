@@ -92,7 +92,7 @@ public class MinesweeperScreen extends Screen {
             if (board.w != normalizedSettings.width() || board.h != normalizedSettings.height() || board.mines != normalizedSettings.mines()) {
 
                 MinesweeperGame.setSavedGame(null);
-                mc.setScreen(((MinesweeperGame) MinigameRegistry.get("minesweeper")).createScreen(parent, GameMode.DEFAULT));
+                mc.gui.setScreen(((MinesweeperGame) MinigameRegistry.get("minesweeper")).createScreen(parent, GameMode.DEFAULT));
             }
         }
     }
@@ -196,7 +196,7 @@ public class MinesweeperScreen extends Screen {
     public void onClose() {
         if (board != null) MinesweeperGame.setSavedGame(board.toSavedGame());
         super.onClose();
-        if (parent!=null) mc.setScreen(parent);
+        if (parent!=null) mc.gui.setScreen(parent);
     }
 
     @Override

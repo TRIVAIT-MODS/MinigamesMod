@@ -312,6 +312,6 @@ public class GoogleDinoScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        Minecraft.getInstance().setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
     }
 }

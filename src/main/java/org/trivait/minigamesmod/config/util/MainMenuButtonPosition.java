@@ -6,11 +6,12 @@ public enum MainMenuButtonPosition {
     LEFT_SINGLEPLAYER(ButtonSide.LEFT, ButtonRow.SINGLEPLAYER, Component.translatable("config.minigames.main_menu_button_position.left_singleplayer")),
     LEFT_MULTIPLAYER(ButtonSide.LEFT, ButtonRow.MULTIPLAYER, Component.translatable("config.minigames.main_menu_button_position.left_multiplayer")),
     LEFT_REALMS(ButtonSide.LEFT, ButtonRow.REALMS, Component.translatable("config.minigames.main_menu_button_position.left_realms")),
-    LEFT_MODS(ButtonSide.LEFT, ButtonRow.MODS, Component.translatable("config.minigames.main_menu_button_position.left_mods")),
+    LEFT_MODS(ButtonSide.LEFT, ButtonRow.SETTINGS, Component.translatable("config.minigames.main_menu_button_position.left_mods")),
     RIGHT_SINGLEPLAYER(ButtonSide.RIGHT, ButtonRow.SINGLEPLAYER, Component.translatable("config.minigames.main_menu_button_position.right_singleplayer")),
     RIGHT_MULTIPLAYER(ButtonSide.RIGHT, ButtonRow.MULTIPLAYER, Component.translatable("config.minigames.main_menu_button_position.right_multiplayer")),
     RIGHT_REALMS(ButtonSide.RIGHT, ButtonRow.REALMS, Component.translatable("config.minigames.main_menu_button_position.right_realms")),
-    RIGHT_MODS(ButtonSide.RIGHT, ButtonRow.MODS, Component.translatable("config.minigames.main_menu_button_position.right_mods"));
+    RIGHT_MODS(ButtonSide.RIGHT, ButtonRow.SETTINGS, Component.translatable("config.minigames.main_menu_button_position.right_mods")),
+    ICON_BUTTON(ButtonSide.RIGHT, ButtonRow.SETTINGS, Component.translatable("config.minigames.main_menu_button_position.icon_button"));
 
     private final ButtonSide side;
     private final ButtonRow row;

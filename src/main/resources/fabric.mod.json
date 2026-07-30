@@ -29,11 +29,12 @@
 	"accessWidener": "minigamesmod.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.19.2",
-		"minecraft": "~26.1",
+		"minecraft": "~26.2",
 		"java": ">=21",
 		"fabric-api": "*",
 		"cloth-config2": "*",
-		"modmenu": "*"
+		"modmenu": "*",
+		"iconbuttonsapi": "*"
 	},
 	"suggests": {
 		"smoothscroll": "*"

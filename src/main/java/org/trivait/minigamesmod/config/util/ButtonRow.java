@@ -4,7 +4,7 @@ public enum ButtonRow {
     SINGLEPLAYER(24),
     MULTIPLAYER(48),
     REALMS(72),
-    MODS(96);
+    SETTINGS(120);
 
     private final int yOffset;
 

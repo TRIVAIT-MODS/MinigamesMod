@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
@@ -19,10 +19,11 @@ public class ConfigButton extends SpriteIconButton.CenteredIcon {
     private static final Identifier HOVER_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/config_hover");
 
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
-        super(20, 20, net.minecraft.network.chat.Component.empty(), 20, 20, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.network.chat.Component.empty(), 20, 20, 0, 0, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             Minecraft client = Minecraft.getInstance();
-            client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.screen));
-        }, null, Button.DEFAULT_NARRATION);
+            client.gui.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.gui.screen()));
+        }, null, Button.DEFAULT_NARRATION, false);
+
         this.setTooltip(Tooltip.create(net.minecraft.network.chat.Component.translatable("minigame.config.btn")));
         this.setX(x);
         this.setY(y);

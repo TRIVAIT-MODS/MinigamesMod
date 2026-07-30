@@ -69,7 +69,7 @@ public class ScoreSelectWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        Minecraft.getInstance().setScreen(new ScoreLeaderboardScreen(parent));
+        Minecraft.getInstance().gui.setScreen(new ScoreLeaderboardScreen(parent));
         return super.mouseClicked(click, doubled);
     }
 

@@ -53,7 +53,7 @@ public class MinigameListScreen extends Screen {
             int cx = centerX + (i - selectedIndex) * (CARD_WIDTH + CARD_SPACING) - CARD_WIDTH / 2;
             MinigameCardWidget card = new MinigameCardWidget(cx, cardY, CARD_WIDTH, CARD_HEIGHT, mg, () -> {
                 mg.onStart();
-                this.minecraft.setScreen(mg.createScreen(this));
+                this.minecraft.gui.setScreen(mg.createScreen(this));
             });
             cards.add(card);
             this.addRenderableWidget(card);
@@ -82,9 +82,9 @@ public class MinigameListScreen extends Screen {
                     Leaderboard leaderboard = all.get(selectedIndex).getLeaderboard();
                     b.active=leaderboard!=null;
                     if (leaderboard!=null) {
-                        Minecraft.getInstance().setScreen(new LeaderboardScreen(leaderboard, this));
+                        Minecraft.getInstance().gui.setScreen(new LeaderboardScreen(leaderboard, this));
                     } else if (all.get(selectedIndex).getId().equals("minesweeper")) {
-                        Minecraft.getInstance().setScreen(new SelectLeaderboardScreen(this));
+                        Minecraft.getInstance().gui.setScreen(new SelectLeaderboardScreen(this));
                     }
                 }
         ).bounds(width/2-35, height/2+70, 70, 20).build();
@@ -188,6 +188,6 @@ public class MinigameListScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 }

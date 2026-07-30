@@ -16,7 +16,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 import org.jetbrains.annotations.Contract;
@@ -25,6 +24,7 @@ import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.minigame.tetris.HardDropAnimation;
 import org.trivait.minigamesmod.minigame.tetris.TetrisScreen;
 import org.trivait.minigamesmod.minigame.tetris.TetrisVisibleConfig;
+import oshi.util.tuples.Pair;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public abstract class Mino {
             default -> {
             }
         }
-        Tuple<Identifier, MutableComponent> randomBlock = getRandomBlockTexture();
+        Pair<Identifier, MutableComponent> randomBlock = getRandomBlockTexture();
         create(randomBlock.getA(), randomBlock.getB());
         //SpriteContents sprite = getRandomBlockTexture();
         //create(Identifier.of(sprite.getId().getNamespace().split(":")[0],"textures/" + sprite.getId().getPath() + ".png"), sprite.getWidth(), sprite.getHeight());
@@ -191,7 +191,7 @@ public abstract class Mino {
         }
     }
 
-    protected Tuple<Identifier, MutableComponent> getRandomBlockTexture() {
+    protected Pair<Identifier, MutableComponent> getRandomBlockTexture() {
         Minecraft client = Minecraft.getInstance();
 
         List<net.minecraft.world.level.block.Block> blocks = new ArrayList<>(BuiltInRegistries.BLOCK.stream().toList());
@@ -241,11 +241,11 @@ public abstract class Mino {
             if (!sprite.isTransparent(0, 15, 15)) corners++;
 
             if (corners >= 3) {
-                return new Tuple<>(sprite.name(), block.getName());
+                return new Pair<>(sprite.name(), block.getName());
             }
         }
 
-        return new Tuple<>(
+        return new Pair<>(
                 Identifier.withDefaultNamespace("block/iron_block"),
                 Blocks.IRON_BLOCK.getName()
         );

@@ -9,11 +9,12 @@
   "config.minigames.main_menu_button_position.left_singleplayer": "Left: Singleplayer",
   "config.minigames.main_menu_button_position.left_multiplayer": "Left: Multiplayer",
   "config.minigames.main_menu_button_position.left_realms": "Left: Realms",
-  "config.minigames.main_menu_button_position.left_mods": "Left: Mods",
+  "config.minigames.main_menu_button_position.left_mods": "Left: Settings",
   "config.minigames.main_menu_button_position.right_singleplayer": "Right: Singleplayer",
   "config.minigames.main_menu_button_position.right_multiplayer": "Right: Multiplayer",
   "config.minigames.main_menu_button_position.right_realms": "Right: Realms",
-  "config.minigames.main_menu_button_position.right_mods": "Right: Mods",
+  "config.minigames.main_menu_button_position.right_mods": "Right: Exit the game",
+  "config.minigames.main_menu_button_position.icon_button": "Icon button row",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Left: Row 1",
   "config.minigames.pause_menu_button_position.left_next_row": "Left: Row 2",
@@ -25,6 +26,7 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Right: Row 3",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Right: Row 4",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Right: Row 5",
+  "config.minigames.pause_menu_button_position.icon_button": "Icon button row",
 
   "text.autoconfig.minigames/2048_ui.title": "2048 Settings",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Grid size",

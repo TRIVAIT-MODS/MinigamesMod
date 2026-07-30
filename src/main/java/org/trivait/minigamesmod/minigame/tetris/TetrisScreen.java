@@ -88,7 +88,7 @@ public class TetrisScreen extends Screen {
 
         hardDrop = MinigameRegistry.getConfig(TetrisVisibleConfig.class).hardDrop.mode;
 
-        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.minecraft.setScreen(this.parent), true)
+        Button returnButton = SpriteIconButton.builder(Component.empty(), button -> this.minecraft.gui.setScreen(this.parent), true)
                 .sprite(Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
         returnButton.setTooltip(Tooltip.create(Component.translatable("minigame.tetris.return")));
         returnButton.setRectangle(20, 20, 10, 10);
