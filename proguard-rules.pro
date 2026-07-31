@@ -4,6 +4,15 @@
 -dontoptimize
 -dontshrink
 
--keep class !org.trivait.minigamesmod.leaderboard.** { *; }
+-keepattributes Signature,InnerClasses,EnclosingMethod,*Annotation*
 
--keepattributes Signature, InnerClasses, EnclosingMethod, Annotation
+-keep class !org.trivait.minigamesmod.leaderboard.** { *; }
+-keepclassmembers class !org.trivait.minigamesmod.leaderboard.** { *; }
+
+-keepclasseswithmembers class * {
+    public static void main(java.lang.String[]);
+}
+
+-useuniqueclassmembernames
+-overloadaggressively
+-allowaccessmodification
