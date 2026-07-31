@@ -84,7 +84,7 @@ public class Dino {
         if (state == DinoState.CROUCH) {
             return new Vector4d(x + 4, (int) y - HEIGHT_CROUCH + 2, x + WIDTH_CROUCH - 4, (int) y - 2);
         } else {
-            return new Vector4d(x + 5, (int) y - HEIGHT + 3, x + WIDTH - 5, (int) y - 2);
+            return new Vector4d(x + 10, (int) y - HEIGHT + 3, x + WIDTH-2, (int) y - 2);
         }
     }
 
