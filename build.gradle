@@ -1,3 +1,12 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.guardsquare:proguard-gradle:7.9.1'
+	}
+}
+
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
@@ -46,6 +55,22 @@ processResources {
 		expand "version": version
 	}
 }
+
+task obfuscateMod(type: proguard.gradle.ProGuardTask) {
+	configuration 'proguard-rules.pro'
+
+	injars jar.archiveFile
+
+	outjars "build/libs/${project.name}-${version}-obf.jar"
+
+	if (System.getProperty('java.home') != null) {
+		libraryjars "${System.getProperty('java.home')}/jmods"
+	}
+
+	dependsOn jar
+}
+
+build.dependsOn obfuscateMod
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 25
