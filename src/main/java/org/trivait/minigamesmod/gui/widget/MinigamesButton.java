@@ -1,9 +1,11 @@
 package org.trivait.minigamesmod.gui.widget;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -21,6 +23,13 @@ public class MinigamesButton extends SpriteIconButton.CenteredIcon {
         }, null, Button.DEFAULT_NARRATION);
         this.setX(x);
         this.setY(y);
+    }
+
+    @Override
+    protected void extractSprite(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        Identifier currentTexture = this.isHovered ? HOVER_TEXTURE : DEFAULT_TEXTURE;
+
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, currentTexture, x, y, this.spriteWidth, this.spriteHeight, this.alpha);
     }
 
     /*@Override
