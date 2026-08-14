@@ -36,8 +36,7 @@ public abstract class GameMenuScreenMixin extends Screen {
                 break;
             }
         }
-        if (cfg.pauseMenuButton) {
-            this.addDrawableChild(btn);
-        }
+
+        this.addDrawableChild(btn);
     }
 }

@@ -24,11 +24,9 @@ public abstract class TitleScreenMixin extends Screen {
         if (cfg.mainMenuButtonPosition == null) {
             cfg.mainMenuButtonPosition = MainMenuButtonPosition.RIGHT_MULTIPLAYER;
         }
-        if (cfg.mainMenuButton) {
-            this.addDrawableChild(new MinigamesButton(
-                    cfg.mainMenuButtonPosition.getX(this.width),
-                    cfg.mainMenuButtonPosition.getY(this.height)
-            ));
-        }
+        this.addDrawableChild(new MinigamesButton(
+                cfg.mainMenuButtonPosition.getX(this.width),
+                cfg.mainMenuButtonPosition.getY(this.height)
+        ));
     }
 }
