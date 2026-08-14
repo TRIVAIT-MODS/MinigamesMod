@@ -7,6 +7,8 @@ import org.trivait.minigamesmod.minigame.bubbleshooter.background.Backgrounds;
 
 @Config(name = "minigames/bubble_shooter_ui")
 public class BubbleShooterVisibleConfig implements ConfigData {
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int volume = 100;
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public Backgrounds background = Backgrounds.SPACE;
     @ConfigEntry.ColorPicker(allowAlpha = true)
