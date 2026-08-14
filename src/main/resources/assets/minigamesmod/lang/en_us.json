@@ -1,6 +1,8 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.mainMenuButton": "Title screen button",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Title screen button position",
+  "text.autoconfig.minigames.option.pauseMenuButton": "Game menu button",
   "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Game menu button position",
 
   "config.minigames.category.general": "General",
@@ -53,6 +55,10 @@
   "text.autoconfig.minigames/sudoku_ui.option.volume": "Volume",
   "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Difficulty",
 
+  "text.autoconfig.minigames/bubble_shooter.option.background": "Background",
+  "text.autoconfig.minigames/bubble_shooter.option.startColor": "Start color (0nly for custom gradient mode)",
+  "text.autoconfig.minigames/bubble_shooter.option.endColor": "End color (0nly for custom gradient mode)",
+
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
   "minigame.tetris.mode.outline": "Outline",
@@ -96,7 +102,12 @@
   "minigame.sudoku.win": "Win!",
   "minigame.sudoku.condition.first": "Medium difficulty",
 
-  "minigame.bubble_shooter": "Bubble shooter",
+  "minigame.bubbleshooter.title": "Bubble Shooter",
+  "minigame.bubbleshooter.background.filled": "Filled",
+  "minigame.bubbleshooter.background.filled_gradient": "Filled (gradient)",
+  "minigame.bubbleshooter.background.space": "Space",
+  "minigame.bubbleshooter.background.custom_gradient": "Custom gradient",
+  "minigame.bubbleshooter.background.gif": "Custom gif (put your gif on gamedir/config/minigames/bubbleshooter.gif)",
 
   "minigame.tetris.title": "Tetris",
   "minigame.tetris.start": "Start game",

@@ -10,13 +10,15 @@ public class Leaderboard {
     private String gameName;
     @Nullable
     private List<Text> conditions;
+    private boolean rewrite;
 
-    public Leaderboard(String gameName, @Nullable List<Text> conditions) {
+    public Leaderboard(String gameName, @Nullable List<Text> conditions, boolean rewrite) {
         this.gameName = gameName;
         this.conditions = conditions;
+        this.rewrite = rewrite;
     }
 
-    public void doPost(String name, int value, boolean rewrite) {
+    public void doPost(String name, int value) {
         SheetsApi.submitAsync(gameName, name, value, rewrite);
     }
 

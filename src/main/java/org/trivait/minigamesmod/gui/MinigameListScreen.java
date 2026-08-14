@@ -26,7 +26,7 @@ public class MinigameListScreen extends Screen {
     private static final float ANIM_SPEED = 0.15f;
 
     private final @Nullable Screen parent;
-    private int selectedIndex = 3;
+    private int selectedIndex = MinigameRegistry.getAll().size()/2;
     private float animOffset = 0f;
     private final List<MinigameCardWidget> cards = new ArrayList<>();
     private final List<ArrowButtonWidget> arrows = new ArrayList<>();

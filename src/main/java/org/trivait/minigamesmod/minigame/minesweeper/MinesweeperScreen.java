@@ -64,8 +64,6 @@ public class MinesweeperScreen extends Screen {
 
     public final GameMode gameMode;
 
-    private ButtonWidget leaderboardButton;
-
     private MinesweeperGame minigame;
     private Screen parent;
 

@@ -27,7 +27,7 @@ public class Sudoku extends AbstractMinigame {
     public @Nullable Leaderboard getLeaderboard() {
         return new Leaderboard("Sudoku", List.of(
                 Text.translatable("minigame.sudoku.condition.first")
-        ));
+        ), false);
     }
 
     @Override

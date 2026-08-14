@@ -224,7 +224,7 @@ public class TetrisScreen extends Screen {
         active = false;
         minigame.onLose();
         if (score!=0) {
-            minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score, true);
+            minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
         }
     }
 
