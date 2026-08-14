@@ -250,7 +250,7 @@ public class GoogleDinoScreen extends Screen {
 
         GameObject newObject;
         int choice = random.nextInt(100);
-        if (choice < 36 && score > 200) {
+        if (choice < 36 && score > 30) {
             int flyY = baseY - random.nextInt(26, 62);
             newObject = new Pterodactyl(spawnX, flyY);
         } else if (choice < 62) {
@@ -281,7 +281,7 @@ public class GoogleDinoScreen extends Screen {
         for (GameObject object : objects) {
             if (!object.isCollidable()) continue;
             Vector4d other = object.getBox();
-            if (dinoBox.x+15 < other.z && dinoBox.z+10 > other.x && dinoBox.y < other.w && dinoBox.w > other.y) {
+            if (dinoBox.x < other.z && dinoBox.z > other.x && dinoBox.y < other.w && dinoBox.w > other.y) {
                 GoogleDinoConfig config = MinigameRegistry.getConfig(GoogleDinoConfig.class);
                 if (score > config.score) {
                     config.score = score;
