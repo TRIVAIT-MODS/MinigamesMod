@@ -88,7 +88,7 @@ public class SudokuScreen extends Screen {
         }
         won = true;
         if (MinigameRegistry.getConfig(SudokuVisibleConfig.class).difficulty == Difficulty.MEDIUM) {
-            minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), 1, false);
+            minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), 1);
         }
         PlayingSoundManager.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, vol());
     }

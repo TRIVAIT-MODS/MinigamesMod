@@ -12,6 +12,7 @@ import org.trivait.minigamesmod.config.util.MainMenuButtonPosition;
 import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
 import org.trivait.minigamesmod.gui.widget.MinigamesButton;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
+import org.trivait.minigamesmod.minigame.bubbleshooter.BubbleShooter;
 import org.trivait.minigamesmod.minigame.game2048.Game2048;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
 import org.trivait.minigamesmod.minigame.minesweeper.game.SavedGame;
@@ -39,6 +40,7 @@ public class MinigamesMod implements ClientModInitializer {
         MinigameRegistry.register(new Snake());
         MinigameRegistry.register(new MinesweeperGame());
         MinigameRegistry.register(new Sudoku());
+        MinigameRegistry.register(new BubbleShooter());
 
         MinigamesButton btn = new MinigamesButton(0, 0);
 

@@ -2,8 +2,8 @@
   "text.autoconfig.minigames.title": "Minigames Mod",
   "text.autoconfig.minigames.option.mainMenuButton": "Кнопка на главном экране",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Позиция на главном экране",
-  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Позиция в меню паузы",
   "text.autoconfig.minigames.option.pauseMenuButton": "Кнопка в меню паузы",
+  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Позиция в меню паузы",
 
   "config.minigames.category.general": "Основное",
   "config.minigames.category.minigames": "Мини-игры",
@@ -11,12 +11,11 @@
   "config.minigames.main_menu_button_position.left_singleplayer": "Слева: Одиночная игра",
   "config.minigames.main_menu_button_position.left_multiplayer": "Слева: Сетевая игра",
   "config.minigames.main_menu_button_position.left_realms": "Слева: Realms",
-  "config.minigames.main_menu_button_position.left_mods": "Слева: Настройки",
+  "config.minigames.main_menu_button_position.left_mods": "Слева: Моды",
   "config.minigames.main_menu_button_position.right_singleplayer": "Справа: Одиночная игра",
   "config.minigames.main_menu_button_position.right_multiplayer": "Справа: Сетевая игра",
   "config.minigames.main_menu_button_position.right_realms": "Справа: Realms",
-  "config.minigames.main_menu_button_position.right_mods": "Справа: Выйти из игры",
-  "config.minigames.main_menu_button_position.icon_button": "Ряд кнопок-иконок",
+  "config.minigames.main_menu_button_position.right_mods": "Справа: Моды",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Слева: 1 ряд",
   "config.minigames.pause_menu_button_position.left_next_row": "Слева: 2 ряд",
@@ -28,7 +27,6 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Справа: 3 ряд",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Справа: 4 ряд",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Справа: 5 ряд",
-  "config.minigames.pause_menu_button_position.icon_button": "Ряд кнопок-иконок",
 
   "text.autoconfig.minigames/2048_ui.title": "Настройки 2048",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Размер поля",
@@ -56,6 +54,12 @@
   "text.autoconfig.minigames/sudoku_ui.option.volume": "Громкость",
   "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Сложность",
 
+  "text.autoconfig.minigames/bubble_shooter_ui.title": "Настройки бабл шутера",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.background": "Задний фон",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.startColor": "Начальный цвет (Только для режима кастомного градиента)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.endColor": "Конечный цвет (Только для режима кастомного градиента)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.volume": "Громкость",
+
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
   "minigame.restart": "Заново",
@@ -77,7 +81,15 @@
   "minigame.sudoku.win": "Победа",
   "minigame.sudoku.condition.first": "Средняя сложность",
 
-  "minigame.bubble_shooter": "Бабл шутер",
+  "minigame.bubbleshooter.title": "Бабл шутер",
+  "minigame.bubbleshooter.background.filled": "Заливка",
+  "minigame.bubbleshooter.background.filled_gradient": "Заливка (градиент)",
+  "minigame.bubbleshooter.background.space": "Космос",
+  "minigame.bubbleshooter.background.custom_gradient": "Кастомный градиент",
+  "minigame.bubbleshooter.background.gif": "Гифка (положите гифку в папка_игры/config/minigames/bubbleshooter.gif)",
+  "minigame.bubbleshooter.score": "Счет: ",
+  "minigame.bubbleshooter.highScore": "Лучший счет: ",
+  "minigame.bubbleshooter.gameOver": "Конец игры!",
 
   "minigame.minesweeper.title": "Сапёр",
   "minigame.minesweeper.leaderboard.name": "Лидерборд",
@@ -107,8 +119,8 @@
   "minigame.tetris.score": "ОЧКИ",
   "minigame.tetris.lines": "ЛИНИЙ УБРАНО",
   "minigame.tetris.level": "УРОВЕНЬ",
-  "minigame.tetris.hight_score": "РЕКОРД",
-  "minigame.tetris.new_hight_score": "НОВЫЙ РЕКОРД",
+  "minigame.tetris.high_score": "РЕКОРД",
+  "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
 
   "minigame.tetris.mode.off": "Выкл",
   "minigame.tetris.mode.instant": "Мгновенный",
@@ -118,5 +130,7 @@
   "minigame.leaderboard": "Лидерборд",
   "minigame.leaderboard.conditions": "Условия",
 
-  "minigame.config.btn": "Открыть конфиг"
+  "minigame.config.btn": "Открыть конфиг",
+  "minigame.leaderboard.disabled": "Лидерборды выключены, временно, или навсегда, никто не знает...",
+  "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд"
 }

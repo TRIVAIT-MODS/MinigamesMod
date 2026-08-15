@@ -192,7 +192,7 @@ public class SnakeScreen extends Screen {
 
     private void endGame() {
         gameOver = true;
-        minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), score, true);
+        minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), score);
         SnakeConfig config = MinigameRegistry.getConfig(SnakeConfig.class);
         if (score > config.snakeHighScore) {
             config.snakeHighScore = score;
