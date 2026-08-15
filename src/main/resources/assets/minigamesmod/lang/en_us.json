@@ -16,6 +16,7 @@
   "config.minigames.main_menu_button_position.right_multiplayer": "Right: Multiplayer",
   "config.minigames.main_menu_button_position.right_realms": "Right: Realms",
   "config.minigames.main_menu_button_position.right_mods": "Right: Mods",
+  "config.minigames.main_menu_button_position.icon_button": "Icon Buttons Row",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Left: Row 1",
   "config.minigames.pause_menu_button_position.left_next_row": "Left: Row 2",
@@ -27,6 +28,7 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Right: Row 3",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Right: Row 4",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Right: Row 5",
+  "config.minigames.pause_menu_button_position.icon_button": "Icon Buttons Row",
 
   "text.autoconfig.minigames/2048_ui.title": "2048 Settings",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Grid size",

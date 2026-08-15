@@ -347,7 +347,7 @@ public class TetrisScreen extends Screen {
             onScreenTextOpacity--;
         }
 
-        context.text(this.font, Component.literal("Tetris by Nukebomb"), leftX, bottomY + 4, 0xFFAAAAAA, true);
+        context.text(this.font, Component.literal("Tetris by Nukebob"), leftX, bottomY + 4, 0xFFAAAAAA, true);
 
         //draw play button if not active
         playButton.visible = !active;

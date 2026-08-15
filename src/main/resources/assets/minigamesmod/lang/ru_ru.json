@@ -16,6 +16,7 @@
   "config.minigames.main_menu_button_position.right_multiplayer": "Справа: Сетевая игра",
   "config.minigames.main_menu_button_position.right_realms": "Справа: Realms",
   "config.minigames.main_menu_button_position.right_mods": "Справа: Моды",
+  "config.minigames.main_menu_button_position.icon_button": "Icon Buttons Row",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Слева: 1 ряд",
   "config.minigames.pause_menu_button_position.left_next_row": "Слева: 2 ряд",
@@ -27,6 +28,7 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Справа: 3 ряд",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Справа: 4 ряд",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Справа: 5 ряд",
+  "config.minigames.pause_menu_button_position.icon_button": "Icon Buttons Row",
 
   "text.autoconfig.minigames/2048_ui.title": "Настройки 2048",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Размер поля",
