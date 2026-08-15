@@ -30,7 +30,7 @@ public class Snake extends AbstractMinigame {
 
     @Override
     public @Nullable Leaderboard getLeaderboard() {
-        return new Leaderboard("Snake", null);
+        return new Leaderboard("Snake", null, true);
     }
 
     @Override
