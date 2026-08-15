@@ -36,7 +36,7 @@ public class GoogleDino extends AbstractMinigame {
 
     @Override
     public @Nullable Leaderboard getLeaderboard() {
-        return new Leaderboard("Dino", null);
+        return new Leaderboard("Dino", null, true);
     }
 
     @Override

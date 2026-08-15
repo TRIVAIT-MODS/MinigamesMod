@@ -35,7 +35,7 @@ public class Game2048 extends AbstractMinigame {
     public @Nullable Leaderboard getLeaderboard() {
         return new Leaderboard("Game2048", List.of(
                 Component.translatable("minigame.2048.condition")
-        ));
+        ), true);
     }
 
     @Override
