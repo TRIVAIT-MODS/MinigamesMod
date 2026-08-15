@@ -27,7 +27,7 @@ public class Tetris extends AbstractMinigame {
 
     @Override
     public @Nullable Leaderboard getLeaderboard() {
-        return new Leaderboard("Tetris", null);
+        return new Leaderboard("Tetris", null, true);
     }
 
     @Override
