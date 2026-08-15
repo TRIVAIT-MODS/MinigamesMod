@@ -2,8 +2,8 @@
   "text.autoconfig.minigames.title": "Minigames Mod",
   "text.autoconfig.minigames.option.mainMenuButton": "Кнопка на главном экране",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Позиция на главном экране",
-  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Позиция в меню паузы",
   "text.autoconfig.minigames.option.pauseMenuButton": "Кнопка в меню паузы",
+  "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Позиция в меню паузы",
 
   "config.minigames.category.general": "Основное",
   "config.minigames.category.minigames": "Мини-игры",
@@ -54,6 +54,12 @@
   "text.autoconfig.minigames/sudoku_ui.option.volume": "Громкость",
   "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Сложность",
 
+  "text.autoconfig.minigames/bubble_shooter_ui.title": "Настройки бабл шутера",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.background": "Задний фон",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.startColor": "Начальный цвет (Только для режима кастомного градиента)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.endColor": "Конечный цвет (Только для режима кастомного градиента)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.volume": "Громкость",
+
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
   "minigame.restart": "Заново",
@@ -75,7 +81,15 @@
   "minigame.sudoku.win": "Победа",
   "minigame.sudoku.condition.first": "Средняя сложность",
 
-  "minigame.bubble_shooter": "Бабл шутер",
+  "minigame.bubbleshooter.title": "Бабл шутер",
+  "minigame.bubbleshooter.background.filled": "Заливка",
+  "minigame.bubbleshooter.background.filled_gradient": "Заливка (градиент)",
+  "minigame.bubbleshooter.background.space": "Космос",
+  "minigame.bubbleshooter.background.custom_gradient": "Кастомный градиент",
+  "minigame.bubbleshooter.background.gif": "Гифка (положите гифку в папка_игры/config/minigames/bubbleshooter.gif)",
+  "minigame.bubbleshooter.score": "Счет: ",
+  "minigame.bubbleshooter.highScore": "Лучший счет: ",
+  "minigame.bubbleshooter.gameOver": "Конец игры!",
 
   "minigame.minesweeper.title": "Сапёр",
   "minigame.minesweeper.leaderboard.name": "Лидерборд",
@@ -105,8 +119,8 @@
   "minigame.tetris.score": "ОЧКИ",
   "minigame.tetris.lines": "ЛИНИЙ УБРАНО",
   "minigame.tetris.level": "УРОВЕНЬ",
-  "minigame.tetris.hight_score": "РЕКОРД",
-  "minigame.tetris.new_hight_score": "НОВЫЙ РЕКОРД",
+  "minigame.tetris.high_score": "РЕКОРД",
+  "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
 
   "minigame.tetris.mode.off": "Выкл",
   "minigame.tetris.mode.instant": "Мгновенный",
@@ -116,5 +130,7 @@
   "minigame.leaderboard": "Лидерборд",
   "minigame.leaderboard.conditions": "Условия",
 
-  "minigame.config.btn": "Открыть конфиг"
+  "minigame.config.btn": "Открыть конфиг",
+  "minigame.leaderboard.disabled": "Лидерборды выключены, временно, или навсегда, никто не знает...",
+  "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд"
 }
