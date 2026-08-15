@@ -1,6 +1,8 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.mainMenuButton": "Title screen button",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Title screen button position",
+  "text.autoconfig.minigames.option.pauseMenuButton": "Game menu button",
   "text.autoconfig.minigames.option.pauseMenuButtonPosition": "Game menu button position",
 
   "config.minigames.category.general": "General",
@@ -53,6 +55,11 @@
   "text.autoconfig.minigames/sudoku_ui.option.volume": "Volume",
   "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Difficulty",
 
+  "text.autoconfig.minigames/bubble_shooter_ui.option.background": "Background",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.startColor": "Start color (0nly for custom gradient mode)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.endColor": "End color (0nly for custom gradient mode)",
+  "text.autoconfig.minigames/bubble_shooter_ui.option.volume": "Volume",
+
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
   "minigame.tetris.mode.outline": "Outline",
@@ -96,7 +103,15 @@
   "minigame.sudoku.win": "Win!",
   "minigame.sudoku.condition.first": "Medium difficulty",
 
-  "minigame.bubble_shooter": "Bubble shooter",
+  "minigame.bubbleshooter.title": "Bubble Shooter",
+  "minigame.bubbleshooter.background.filled": "Filled",
+  "minigame.bubbleshooter.background.filled_gradient": "Filled (gradient)",
+  "minigame.bubbleshooter.background.space": "Space",
+  "minigame.bubbleshooter.background.custom_gradient": "Custom gradient",
+  "minigame.bubbleshooter.background.gif": "Custom gif (put your gif on gamedir/config/minigames/bubbleshooter.gif)",
+  "minigame.bubbleshooter.score": "Score: ",
+  "minigame.bubbleshooter.highScore": "High Score: ",
+  "minigame.bubbleshooter.gameOver": "Game Over",
 
   "minigame.tetris.title": "Tetris",
   "minigame.tetris.start": "Start game",
@@ -110,11 +125,13 @@
   "minigame.tetris.score": "SCORE",
   "minigame.tetris.lines": "LINES CLEARED",
   "minigame.tetris.level": "LEVEL",
-  "minigame.tetris.hight_score": "HIGH SCORE",
-  "minigame.tetris.new_hight_score": "NEW HIGH SCORE",
+  "minigame.tetris.high_score": "HIGH SCORE",
+  "minigame.tetris.new_high_score": "NEW HIGH SCORE",
 
   "minigame.leaderboard": "Leaderboard",
   "minigame.leaderboard.conditions": "Conditions",
 
-  "minigame.config.btn": "Open config"
+  "minigame.config.btn": "Open config",
+  "minigame.leaderboard.disabled": "Leaderboards are disabled. Whether temporarily or permanently, it's unknown...",
+  "minigame.leaderboard.notSupported": "This minigame does not support a leaderboard."
 }
