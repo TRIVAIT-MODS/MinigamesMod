@@ -12,4 +12,6 @@ public class TetrisVisibleConfig implements ConfigData {
 
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int volume = 100;
+
+    public boolean randomBlocks = true;
 }

@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -16,7 +15,6 @@ import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
-import org.trivait.minigamesmod.minigame.game2048.Game2048VisibleConfig;
 import org.trivait.minigamesmod.minigame.tetris.mino.*;
 
 import java.util.ArrayList;
@@ -141,8 +139,8 @@ public class TetrisScreen extends Screen {
         leftPressed = rightPressed = upPressed = downPressed = spacePressed = false;
         nextMino = pickMino();
         nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE :
-                (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
+                (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                 TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
     }
 
@@ -208,8 +206,8 @@ public class TetrisScreen extends Screen {
             currentMino.setXY(TETRIS_WIDTH / 2, Block.SIZE);
             nextMino = pickMino();
             nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                    (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE :
-                    (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
+                    (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                    (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                     TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
         }
         float frameDuration = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
@@ -245,13 +243,13 @@ public class TetrisScreen extends Screen {
         Mino mino = null;
         int i = new Random().nextInt(7);
         mino = switch (i) {
-            case 0 -> new Mino_L1();
-            case 1 -> new Mino_L2();
-            case 2 -> new Mino_Square();
-            case 3 -> new Mino_Bar();
-            case 4 -> new Mino_T();
-            case 5 -> new Mino_Z1();
-            case 6 -> new Mino_Z2();
+            case 0 -> new MinoL1();
+            case 1 -> new MinoL2();
+            case 2 -> new MinoSquare();
+            case 3 -> new MinoBar();
+            case 4 -> new MinoT();
+            case 5 -> new MinoZ1();
+            case 6 -> new MinoZ2();
             default -> mino;
         };
         return mino;
@@ -324,7 +322,7 @@ public class TetrisScreen extends Screen {
         }
 
         // draw credits
-        context.drawText(this.textRenderer, Text.literal("Tetris by Nukebomb"), leftX, bottomY + 4, 0xFFAAAAAA, true);
+        context.drawText(this.textRenderer, Text.literal("Tetris by Nukebob"), leftX, bottomY + 4, 0xFFAAAAAA, true);
 
         // draw play button if not active
         playButton.visible = !active;
