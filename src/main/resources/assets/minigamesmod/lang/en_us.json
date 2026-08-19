@@ -16,6 +16,7 @@
   "config.minigames.main_menu_button_position.right_multiplayer": "Right: Multiplayer",
   "config.minigames.main_menu_button_position.right_realms": "Right: Realms",
   "config.minigames.main_menu_button_position.right_mods": "Right: Mods",
+  "config.minigames.main_menu_button_position.icon_button": "Icon Buttons Row",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Left: Row 1",
   "config.minigames.pause_menu_button_position.left_next_row": "Left: Row 2",
@@ -27,6 +28,7 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Right: Row 3",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Right: Row 4",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Right: Row 5",
+  "config.minigames.pause_menu_button_position.icon_button": "Icon Buttons Row",
 
   "text.autoconfig.minigames/2048_ui.title": "2048 Settings",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Grid size",
@@ -35,6 +37,7 @@
   "text.autoconfig.minigames/tetris_ui.title": "Tetris Settings",
   "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Hard drop",
   "text.autoconfig.minigames/tetris_ui.option.volume": "Volume",
+  "text.autoconfig.minigames/tetris_ui.option.randomBlocks": "Random block textures",
 
   "text.autoconfig.minigames/dino_ui.title": "Dino Settings",
   "text.autoconfig.minigames/dino_ui.option.volume": "Volume",
@@ -55,10 +58,16 @@
   "text.autoconfig.minigames/sudoku_ui.option.volume": "Volume",
   "text.autoconfig.minigames/sudoku_ui.option.difficulty": "Difficulty",
 
+  "text.autoconfig.minigames/bubble_shooter_ui.title": "Bubble Shooter Options",
   "text.autoconfig.minigames/bubble_shooter_ui.option.background": "Background",
   "text.autoconfig.minigames/bubble_shooter_ui.option.startColor": "Start color (0nly for custom gradient mode)",
   "text.autoconfig.minigames/bubble_shooter_ui.option.endColor": "End color (0nly for custom gradient mode)",
   "text.autoconfig.minigames/bubble_shooter_ui.option.volume": "Volume",
+
+  "text.autoconfig.minigames/cookie_clicker_ui.title": "Cookie Clicker Options",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.volume": "Volume",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Cookie Clicker Sounds",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Max background cookie spawn rate",
 
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
@@ -113,6 +122,32 @@
   "minigame.bubbleshooter.highScore": "High Score: ",
   "minigame.bubbleshooter.gameOver": "Game Over",
 
+  "minigame.cookieclicker.title": "Cookie Clicker",
+  "minigame.cookieclicker.bakery": "%s's bakery",
+  "minigame.cookieclicker.cookies": "Cookies: ",
+  "minigame.cookieclicker.shop": "Shop",
+  "minigame.cookieclicker.cookiesPerSecond": "Cookies per second: ",
+  "minigame.cookieclicker.upgrade_click": "Upgrade click",
+  "minigame.cookieclicker.wooden_cursor": "Wooden Cursor",
+  "minigame.cookieclicker.stone_cursor": "Stone Cursor",
+  "minigame.cookieclicker.copper_cursor": "Copper Cursor",
+  "minigame.cookieclicker.golden_cursor": "Golden Cursor",
+  "minigame.cookieclicker.iron_cursor": "Iron Cursor",
+  "minigame.cookieclicker.diamond_cursor": "Diamond Cursor",
+  "minigame.cookieclicker.netherite_cursor": "Netherite Cursor",
+  "minigame.cookieclicker.clicker_doubler": "Clicker Doubler",
+  "minigame.cookieclicker.upgrade_click.desc": "+1 cookie per click",
+  "minigame.cookieclicker.wooden_cursor.desc": "+0.5 cookies per second",
+  "minigame.cookieclicker.stone_cursor.desc": "+3.5 cookies per second",
+  "minigame.cookieclicker.copper_cursor.desc": "+20 cookies per second",
+  "minigame.cookieclicker.golden_cursor.desc": "+100 cookies per second",
+  "minigame.cookieclicker.iron_cursor.desc": "+500 cookies per second",
+  "minigame.cookieclicker.diamond_cursor.desc": "+1000 cookies per second",
+  "minigame.cookieclicker.netherite_cursor.desc": "+10000 cookies per second",
+  "minigame.cookieclicker.amethyst_shard.desc": "Finish game",
+  "minigame.cookieclicker.clicker_doubler.desc": "2x cookies per click",
+  "minigame.cookieclicker.procent_per_click": "% at purchase",
+
   "minigame.tetris.title": "Tetris",
   "minigame.tetris.start": "Start game",
   "minigame.tetris.return": "Return",
@@ -133,5 +168,8 @@
 
   "minigame.config.btn": "Open config",
   "minigame.leaderboard.disabled": "Leaderboards are disabled. Whether temporarily or permanently, it's unknown...",
-  "minigame.leaderboard.notSupported": "This minigame does not support a leaderboard."
+  "minigame.leaderboard.notSupported": "This minigame does not support a leaderboard.",
+
+  "modmenu.summaryTranslation.minigamesmod": "This mod adds some cool minigames.",
+  "modmenu.descriptionTranslation.minigamesmod": "This mod adds some cool minigames."
 }
