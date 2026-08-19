@@ -10,7 +10,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.minigame.tetris.HardDropAnimation;
 import org.trivait.minigamesmod.minigame.tetris.TetrisScreen;
@@ -34,17 +33,17 @@ public abstract class Mino {
 
     public Mino() {
         switch (this) {
-            case Mino_Square ignored -> type = "square";
-            case Mino_Bar ignored -> type = "bar";
-            case Mino_T ignored -> type = "t";
-            case Mino_L1 ignored -> type = "l1";
-            case Mino_L2 ignored -> type = "l2";
-            case Mino_Z1 ignored -> type = "z1";
-            case Mino_Z2 ignored -> type = "z2";
+            case MinoSquare ignored -> type = "square";
+            case MinoBar ignored -> type = "bar";
+            case MinoT ignored -> type = "t";
+            case MinoL1 ignored -> type = "l1";
+            case MinoL2 ignored -> type = "l2";
+            case MinoZ1 ignored -> type = "z1";
+            case MinoZ2 ignored -> type = "z2";
             default -> {
             }
         }
-        Identifier randomBlockTexture = getRandomBlockTexture();
+        Identifier randomBlockTexture = MinigameRegistry.getConfig(TetrisVisibleConfig.class).randomBlocks ? getRandomBlockTexture() : getFixedBlockTexture();
         create(randomBlockTexture);
         //SpriteContents sprite = getRandomBlockTexture();
         //create(Identifier.of(sprite.getId().getNamespace().split(":")[0],"textures/" + sprite.getId().getPath() + ".png"), sprite.getWidth(), sprite.getHeight());
@@ -102,6 +101,20 @@ public abstract class Mino {
         b[3].y = tempB[3].y;
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol()));
     }
+
+    protected Identifier getFixedBlockTexture() {
+        return switch (type) {
+            case "square" -> Identifier.ofVanilla("block/gold_block");
+            case "bar" -> Identifier.ofVanilla("block/diamond_block");
+            case "t" -> Identifier.ofVanilla("block/amethyst_block");
+            case "l1" -> Identifier.ofVanilla("block/copper_block");
+            case "l2" -> Identifier.ofVanilla("block/lapis_block");
+            case "z1" -> Identifier.ofVanilla("block/redstone_block");
+            case "z2" -> Identifier.ofVanilla("block/emerald_block");
+            default -> Identifier.ofVanilla("block/iron_block");
+        };
+    }
+
     public void getDirection1() {}
     public void getDirection2() {}
     public void getDirection3() {}
@@ -337,42 +350,42 @@ public abstract class Mino {
             switch (TetrisScreen.hardDrop) {
                 case 2:
                     if (getOutline(block)[0]) {
-                        context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                        context.drawHorizontalLine(TetrisScreen.leftX + block.x, TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                     }
                     if (getOutline(block)[1]) {
-                        context.drawHorizontalLine(TetrisScreen.left_x + block.x, TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
+                        context.drawHorizontalLine(TetrisScreen.leftX + block.x, TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
                     }
                     if (getOutline(block)[2]) {
-                        context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
+                        context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
                         if (!getOutline(block)[1]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, color.getRGB());
                         }
                         if (!getOutline(block)[0]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
                     }
                     if (getOutline(block)[3]) {
-                        context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
+                        context.drawVerticalLine(TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + Block.SIZE - 1 + yOffset, color.getRGB());
                         if (!getOutline(block)[1]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, color.getRGB());
                         }
                         if (!getOutline(block)[0]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
                     }
                     //individual diagonal pixels
-                    if (!(this instanceof Mino_Square)) {
+                    if (!(this instanceof MinoSquare)) {
                         if (!getOutline(block)[0] && !getOutline(block)[2]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
                         if (!getOutline(block)[0] && !getOutline(block)[3]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
                         if (!getOutline(block)[1] && !getOutline(block)[2]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, color.getRGB());
                         }
                         if (!getOutline(block)[1] && !getOutline(block)[3]) {
-                            context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, color.getRGB());
+                            context.drawVerticalLine(TetrisScreen.leftX + block.x + Block.SIZE - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, TetrisScreen.topY + block.y + Block.SIZE + yOffset - 1, color.getRGB());
                         }
                     } break;
                 case 3: block.draw(context, yOffset); break;

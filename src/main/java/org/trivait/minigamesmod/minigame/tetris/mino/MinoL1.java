@@ -1,6 +1,6 @@
 package org.trivait.minigamesmod.minigame.tetris.mino;
 
-public class Mino_L1 extends Mino{
+public class MinoL1 extends Mino{
     public void setXY(int x, int y) {
         //   o     b1
         //   o     b0

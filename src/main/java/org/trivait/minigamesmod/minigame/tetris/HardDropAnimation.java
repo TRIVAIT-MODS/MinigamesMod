@@ -16,6 +16,6 @@ public class HardDropAnimation extends Animation{
     @Override
     public void draw(DrawContext context) {
         Color color = new Color(1, 1, 1, (1 - frame * ((float) 1 / frames)) / 4);
-        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "animation/hard_drop/0.png"), x + TetrisScreen.left_x - width / 2, y + TetrisScreen.top_y + Block.SIZE, 0, 0, width, height, width, height, color.getRGB());
+        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of(MinigamesMod.MOD_ID, "animation/hard_drop/0.png"), x + TetrisScreen.leftX - width / 2, y + TetrisScreen.topY + Block.SIZE, 0, 0, width, height, width, height, color.getRGB());
     }
 }
