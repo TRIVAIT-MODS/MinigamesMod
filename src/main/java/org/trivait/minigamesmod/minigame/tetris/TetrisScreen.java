@@ -136,7 +136,7 @@ public class TetrisScreen extends Screen {
 
         nextMino = pickMino();
         nextMino.setXY(WIDTH + Block.SIZE * 2 +
-                        (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE : (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
+                        (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE : (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                 HEIGHT - (int) (Block.SIZE * 2.5f));
     }
 
@@ -207,7 +207,7 @@ public class TetrisScreen extends Screen {
 
             nextMino = pickMino();
             nextMino.setXY(WIDTH + Block.SIZE * 2 +
-                            (nextMino instanceof Mino_L2 || nextMino instanceof Mino_Z1 ? Block.SIZE : (nextMino instanceof Mino_T ? Block.SIZE / 2 : 0)),
+                            (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE : (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                     HEIGHT - (int) (Block.SIZE * 2.5f));
         }
         float frameDuration = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
@@ -253,13 +253,13 @@ public class TetrisScreen extends Screen {
         Mino mino = null;
         int i = new Random().nextInt(7);
         mino = switch (i) {
-            case 0 -> new Mino_L1();
-            case 1 -> new Mino_L2();
-            case 2 -> new Mino_Square();
-            case 3 -> new Mino_Bar();
-            case 4 -> new Mino_T();
-            case 5 -> new Mino_Z1();
-            case 6 -> new Mino_Z2();
+            case 0 -> new MinoL1();
+            case 1 -> new MinoL2();
+            case 2 -> new MinoSquare();
+            case 3 -> new MinoBar();
+            case 4 -> new MinoT();
+            case 5 -> new MinoZ1();
+            case 6 -> new MinoZ2();
             default -> mino;
         };
         return mino;
@@ -366,7 +366,7 @@ public class TetrisScreen extends Screen {
                 if (score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore) {
                     MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore = score;
                 }
-                highScoreClearedText = Component.translatable(isNewHighScore ? "minigame.tetris.new_hight_score" : "minigame.tetris.hight_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(CommonColors.YELLOW);
+                highScoreClearedText = Component.translatable(isNewHighScore ? "minigame.tetris.new_high_score" : "minigame.tetris.high_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(CommonColors.YELLOW);
                 if (MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore > 0) context.text(this.font, highScoreClearedText, this.width / 2 - (highScoreClearedText.getString().length() * 3),
                         this.height / 2 + 25, CommonColors.WHITE, true);
             }

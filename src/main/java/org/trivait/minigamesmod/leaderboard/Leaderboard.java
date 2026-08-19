@@ -21,6 +21,9 @@ public class Leaderboard {
     public void doPost(String name, int value) {
         SheetsApi.submitAsync(gameName, name, value, rewrite);
     }
+    public void doPost(String name, long value) {
+        SheetsApi.submitAsync(gameName, name, value, rewrite);
+    }
 
     public CompletableFuture<List<LeaderboardEntry>> getEntries() {
         return SheetsApi.fetchAsync(gameName);
