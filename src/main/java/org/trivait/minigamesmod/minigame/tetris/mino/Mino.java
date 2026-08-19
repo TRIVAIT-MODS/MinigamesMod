@@ -1,11 +1,9 @@
 package org.trivait.minigamesmod.minigame.tetris.mino;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.block.model.BlockDisplayContext;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +15,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -50,20 +47,35 @@ public abstract class Mino {
 
     protected Mino() {
         switch (this) {
-            case Mino_Square ignored -> type = "square";
-            case Mino_Bar ignored -> type = "bar";
-            case Mino_T ignored -> type = "t";
-            case Mino_L1 ignored -> type = "l1";
-            case Mino_L2 ignored -> type = "l2";
-            case Mino_Z1 ignored -> type = "z1";
-            case Mino_Z2 ignored -> type = "z2";
+            case MinoSquare ignored -> type = "square";
+            case MinoBar ignored -> type = "bar";
+            case MinoT ignored -> type = "t";
+            case MinoL1 ignored -> type = "l1";
+            case MinoL2 ignored -> type = "l2";
+            case MinoZ1 ignored -> type = "z1";
+            case MinoZ2 ignored -> type = "z2";
             default -> {
             }
         }
-        Pair<Identifier, MutableComponent> randomBlock = getRandomBlockTexture();
+        Pair<Identifier, MutableComponent> randomBlock = MinigameRegistry.getConfig(TetrisVisibleConfig.class).randomBlocks ? getRandomBlockTexture() : getFixedBlockTexture();
         create(randomBlock.getA(), randomBlock.getB());
         //SpriteContents sprite = getRandomBlockTexture();
         //create(Identifier.of(sprite.getId().getNamespace().split(":")[0],"textures/" + sprite.getId().getPath() + ".png"), sprite.getWidth(), sprite.getHeight());
+    }
+
+    protected Pair<Identifier, MutableComponent> getFixedBlockTexture() {
+        Identifier texture = switch (type) {
+            case "square" -> Identifier.withDefaultNamespace("block/gold_block");
+            case "bar" -> Identifier.withDefaultNamespace("block/diamond_block");
+            case "t" -> Identifier.withDefaultNamespace("block/amethyst_block");
+            case "l1" -> Identifier.withDefaultNamespace("block/copper_block");
+            case "l2" -> Identifier.withDefaultNamespace("block/lapis_block");
+            case "z1" -> Identifier.withDefaultNamespace("block/redstone_block");
+            case "z2" -> Identifier.withDefaultNamespace("block/emerald_block");
+            default -> Identifier.withDefaultNamespace("block/iron_block");
+        };
+
+        return new Pair<>(texture, Component.literal("block"));
     }
 
     public void create(Identifier texture, MutableComponent name) {
@@ -421,7 +433,7 @@ public abstract class Mino {
                         }
                     }
                     //individual diagonal pixels
-                    if (!(this instanceof Mino_Square)) {
+                    if (!(this instanceof MinoSquare)) {
                         if (!getOutline(block)[0] && !getOutline(block)[2]) {
                             context.verticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }

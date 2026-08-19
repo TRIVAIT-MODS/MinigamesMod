@@ -20,7 +20,7 @@ public class LeaderboardScreen extends Screen {
 
     @Override
     protected void init() {
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), b -> this.onClose()).bounds(this.width / 2 - 50, this.height - 25, 100, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), b -> this.onClose()).bounds(this.width / 2 - 50, this.height - 28, 100, 20).build());
 
         int widthWidget = Math.max(width - 40 * 2, 420);
         int heightWidget = Math.max(height - 40 * 2, 210);

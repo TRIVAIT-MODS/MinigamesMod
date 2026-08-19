@@ -1,11 +1,13 @@
 package org.trivait.minigamesmod.minigame.minesweeper;
 
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -17,6 +19,7 @@ import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
 import org.trivait.minigamesmod.minigame.minesweeper.game.*;
+import org.trivait.minigamesmod.minigame.minesweeper.screen.SelectLeaderboardScreen;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.DigitDisplayWidget;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.ExplosionAnimation;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.widget.SmileyButtonWidget;
@@ -61,8 +64,6 @@ public class MinesweeperScreen extends Screen {
     private final List<ExplosionAnimation> explosions = new ArrayList<>();
 
     public final GameMode gameMode;
-
-    private Button leaderboardButton;
 
     private MinesweeperGame minigame;
     private Screen parent;
@@ -137,9 +138,7 @@ public class MinesweeperScreen extends Screen {
         int dispY = topBarY + (TOP_BAR_H - minesDisplay.getHeight()) / 2;
         minesDisplay.setPosition(topBarX + 6, dispY);
         timerDisplay.setPosition(topBarX + topBarW - 6 - timerDisplay.getWidth(), dispY);
-
         if (gameMode == GameMode.DEFAULT) {
-
             this.addRenderableWidget(new ConfigButton(60, 10, minigame));
         }
     }
@@ -152,7 +151,7 @@ public class MinesweeperScreen extends Screen {
     protected void resetGame() {
         MinesweeperGame.setSavedGame(null);
         explosions.clear();
-        board = new GameBoard(new GameSettings(MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridWidth, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridHeight, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).mines));
+        board = new GameBoard(newGameSettings != null ? newGameSettings : defaultSettings());
         board.setSoundCallback(makeSoundCallback());
         this.init();
     }
@@ -205,9 +204,11 @@ public class MinesweeperScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+        MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
+        double mouseX = click.x();
+        double mouseY = click.y();
         int button = click.button();
 
-        MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
         if (board == null) return super.mouseClicked(click, doubled);
 
         if (!board.alive || board.won) {
@@ -215,8 +216,8 @@ public class MinesweeperScreen extends Screen {
             return super.mouseClicked(click, doubled);
         }
 
-        int gx = (int) Math.floor((click.x() - gridX) / (double) cellSize);
-        int gy = (int) Math.floor((click.y() - gridY) / (double) cellSize);
+        int gx = (int) Math.floor((mouseX - gridX) / (double) cellSize);
+        int gy = (int) Math.floor((mouseY - gridY) / (double) cellSize);
         if (gx < 0 || gx >= board.w || gy < 0 || gy >= board.h)
             return super.mouseClicked(click, doubled);
 
@@ -396,5 +397,7 @@ public class MinesweeperScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() { return false; }
+    public boolean isPauseScreen() {
+        return false;
+    }
 }

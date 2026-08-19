@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -21,7 +22,9 @@ public class ConfigButton extends SpriteIconButton.CenteredIcon {
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
         super(20, 20, net.minecraft.network.chat.Component.empty(), 20, 20, 0, 0, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             Minecraft client = Minecraft.getInstance();
-            client.gui.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.gui.screen()));
+            Screen screen = client.gui.screen();
+            screen.onClose();
+            client.gui.setScreen(MinigameRegistry.openVisibleConfig(minigame, screen));
         }, null, Button.DEFAULT_NARRATION, false);
 
         this.setTooltip(Tooltip.create(net.minecraft.network.chat.Component.translatable("minigame.config.btn")));
