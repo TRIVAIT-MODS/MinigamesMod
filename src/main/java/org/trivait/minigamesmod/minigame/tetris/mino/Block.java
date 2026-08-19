@@ -3,7 +3,6 @@ package org.trivait.minigamesmod.minigame.tetris.mino;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
 import org.trivait.minigamesmod.minigame.tetris.TetrisScreen;
@@ -29,9 +28,9 @@ public class Block {
         Color color = new Color(1F, 1F, 1F, destroying==-1?1:1 - ((int) destroying * 0.1f));
         Identifier atlas = Identifier.ofVanilla("textures/atlas/blocks.png");
         Sprite sprite = MinecraftClient.getInstance().getSpriteAtlas(atlas).apply(texture);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.left_x + x, TetrisScreen.top_y + y, Block.SIZE, Block.SIZE, color.getRGB());
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.leftX + x, TetrisScreen.topY + y, Block.SIZE, Block.SIZE, color.getRGB());
         if ((int) destroying != -1) {
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("textures/block/destroy_stage_" + (int) destroying + ".png"), TetrisScreen.left_x + x, TetrisScreen.top_y + y, 0, Block.SIZE * (int) (TetrisScreen.animation / 30f), Block.SIZE, Block.SIZE, Block.SIZE, Block.SIZE);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("textures/block/destroy_stage_" + (int) destroying + ".png"), TetrisScreen.leftX + x, TetrisScreen.topY + y, 0, Block.SIZE * (int) (TetrisScreen.animation / 30f), Block.SIZE, Block.SIZE, Block.SIZE, Block.SIZE);
         }
     }
 
@@ -40,6 +39,6 @@ public class Block {
 
         Identifier atlas = Identifier.ofVanilla("textures/atlas/blocks.png");
         Sprite sprite = MinecraftClient.getInstance().getSpriteAtlas(atlas).apply(texture);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.left_x + x, TetrisScreen.top_y + y + yOffset, Block.SIZE, Block.SIZE, new Color(1, 1, 1, 0.3f).getRGB());
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, TetrisScreen.leftX + x, TetrisScreen.topY + y + yOffset, Block.SIZE, Block.SIZE, new Color(1, 1, 1, 0.3f).getRGB());
     }
 }

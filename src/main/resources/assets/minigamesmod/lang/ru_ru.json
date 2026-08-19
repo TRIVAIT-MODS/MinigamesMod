@@ -16,6 +16,7 @@
   "config.minigames.main_menu_button_position.right_multiplayer": "Справа: Сетевая игра",
   "config.minigames.main_menu_button_position.right_realms": "Справа: Realms",
   "config.minigames.main_menu_button_position.right_mods": "Справа: Моды",
+  "config.minigames.main_menu_button_position.icon_button": "Ряд кнопок-иконок",
 
   "config.minigames.pause_menu_button_position.left_same_row": "Слева: 1 ряд",
   "config.minigames.pause_menu_button_position.left_next_row": "Слева: 2 ряд",
@@ -27,6 +28,7 @@
   "config.minigames.pause_menu_button_position.right_2_rows_down": "Справа: 3 ряд",
   "config.minigames.pause_menu_button_position.right_3_rows_down": "Справа: 4 ряд",
   "config.minigames.pause_menu_button_position.right_4_rows_down": "Справа: 5 ряд",
+  "config.minigames.pause_menu_button_position.icon_button": "Ряд кнопок-иконок",
 
   "text.autoconfig.minigames/2048_ui.title": "Настройки 2048",
   "text.autoconfig.minigames/2048_ui.option.gridSize": "Размер поля",
@@ -35,6 +37,7 @@
   "text.autoconfig.minigames/tetris_ui.title": "Настройки Тетриса",
   "text.autoconfig.minigames/tetris_ui.option.hardDrop": "Хард-дроп",
   "text.autoconfig.minigames/tetris_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/tetris_ui.option.randomBlocks": "Рандомные текстуры блоков",
 
   "text.autoconfig.minigames/dino_ui.title": "Настрйоки дино",
   "text.autoconfig.minigames/dino_ui.option.volume": "Громкость",
@@ -60,11 +63,16 @@
   "text.autoconfig.minigames/bubble_shooter_ui.option.endColor": "Конечный цвет (Только для режима кастомного градиента)",
   "text.autoconfig.minigames/bubble_shooter_ui.option.volume": "Громкость",
 
+  "text.autoconfig.minigames/cookie_clicker_ui.title": "Настройки куки кликера",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Звуки из куки кликера",
+  "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Максимальный спавн печенек на фоне",
+
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
   "minigame.restart": "Заново",
   "minigame.2048.title": "2048",
-  "minigame.2048.undo": "Отмена",
+  "minigame.2048.undo": "Назад",
   "minigame.2048.score": "ОЧКИ",
   "minigame.2048.best": "РЕКОРД",
   "minigame.2048.game_over": "Игра окончена!",
@@ -90,6 +98,32 @@
   "minigame.bubbleshooter.score": "Счет: ",
   "minigame.bubbleshooter.highScore": "Лучший счет: ",
   "minigame.bubbleshooter.gameOver": "Конец игры!",
+
+  "minigame.cookieclicker.title": "Куки кликер",
+  "minigame.cookieclicker.bakery": "Пекарня %s",
+  "minigame.cookieclicker.cookies": "Печенек: ",
+  "minigame.cookieclicker.cookiesPerSecond": "Печенек в секунду: ",
+  "minigame.cookieclicker.shop": "Магазин",
+  "minigame.cookieclicker.upgrade_click": "Прокачать клик",
+  "minigame.cookieclicker.wooden_cursor": "Деревянный курсор",
+  "minigame.cookieclicker.stone_cursor": "Каменный курсор",
+  "minigame.cookieclicker.copper_cursor": "Медный курсор",
+  "minigame.cookieclicker.golden_cursor": "Золотой курсор",
+  "minigame.cookieclicker.iron_cursor": "Железный курсор",
+  "minigame.cookieclicker.diamond_cursor": "Алмазный курсор",
+  "minigame.cookieclicker.netherite_cursor": "Незеритовый курсор",
+  "minigame.cookieclicker.clicker_doubler": "Удвоитель кликов",
+  "minigame.cookieclicker.upgrade_click.desc": "+1 печенька за клик",
+  "minigame.cookieclicker.wooden_cursor.desc": "+0.5 печенек в секунду",
+  "minigame.cookieclicker.stone_cursor.desc": "+3.5 печенек в секунду",
+  "minigame.cookieclicker.copper_cursor.desc": "+20 печенек в секунду",
+  "minigame.cookieclicker.golden_cursor.desc": "+100 печенек в секунду",
+  "minigame.cookieclicker.iron_cursor.desc": "+500 печенек в секунду",
+  "minigame.cookieclicker.diamond_cursor.desc": "+1000 печенек в секунду",
+  "minigame.cookieclicker.netherite_cursor.desc": "+10000 печенек в секунду",
+  "minigame.cookieclicker.amethyst_shard.desc": "Завершить игру",
+  "minigame.cookieclicker.clicker_doubler.desc": "2x печенек за клик",
+  "minigame.cookieclicker.procent_per_click": "% при покупке",
 
   "minigame.minesweeper.title": "Сапёр",
   "minigame.minesweeper.leaderboard.name": "Лидерборд",
@@ -132,5 +166,8 @@
 
   "minigame.config.btn": "Открыть конфиг",
   "minigame.leaderboard.disabled": "Лидерборды выключены, временно, или навсегда, никто не знает...",
-  "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд"
+  "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд",
+
+  "modmenu.summaryTranslation.minigamesmod": "Добавляет много прикольных мини-игр в майнкрафт!",
+  "modmenu.descriptionTranslation.minigamesmod": "Добавляет много прикольных мини-игр в майнкрафт!"
 }

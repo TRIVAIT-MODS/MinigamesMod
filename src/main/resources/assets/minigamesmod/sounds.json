@@ -1,0 +1,22 @@
+{
+  "buy": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:buy1",
+      "minigamesmod:buy2",
+      "minigamesmod:buy3"
+    ]
+  },
+  "click": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:clickb1",
+      "minigamesmod:clickb2",
+      "minigamesmod:clickb3",
+      "minigamesmod:clickb4",
+      "minigamesmod:clickb5",
+      "minigamesmod:clickb6",
+      "minigamesmod:clickb7"
+    ]
+  }
+}
