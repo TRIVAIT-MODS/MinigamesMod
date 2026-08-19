@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SheetsApi {
-    public static final String SCOREBOARD_API_VERSION = "1.1";
+    public static final String SCOREBOARD_API_VERSION = "1.2";
     public static volatile boolean leaderboardsEnabled = true;
     private static final String CSV_BASE = "https://docs.google.com/spreadsheets/d/" + LeaderboardLink.SPREADSHEET_ID + "/gviz/tq?tqx=out:csv&sheet=";
     private static final String LEADERBOARDS_ENABLED_URL = "https://docs.google.com/spreadsheets/d/" + LeaderboardLink.SPREADSHEET_ID + "/gviz/tq?tqx=out:csv&sheet=DIno&range=P35";
@@ -59,7 +59,7 @@ public class SheetsApi {
         return !apiParts[0].equals(scriptParts[0]);
     }
 
-    public static CompletableFuture<Void> submitAsync(String game, String name, int value, boolean rewrite) {
+    public static CompletableFuture<Void> submitAsync(String game, String name, long value, boolean rewrite) {
         return CompletableFuture.runAsync(() -> submit(game, name, value, rewrite));
     }
 
@@ -87,7 +87,7 @@ public class SheetsApi {
                     continue;
                 }
                 try {
-                    int value = Integer.parseInt(cols[1].trim());
+                    long value = Long.parseLong(cols[1].trim());
                     result.add(new LeaderboardEntry(name, value));
                 } catch (NumberFormatException ignored) {
                 }
@@ -155,7 +155,7 @@ public class SheetsApi {
         });
     }
 
-    public static void submit(String game, String name, int value, boolean rewrite) {
+    public static void submit(String game, String name, long value, boolean rewrite) {
         if (!canWrite()) {
             throw new IllegalStateException("writeWebAppUrl not set");
         }

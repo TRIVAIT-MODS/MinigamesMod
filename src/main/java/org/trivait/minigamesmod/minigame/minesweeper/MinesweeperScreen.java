@@ -68,8 +68,6 @@ public class MinesweeperScreen extends Screen {
 
     public final GameMode gameMode;
 
-    private ButtonWidget leaderboardButton;
-
     private MinesweeperGame minigame;
     private Screen parent;
 
@@ -143,9 +141,7 @@ public class MinesweeperScreen extends Screen {
         int dispY = topBarY + (TOP_BAR_H - minesDisplay.getHeight()) / 2;
         minesDisplay.setPosition(topBarX + 6, dispY);
         timerDisplay.setPosition(topBarX + topBarW - 6 - timerDisplay.getWidth(), dispY);
-
         if (gameMode == GameMode.DEFAULT) {
-
             this.addDrawableChild(new ConfigButton(60, 10, minigame));
         }
     }
@@ -158,7 +154,7 @@ public class MinesweeperScreen extends Screen {
     protected void resetGame() {
         MinesweeperGame.setSavedGame(null);
         explosions.clear();
-        board = new GameBoard(new GameSettings(MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridWidth, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).gridHeight, MinigameRegistry.getConfig(MinesweeperVisibleConfig.class).mines));
+        board = new GameBoard(newGameSettings != null ? newGameSettings : defaultSettings());
         board.setSoundCallback(makeSoundCallback());
         this.init();
     }
@@ -211,9 +207,11 @@ public class MinesweeperScreen extends Screen {
 
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
+        MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
+        double mouseX = click.x();
+        double mouseY = click.y();
         int button = click.button();
 
-        MinesweeperVisibleConfig cfg = MinigameRegistry.getConfig(MinesweeperVisibleConfig.class);
         if (board == null) return super.mouseClicked(click, doubled);
 
         if (!board.alive || board.won) {
@@ -221,8 +219,8 @@ public class MinesweeperScreen extends Screen {
             return super.mouseClicked(click, doubled);
         }
 
-        int gx = (int) Math.floor((click.x() - gridX) / (double) cellSize);
-        int gy = (int) Math.floor((click.y() - gridY) / (double) cellSize);
+        int gx = (int) Math.floor((mouseX - gridX) / (double) cellSize);
+        int gy = (int) Math.floor((mouseY - gridY) / (double) cellSize);
         if (gx < 0 || gx >= board.w || gy < 0 || gy >= board.h)
             return super.mouseClicked(click, doubled);
 

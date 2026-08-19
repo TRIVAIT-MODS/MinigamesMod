@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
@@ -23,7 +24,9 @@ public class ConfigButton extends TextIconButtonWidget.IconOnly {
     public ConfigButton(int x, int y, AbstractMinigame minigame) {
         super(20, 20, Text.empty(), 20, 20, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
             MinecraftClient client = MinecraftClient.getInstance();
-            client.setScreen(MinigameRegistry.openVisibleConfig(minigame, client.currentScreen));
+            Screen screen = client.currentScreen;
+            screen.close();
+            client.setScreen(MinigameRegistry.openVisibleConfig(minigame, screen));
         }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
         this.setTooltip(Tooltip.of(Text.translatable("minigame.config.btn")));
         this.setX(x);
