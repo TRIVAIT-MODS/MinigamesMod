@@ -11,6 +11,7 @@ import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
@@ -45,20 +46,35 @@ public abstract class Mino {
 
     protected Mino() {
         switch (this) {
-            case Mino_Square ignored -> type = "square";
-            case Mino_Bar ignored -> type = "bar";
-            case Mino_T ignored -> type = "t";
-            case Mino_L1 ignored -> type = "l1";
-            case Mino_L2 ignored -> type = "l2";
-            case Mino_Z1 ignored -> type = "z1";
-            case Mino_Z2 ignored -> type = "z2";
+            case MinoSquare ignored -> type = "square";
+            case MinoBar ignored -> type = "bar";
+            case MinoT ignored -> type = "t";
+            case MinoL1 ignored -> type = "l1";
+            case MinoL2 ignored -> type = "l2";
+            case MinoZ1 ignored -> type = "z1";
+            case MinoZ2 ignored -> type = "z2";
             default -> {
             }
         }
-        Pair<Identifier, MutableText> randomBlock = getRandomBlockTexture();
+        Pair<Identifier, MutableText> randomBlock = MinigameRegistry.getConfig(TetrisVisibleConfig.class).randomBlocks ? getRandomBlockTexture() : getFixedBlockTexture();
         create(randomBlock.getLeft(), randomBlock.getRight());
         //SpriteContents sprite = getRandomBlockTexture();
         //create(Identifier.of(sprite.getId().getNamespace().split(":")[0],"textures/" + sprite.getId().getPath() + ".png"), sprite.getWidth(), sprite.getHeight());
+    }
+
+    protected Pair<Identifier, MutableText> getFixedBlockTexture() {
+        Identifier texture = switch (type) {
+            case "square" -> Identifier.ofVanilla("block/gold_block");
+            case "bar" -> Identifier.ofVanilla("block/diamond_block");
+            case "t" -> Identifier.ofVanilla("block/amethyst_block");
+            case "l1" -> Identifier.ofVanilla("block/copper_block");
+            case "l2" -> Identifier.ofVanilla("block/lapis_block");
+            case "z1" -> Identifier.ofVanilla("block/redstone_block");
+            case "z2" -> Identifier.ofVanilla("block/emerald_block");
+            default -> Identifier.ofVanilla("block/iron_block");
+        };
+
+        return new Pair<Identifier, MutableText>(texture, Text.literal("block"));
     }
 
     public void create(Identifier texture, MutableText name) {
@@ -386,7 +402,7 @@ public abstract class Mino {
                         }
                     }
                     //individual diagonal pixels
-                    if (!(this instanceof Mino_Square)) {
+                    if (!(this instanceof MinoSquare)) {
                         if (!getOutline(block)[0] && !getOutline(block)[2]) {
                             context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
