@@ -136,7 +136,7 @@ public class GameBoard {
         int placed = 0;
         while (placed < mines) {
             int x = rng.nextInt(w), y = rng.nextInt(h);
-            if ((x == avoidX && y == avoidY) || grid[y][x].mine) continue;
+            if (Math.abs(x - avoidX) <= 1 && Math.abs(y - avoidY) <= 1 || grid[y][x].mine) continue;
             grid[y][x].mine = true;
             placed++;
         }
