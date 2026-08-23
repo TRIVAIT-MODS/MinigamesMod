@@ -248,7 +248,7 @@ public class BubbleShooterScreen extends Screen {
             if (!defeatSoundPlayed) {
                 defeatSoundPlayed = true;
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1f, vol());
-                minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
+                minigame.getLeaderboard().doPost(score);
             }
         }
     }
@@ -432,7 +432,7 @@ public class BubbleShooterScreen extends Screen {
             if (!defeatSoundPlayed) {
                 defeatSoundPlayed = true;
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1f, vol());
-                minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
+                minigame.getLeaderboard().doPost(score);
             }
 
             return;
@@ -676,7 +676,7 @@ public class BubbleShooterScreen extends Screen {
             if (!defeatSoundPlayed) {
                 defeatSoundPlayed = true;
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1f, vol());
-                minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
+                minigame.getLeaderboard().doPost(score);
             }
         }
     }

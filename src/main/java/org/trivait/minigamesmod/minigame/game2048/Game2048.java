@@ -18,7 +18,9 @@ import java.util.List;
 public class Game2048 extends AbstractMinigame {
 
     public Game2048() {
-        super("2048", Text.literal("2048"), Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/2048_icon.png"));
+        super("2048",
+                Text.literal("2048"),
+                Identifier.of(MinigamesMod.MOD_ID, "textures/minigame/2048_icon.png"));
     }
 
     @Override

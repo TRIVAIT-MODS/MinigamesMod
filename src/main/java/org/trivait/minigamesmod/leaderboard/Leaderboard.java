@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.leaderboard;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +19,15 @@ public class Leaderboard {
         this.rewrite = rewrite;
     }
 
-    public void doPost(String name, int value) {
-        SheetsApi.submitAsync(gameName, name, value, rewrite);
+    public void doPost(int value) {
+        SheetsApi.submitAsync(gameName, getPlayerName(), value, rewrite);
     }
-    public void doPost(String name, long value) {
-        SheetsApi.submitAsync(gameName, name, value, rewrite);
+    public void doPost(long value) {
+        SheetsApi.submitAsync(gameName, getPlayerName(), value, rewrite);
+    }
+
+    public static String getPlayerName() {
+        return MinecraftClient.getInstance().getSession().getUsername();
     }
 
     public CompletableFuture<List<LeaderboardEntry>> getEntries() {
