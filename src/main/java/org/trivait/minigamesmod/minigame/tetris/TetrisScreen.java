@@ -220,7 +220,7 @@ public class TetrisScreen extends Screen {
         isNewHighScore = score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore;
         active = false;
         if (score!=0) {
-            tetris.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
+            tetris.getLeaderboard().doPost(score);
         }
     }
 
