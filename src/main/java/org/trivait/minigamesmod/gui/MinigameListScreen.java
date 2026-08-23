@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.api.MinigameDefinition;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ArrowButtonWidget;
+import org.trivait.minigamesmod.gui.widget.MainConfigButton;
 import org.trivait.minigamesmod.gui.widget.MinigameCardWidget;
 import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
@@ -97,6 +98,7 @@ public class MinigameListScreen extends Screen {
         }).bounds(width / 2 - 35, height / 2 + 70, 70, 20).build();
 
         this.addRenderableWidget(leaderboardBtn);
+        this.addRenderableWidget(new MainConfigButton(width-20-5, 5));
         updateActive();
     }
 
