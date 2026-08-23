@@ -292,7 +292,7 @@ public class GoogleDinoScreen extends Screen {
                 }
                 PlayingSoundManager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 1, GoogleDino.vol());
                 gameRunning = false;
-                minigame.getLeaderboard().doPost(MinecraftClient.getInstance().getSession().getUsername(), score);
+                minigame.getLeaderboard().doPost(score);
                 return;
             }
         }
