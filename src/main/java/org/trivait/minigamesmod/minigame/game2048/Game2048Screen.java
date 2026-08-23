@@ -184,7 +184,7 @@ public class Game2048Screen extends Screen {
                 minigame.onLose();
                 Game2048VisibleConfig cfg = MinigameRegistry.getConfig(Game2048VisibleConfig.class);
                 if (cfg.gridSize == 4) {
-                    minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), (int) score);
+                    minigame.getLeaderboard().doPost(score);
                 }
             }
         }
@@ -245,7 +245,7 @@ public class Game2048Screen extends Screen {
                         won = true;
                         saveBestScore();
                         minigame.onWin();
-                        minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), (int) score);
+                        minigame.getLeaderboard().doPost(score);
                     }
                 } else {
                     grid[tr][tc] = grid[r][c];

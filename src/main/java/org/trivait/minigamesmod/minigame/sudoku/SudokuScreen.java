@@ -36,8 +36,6 @@ public class SudokuScreen extends Screen {
         this.parent = parent;
         if (savedGrid == null) {
             initNewGame();
-        } else {
-            checkWinCondition();
         }
         this.minigame = sudoku;
     }
@@ -78,18 +76,24 @@ public class SudokuScreen extends Screen {
     }
 
     private void checkWinCondition() {
-        if (won) return;
+        if (won || savedGrid == null || savedSolution == null) {
+            return;
+        }
+
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
-                if (savedGrid[r][c] == 0 || savedGrid[r][c] != savedSolution[r][c]) {
+                if (savedGrid[r][c] != savedSolution[r][c]) {
                     return;
                 }
             }
         }
+
         won = true;
+
         if (MinigameRegistry.getConfig(SudokuVisibleConfig.class).difficulty == Difficulty.MEDIUM) {
-            minigame.getLeaderboard().doPost(Minecraft.getInstance().getUser().getName(), 1);
+            minigame.getLeaderboard().doPost(1);
         }
+
         PlayingSoundManager.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, vol());
     }
 

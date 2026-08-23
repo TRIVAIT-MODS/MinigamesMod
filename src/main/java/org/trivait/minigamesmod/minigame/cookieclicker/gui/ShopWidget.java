@@ -140,13 +140,13 @@ public class ShopWidget extends AbstractWidget {
                             }
                         }, () -> screen.clickDoublerCount, Component.translatable("minigame.cookieclicker.clicker_doubler.desc"), 250),
                 new ShopEntry(Component.translatable("item.minecraft.amethyst_shard"),
-                        () -> 500000000,
+                        () -> 350000000,
                         Identifier.withDefaultNamespace("textures/item/amethyst_shard.png"),
                         (mc, entry, action) -> {
                             if (screen.cookies>=entry.price.getAsInt()) {
                                 screen.clearGame();
                                 PlayingSoundManager.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
-                                screen.minigame.getLeaderboard().doPost(screen.playerName, 1);
+                                screen.minigame.getLeaderboard().doPost(1);
                             }
                         }, () -> 0, Component.translatable("minigame.cookieclicker.amethyst_shard.desc"), 0)
         );
