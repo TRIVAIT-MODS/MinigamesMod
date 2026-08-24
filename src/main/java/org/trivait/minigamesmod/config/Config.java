@@ -8,6 +8,8 @@ import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
 @me.shedaniel.autoconfig.annotation.Config(name = "minigames")
 public class Config implements ConfigData {
 
+    public boolean leaderboard = true;
+
     public boolean mainMenuButton = true;
 
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)

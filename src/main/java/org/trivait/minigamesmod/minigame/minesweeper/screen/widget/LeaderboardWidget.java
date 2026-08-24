@@ -103,7 +103,7 @@ public class LeaderboardWidget extends AbstractWidget {
         int rowW = w - 2 - (needsScrollbar ? SB_W + 2 : 0);
 
         boolean isTime = gameMode == GameMode.LEADERBOARD_TIME;
-        int rankW = mc.font.width("00. ");
+        int rankW = mc.font.width("000. ");
 
         float renderOffset = SMOOTH ? smoothScrollOffset : scrollOffset;
         int baseRow = (int) renderOffset;
@@ -128,7 +128,10 @@ public class LeaderboardWidget extends AbstractWidget {
             ctx.text(mc.font, rankText, x + PAD_X, rowY + 2, placeColor, false);
 
             MutableComponent nameText = Component.literal(entry.name()).withStyle(s -> s.withBold(true));
-            ctx.text(mc.font, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            int nameColor = entry.name().equalsIgnoreCase(Minecraft.getInstance().getGameProfile().name())
+                    ? 0xFF0094FF
+                    : (top3 ? placeColor : COLOR_WHITE);
+            ctx.text(mc.font, nameText, x + PAD_X + rankW, rowY + 2, nameColor, false);
 
             String suffix = isTime ? Component.translatable("minigame.minesweeper.second.suffix").getString() : "";
             MutableComponent valueText = Component.literal(entry.value() + suffix).withStyle(s -> s.withBold(true));
