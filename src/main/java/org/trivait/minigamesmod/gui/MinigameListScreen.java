@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameDefinition;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.gui.widget.ArrowButtonWidget;
@@ -95,7 +96,9 @@ public class MinigameListScreen extends Screen {
             }
         }).dimensions(width / 2 - 35, height / 2 + 70, 70, 20).build();
 
-        this.addDrawableChild(leaderboardBtn);
+        if (MinigamesMod.CONFIG.leaderboard) {
+            this.addDrawableChild(leaderboardBtn);
+        }
         this.addDrawableChild(new MainConfigButton(width-20-5, 5));
         updateActive();
     }
@@ -184,12 +187,13 @@ public class MinigameListScreen extends Screen {
         if (cards.isEmpty()) {
             context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("screen.minigames.list.empty"), this.width / 2, this.height / 2 - 10, 0xFF888888);
         }
-
-        if (leaderboardBtn != null && mouseX >= leaderboardBtn.getX() && mouseX < leaderboardBtn.getX() + leaderboardBtn.getWidth() && mouseY >= leaderboardBtn.getY() && mouseY < leaderboardBtn.getY() + leaderboardBtn.getHeight()) {
-            if (leaderboardBlocked) {
-                context.drawTooltip(this.textRenderer, Text.translatable("minigame.leaderboard.disabled"), mouseX, mouseY);
-            } else if (leaderboardNotSupported) {
-                context.drawTooltip(this.textRenderer, Text.translatable("minigame.leaderboard.notSupported"), mouseX, mouseY);
+        if (MinigamesMod.CONFIG.leaderboard) {
+            if (leaderboardBtn != null && mouseX >= leaderboardBtn.getX() && mouseX < leaderboardBtn.getX() + leaderboardBtn.getWidth() && mouseY >= leaderboardBtn.getY() && mouseY < leaderboardBtn.getY() + leaderboardBtn.getHeight()) {
+                if (leaderboardBlocked) {
+                    context.drawTooltip(this.textRenderer, Text.translatable("minigame.leaderboard.disabled"), mouseX, mouseY);
+                } else if (leaderboardNotSupported) {
+                    context.drawTooltip(this.textRenderer, Text.translatable("minigame.leaderboard.notSupported"), mouseX, mouseY);
+                }
             }
         }
     }
