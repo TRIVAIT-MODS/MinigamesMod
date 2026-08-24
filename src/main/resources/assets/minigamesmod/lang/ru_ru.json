@@ -1,5 +1,6 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.leaderboard": "Лидерборд включен",
   "text.autoconfig.minigames.option.mainMenuButton": "Кнопка на главном экране",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Позиция на главном экране",
   "text.autoconfig.minigames.option.pauseMenuButton": "Кнопка в меню паузы",

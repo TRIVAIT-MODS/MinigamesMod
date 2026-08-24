@@ -17,6 +17,7 @@ import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
+import org.trivait.minigamesmod.minigame.bubbleshooter.background.GifBackground;
 import org.trivait.minigamesmod.minigame.game2048.Game2048Config;
 
 import java.util.ArrayList;
