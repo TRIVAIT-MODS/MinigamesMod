@@ -103,7 +103,7 @@ public class LeaderboardWidget extends ClickableWidget {
         int rowW = w - 2 - (needsScrollbar ? SB_W + 2 : 0);
 
         boolean isTime = gameMode == GameMode.LEADERBOARD_TIME;
-        int rankW = mc.textRenderer.getWidth("00. ");
+        int rankW = mc.textRenderer.getWidth("000. ");
 
         float renderOffset = SMOOTH ? smoothScrollOffset : scrollOffset;
         int baseRow = (int) renderOffset;
@@ -128,7 +128,10 @@ public class LeaderboardWidget extends ClickableWidget {
             ctx.drawText(mc.textRenderer, rankText, x + PAD_X, rowY + 2, placeColor, false);
 
             MutableText nameText = Text.literal(entry.name()).styled(s -> s.withBold(true));
-            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            int nameColor = entry.name().equalsIgnoreCase(MinecraftClient.getInstance().getSession().getUsername())
+                    ? 0xFF0094FF
+                    : (top3 ? placeColor : COLOR_WHITE);
+            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, nameColor, false);
 
             String suffix = isTime ? Text.translatable("minigame.minesweeper.second.suffix").getString() : "";
             MutableText valueText = Text.literal(entry.value() + suffix).styled(s -> s.withBold(true));
