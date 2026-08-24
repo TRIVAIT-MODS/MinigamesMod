@@ -1,5 +1,6 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
+  "text.autoconfig.minigames.option.leaderboard": "Leaderboard enabled",
   "text.autoconfig.minigames.option.mainMenuButton": "Title screen button",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Title screen button position",
   "text.autoconfig.minigames.option.pauseMenuButton": "Game menu button",
