@@ -1,6 +1,5 @@
 package org.trivait.minigamesmod.minigame.bubbleshooter.background;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
@@ -14,7 +13,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GifBackground extends Background {
-    private static final Identifier MOD_ID = Identifier.of("minigamesmod", "bubbleshooter_gif");
+
+    private static final Identifier TEXTURE_PREFIX =
+            Identifier.of("minigamesmod", "bubbleshooter_gif");
+
     private final List<Frame> frames = new ArrayList<>();
-    private float totalTime = 0;
-    private float totalDuration = 0;
+
+    private float totalTime = 0.0f;
+    private float totalDuration = 0.0f;
+
     private boolean loaded = false;
+    private long lastModified = -1L;
+    private int loadId = 0;
+
     private int gifWidth = 1;
     private int gifHeight = 1;
 
@@ -34,147 +42,349 @@ public class GifBackground extends Background {
         super(Text.translatable("minigame.bubbleshooter.background.gif"));
     }
 
-    private void loadGif() {
-        loaded = true;
-        File gifFile = new File(MinecraftClient.getInstance().runDirectory, "config/minigames/bubbleshooter.gif");
+    public void loadGif() {
+        File gifFile = getGifFile();
+
         if (!gifFile.exists()) {
+            clearFrames();
+            loaded = true;
+            lastModified = -1L;
             return;
         }
 
+        long modified = gifFile.lastModified();
+
+        if (loaded && modified == lastModified) {
+            return;
+        }
+
+        reloadGif(gifFile, modified);
+    }
+
+    private File getGifFile() {
+        return new File(MinecraftClient.getInstance().runDirectory, "config/minigames/bubbleshooter.gif");
+    }
+
+    private void reloadGif(File gifFile, long modified) {
+        clearFrames();
+
+        totalTime = 0.0f;
+        totalDuration = 0.0f;
+        gifWidth = 1;
+        gifHeight = 1;
+        loaded = false;
+
+        loadId++;
+
+        List<Frame> newFrames = new ArrayList<>();
+
         try (ImageInputStream stream = ImageIO.createImageInputStream(gifFile)) {
-            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
-            reader.setInput(stream);
 
-            int count = reader.getNumImages(true);
-
-            IIOMetadata streamMetadata = reader.getStreamMetadata();
-            if (streamMetadata != null) {
-                String globalFormat = streamMetadata.getNativeMetadataFormatName();
-                if (globalFormat != null) {
-                    IIOMetadataNode globalRoot = (IIOMetadataNode) streamMetadata.getAsTree(globalFormat);
-                    var screenDesc = globalRoot.getElementsByTagName("LogicalScreenDescriptor");
-                    if (screenDesc.getLength() > 0) {
-                        IIOMetadataNode node = (IIOMetadataNode) screenDesc.item(0);
-                        this.gifWidth = Integer.parseInt(node.getAttribute("logicalScreenWidth"));
-                        this.gifHeight = Integer.parseInt(node.getAttribute("logicalScreenHeight"));
-                    }
-                }
+            if (stream == null) {
+                loaded = true;
+                lastModified = modified;
+                return;
             }
 
-            if (this.gifWidth <= 1) this.gifWidth = reader.getWidth(0);
-            if (this.gifHeight <= 1) this.gifHeight = reader.getHeight(0);
+            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
 
-            BufferedImage master = new BufferedImage(gifWidth, gifHeight, BufferedImage.TYPE_INT_ARGB);
-            BufferedImage previous = null;
-            Graphics2D g = master.createGraphics();
-            g.setBackground(new Color(0, 0, 0, 0));
+            try {
+                reader.setInput(stream);
 
-            for (int i = 0; i < count; i++) {
-                BufferedImage frameImage = reader.read(i);
-                IIOMetadata metadata = reader.getImageMetadata(i);
+                int count = reader.getNumImages(true);
 
-                int delay = 10;
-                int offsetX = 0;
-                int offsetY = 0;
-                String disposalMethod = "doNotDispose";
-
-                String metaFormat = metadata.getNativeMetadataFormatName();
-                if (metaFormat != null) {
-                    IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(metaFormat);
-
-                    var gce = root.getElementsByTagName("GraphicControlExtension");
-                    if (gce.getLength() > 0) {
-                        IIOMetadataNode node = (IIOMetadataNode) gce.item(0);
-                        delay = Integer.parseInt(node.getAttribute("delayTime"));
-                        disposalMethod = node.getAttribute("disposalMethod");
-                    }
-
-                    var id = root.getElementsByTagName("ImageDescriptor");
-                    if (id.getLength() > 0) {
-                        IIOMetadataNode node = (IIOMetadataNode) id.item(0);
-                        offsetX = Integer.parseInt(node.getAttribute("imageLeftPosition"));
-                        offsetY = Integer.parseInt(node.getAttribute("imageTopPosition"));
-                    }
+                if (count <= 0) {
+                    loaded = true;
+                    lastModified = modified;
+                    return;
                 }
 
-                if (i > 0) {
-                    String prevDisposal = frames.get(i - 1).disposalMethod;
-                    if ("restoreToBackgroundColor".equals(prevDisposal)) {
-                        Frame prevFrame = frames.get(i - 1);
-                        g.setComposite(AlphaComposite.Clear);
-                        g.fillRect(prevFrame.offX, prevFrame.offY, prevFrame.w, prevFrame.h);
-                        g.setComposite(AlphaComposite.SrcOver);
-                    } else if ("restoreToPrevious".equals(prevDisposal) && previous != null) {
-                        g.setComposite(AlphaComposite.Src);
-                        g.drawImage(previous, 0, 0, null);
-                        g.setComposite(AlphaComposite.SrcOver);
-                    }
-                }
+                readLogicalScreenSize(reader);
 
-                if ("restoreToPrevious".equals(disposalMethod)) {
-                    previous = new BufferedImage(gifWidth, gifHeight, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D pg = previous.createGraphics();
-                    pg.drawImage(master, 0, 0, null);
-                    pg.dispose();
-                }
+                BufferedImage master = new BufferedImage(gifWidth, gifHeight, BufferedImage.TYPE_INT_ARGB);
 
-                g.drawImage(frameImage, offsetX, offsetY, null);
+                Graphics2D graphics = master.createGraphics();
 
-                NativeImage nativeImage = new NativeImage(gifWidth, gifHeight, false);
-                for (int y = 0; y < gifHeight; y++) {
-                    for (int x = 0; x < gifWidth; x++) {
-                        int argb = master.getRGB(x, y);
-                        int a = (argb >> 24) & 0xFF;
-                        int r = (argb >> 16) & 0xFF;
-                        int gChannel = (argb >> 8) & 0xFF;
-                        int b = argb & 0xFF;
+                try {
+                    graphics.setComposite(AlphaComposite.Src);
+                    graphics.clearRect(0, 0, gifWidth, gifHeight);
 
-                        if (a == 0) {
-                            argb = 0xFFFFFFFF;
+                    BufferedImage previous = null;
+
+                    for (int i = 0; i < count; i++) {
+                        BufferedImage frameImage = reader.read(i);
+                        IIOMetadata metadata = reader.getImageMetadata(i);
+
+                        FrameInfo info = readFrameInfo(metadata, frameImage);
+
+                        if (i > 0 && !newFrames.isEmpty()) {
+                            Frame previousFrame = newFrames.get(newFrames.size() - 1);
+
+                            if ("restoreToBackgroundColor".equals(previousFrame.disposalMethod)) {
+                                graphics.setComposite(AlphaComposite.Clear);
+                                graphics.fillRect(previousFrame.offX, previousFrame.offY, previousFrame.width, previousFrame.height);
+                                graphics.setComposite(AlphaComposite.SrcOver);
+
+                            } else if ("restoreToPrevious".equals(previousFrame.disposalMethod) && previous != null) {
+
+                                graphics.setComposite(AlphaComposite.Src);
+                                graphics.drawImage(previous, 0, 0, null);
+                                graphics.setComposite(AlphaComposite.SrcOver);
+                            }
                         }
 
-                        nativeImage.setColorArgb(x, y, argb);
+                        if ("restoreToPrevious".equals(info.disposalMethod)) {
+                            previous = copyImage(master);
+                        }
+
+                        graphics.setComposite(AlphaComposite.SrcOver);
+                        graphics.drawImage(frameImage, info.offsetX, info.offsetY, null);
+
+                        NativeImage nativeImage = convertToNativeImage(master);
+
+                        Identifier frameId = Identifier.of(TEXTURE_PREFIX.getNamespace(), TEXTURE_PREFIX.getPath() + "_" + loadId + "_frame_" + i);
+
+                        NativeImageBackedTexture texture = new NativeImageBackedTexture(nativeImage);
+
+                        MinecraftClient.getInstance().getTextureManager().registerTexture(frameId, texture);
+
+                        float durationSeconds =
+                                info.delayCentiseconds / 100.0f;
+
+                        if (durationSeconds <= 0.0f) {
+                            durationSeconds = 0.1f;
+                        }
+
+                        Frame frame = new Frame(frameId, texture, durationSeconds, info.disposalMethod, info.offsetX, info.offsetY, info.width, info.height);
+
+                        newFrames.add(frame);
+                        totalDuration += durationSeconds;
+                    }
+
+                } finally {
+                    graphics.dispose();
+                }
+
+            } finally {
+                reader.dispose();
+            }
+
+            frames.addAll(newFrames);
+
+            loaded = true;
+            lastModified = modified;
+
+            if (frames.isEmpty()) {
+                totalTime = 0.0f;
+                totalDuration = 0.0f;
+            }
+
+        } catch (Exception ignored) {
+            clearFrames();
+
+            loaded = true;
+            lastModified = modified;
+            totalTime = 0.0f;
+            totalDuration = 0.0f;
+        }
+    }
+
+    private void readLogicalScreenSize(ImageReader reader) throws IOException {
+        IIOMetadata streamMetadata = reader.getStreamMetadata();
+
+        if (streamMetadata != null) {
+            String format = streamMetadata.getNativeMetadataFormatName();
+
+            if (format != null) {
+                IIOMetadataNode root = (IIOMetadataNode) streamMetadata.getAsTree(format);
+
+                var screenDesc = root.getElementsByTagName("LogicalScreenDescriptor");
+
+                if (screenDesc.getLength() > 0) {
+                    IIOMetadataNode node = (IIOMetadataNode) screenDesc.item(0);
+
+                    String width = node.getAttribute("logicalScreenWidth");
+
+                    String height = node.getAttribute("logicalScreenHeight");
+
+                    if (!width.isEmpty()) {
+                        gifWidth = Integer.parseInt(width);
+                    }
+
+                    if (!height.isEmpty()) {
+                        gifHeight = Integer.parseInt(height);
                     }
                 }
+            }
+        }
 
-                Identifier frameId = Identifier.of(MOD_ID.getNamespace(), MOD_ID.getPath() + "_frame_" + i);
-                NativeImageBackedTexture texture = new NativeImageBackedTexture(nativeImage);
-                MinecraftClient.getInstance().getTextureManager().registerTexture(frameId, texture);
+        if (gifWidth <= 1) {
+            gifWidth = reader.getWidth(0);
+        }
 
-                float durationSeconds = delay / 100.0f;
-                if (durationSeconds <= 0) {
-                    durationSeconds = 0.1f;
+        if (gifHeight <= 1) {
+            gifHeight = reader.getHeight(0);
+        }
+    }
+
+    private FrameInfo readFrameInfo(IIOMetadata metadata, BufferedImage frameImage) {
+        int delay = 10;
+        int offsetX = 0;
+        int offsetY = 0;
+
+        String disposalMethod = "doNotDispose";
+
+        String format = metadata.getNativeMetadataFormatName();
+
+        if (format != null) {
+            IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(format);
+
+            var gce = root.getElementsByTagName("GraphicControlExtension");
+
+            if (gce.getLength() > 0) {
+                IIOMetadataNode node = (IIOMetadataNode) gce.item(0);
+
+                String delayValue = node.getAttribute("delayTime");
+
+                if (!delayValue.isEmpty()) {
+                    delay = Integer.parseInt(delayValue);
                 }
 
-                frames.add(new Frame(frameId, durationSeconds, disposalMethod, offsetX, offsetY, frameImage.getWidth(), frameImage.getHeight()));
-                totalDuration += durationSeconds;
+                String disposal = node.getAttribute("disposalMethod");
+
+                if (!disposal.isEmpty()) {
+                    disposalMethod = disposal;
+                }
             }
-            g.dispose();
-            reader.dispose();
-        } catch (IOException ignored) {}
+
+            var imageDescriptor = root.getElementsByTagName("ImageDescriptor");
+
+            if (imageDescriptor.getLength() > 0) {
+                IIOMetadataNode node = (IIOMetadataNode) imageDescriptor.item(0);
+
+                String x = node.getAttribute("imageLeftPosition");
+
+                String y = node.getAttribute("imageTopPosition");
+
+                if (!x.isEmpty()) {
+                    offsetX = Integer.parseInt(x);
+                }
+
+                if (!y.isEmpty()) {
+                    offsetY = Integer.parseInt(y);
+                }
+            }
+        }
+
+        return new FrameInfo(delay, offsetX, offsetY, disposalMethod, frameImage.getWidth(), frameImage.getHeight());
+    }
+
+    private BufferedImage copyImage(BufferedImage source) {
+        BufferedImage copy = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphics = copy.createGraphics();
+
+        try {
+            graphics.setComposite(AlphaComposite.Src);
+            graphics.drawImage(source, 0, 0, null);
+        } finally {
+            graphics.dispose();
+        }
+
+        return copy;
+    }
+
+    private NativeImage convertToNativeImage(BufferedImage image) {
+        NativeImage nativeImage = new NativeImage(image.getWidth(), image.getHeight(), false);
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+
+                int a = (argb >> 24) & 0xFF;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+
+                if (a == 0) {
+                    r = 255;
+                    g = 255;
+                    b = 255;
+                    a = 255;
+                }
+
+                int abgr = (a << 24) | (b << 16) | (g << 8) | r;
+
+                nativeImage.setColorArgb(x, y, argb);
+            }
+        }
+
+        return nativeImage;
+    }
+
+    private void clearFrames() {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        for (Frame frame : frames) {
+            try {
+                client.getTextureManager()
+                        .destroyTexture(frame.id);
+            } catch (Exception ignored) {
+            }
+
+            try {
+                frame.texture.close();
+            } catch (Exception ignored) {
+            }
+        }
+
+        frames.clear();
+
+        totalTime = 0.0f;
+        totalDuration = 0.0f;
     }
 
     @Override
     public void render(int x, int y, int width, int height, DrawContext ctx, float delta, int mouseX, int mouseY) {
-        if (!loaded) {
-            loadGif();
+        File gifFile = getGifFile();
+
+        if (!gifFile.exists()) {
+            if (!loaded || lastModified != -1L) {
+                clearFrames();
+                loaded = true;
+                lastModified = -1L;
+            }
+        } else {
+            long modified = gifFile.lastModified();
+
+            if (!loaded || modified != lastModified) {
+                loadGif();
+            }
         }
 
-        if (frames.isEmpty()) {
+        if (frames.isEmpty() || totalDuration <= 0.0f) {
             ctx.fill(x, y, x + width, y + height, 0xFFFFFFFF);
             return;
         }
 
-        totalTime += (delta / 20.0f);
+        totalTime += delta / 20.0f;
+
         if (totalTime >= totalDuration) {
             totalTime %= totalDuration;
         }
 
+        if (totalTime < 0.0f) {
+            totalTime = 0.0f;
+        }
+
         Identifier currentFrameId = frames.get(0).id;
-        float elapsed = 0;
+
+        float elapsed = 0.0f;
+
         for (Frame frame : frames) {
             elapsed += frame.duration;
-            if (totalTime <= elapsed) {
+
+            if (totalTime < elapsed) {
                 currentFrameId = frame.id;
                 break;
             }
@@ -183,5 +393,16 @@ public class GifBackground extends Background {
         ctx.drawTexture(RenderLayer::getGuiTextured, currentFrameId, x, y, 0, 0, width, height, width, height);
     }
 
-    private record Frame(Identifier id, float duration, String disposalMethod, int offX, int offY, int w, int h) {}
+    public void close() {
+        clearFrames();
+
+        loaded = false;
+        lastModified = -1L;
+        totalTime = 0.0f;
+        totalDuration = 0.0f;
+    }
+
+    private record Frame(Identifier id, NativeImageBackedTexture texture, float duration, String disposalMethod, int offX, int offY, int width, int height) { }
+
+    private record FrameInfo(int delayCentiseconds, int offsetX, int offsetY, String disposalMethod, int width, int height) { }
 }

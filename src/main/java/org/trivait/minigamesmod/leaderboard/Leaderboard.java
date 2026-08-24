@@ -3,6 +3,7 @@ package org.trivait.minigamesmod.leaderboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import org.trivait.minigamesmod.MinigamesMod;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,9 +21,13 @@ public class Leaderboard {
     }
 
     public void doPost(int value) {
+        if (!MinigamesMod.CONFIG.leaderboard) return;
         SheetsApi.submitAsync(gameName, getPlayerName(), value, rewrite);
     }
-    public void doPost(long value) {SheetsApi.submitAsync(gameName, getPlayerName(), value, rewrite);}
+    public void doPost(long value) {
+        if (!MinigamesMod.CONFIG.leaderboard) return;
+        SheetsApi.submitAsync(gameName, getPlayerName(), value, rewrite);
+    }
 
     public static String getPlayerName() {
         return MinecraftClient.getInstance().getSession().getUsername();

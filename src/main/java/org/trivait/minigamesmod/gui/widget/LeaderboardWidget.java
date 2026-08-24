@@ -127,7 +127,7 @@ public class LeaderboardWidget extends ClickableWidget {
 
         ctx.enableScissor(x + 1, listY, x + 1 + rowW, y + h - 2);
 
-        int rankW = mc.textRenderer.getWidth("00. ");
+        int rankW = mc.textRenderer.getWidth("000. ");
 
         for (int i = 0; i < visibleRows + 2 && i + baseRow < entries.size(); i++) {
 
@@ -149,7 +149,10 @@ public class LeaderboardWidget extends ClickableWidget {
 
             MutableText nameText = Text.literal(entry.name()).styled(s -> s.withBold(true));
 
-            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, top3 ? placeColor : COLOR_WHITE, false);
+            int nameColor = entry.name().equalsIgnoreCase(MinecraftClient.getInstance().getSession().getUsername())
+                    ? 0xFF0094FF
+                    : (top3 ? placeColor : COLOR_WHITE);
+            ctx.drawText(mc.textRenderer, nameText, x + PAD_X + rankW, rowY + 2, nameColor, false);
 
             MutableText valueText = Text.literal(String.valueOf(entry.value())).styled(s -> s.withBold(true));
 
