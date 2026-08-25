@@ -369,7 +369,7 @@ public class TetrisScreen extends Screen {
                 if (score > MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore) {
                     MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore = score;
                 }
-                highScoreClearedText = Text.translatable(isNewHighScore ? "minigame.tetris.new_hight_score" : "minigame.tetris.hight_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(Colors.YELLOW);
+                highScoreClearedText = Text.translatable(isNewHighScore ? "minigame.tetris.new_high_score" : "minigame.tetris.high_score").append(": " + MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore).withColor(Colors.YELLOW);
                 if (MinigameRegistry.getConfig(TetrisConfig.class).tetrisHighScore > 0) context.drawText(this.textRenderer, highScoreClearedText, this.width / 2 - (highScoreClearedText.getString().length() * 3),
                         this.height / 2 + 25, Colors.WHITE, true);
             }
