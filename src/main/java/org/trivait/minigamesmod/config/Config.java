@@ -10,6 +10,8 @@ public class Config implements ConfigData {
 
     public boolean leaderboard = true;
 
+    public boolean staticIconButton = false;
+
     public boolean mainMenuButton = true;
 
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)

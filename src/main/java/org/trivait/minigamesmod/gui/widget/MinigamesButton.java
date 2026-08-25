@@ -9,15 +9,19 @@ import net.minecraft.client.gui.widget.TextIconButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
 
 public class MinigamesButton extends TextIconButtonWidget.IconOnly {
 
     private static final Identifier DEFAULT_TEXTURE = Identifier.of("minigamesmod", "icon/button");
+    private static final Identifier DEFAULT_STATIC_TEXTURE = Identifier.of("minigamesmod", "icon/button_static");
     private static final Identifier HOVER_TEXTURE = Identifier.of("minigamesmod", "icon/button_hover");
+    private static final Identifier HOVER_STATIC_TEXTURE = Identifier.of("minigamesmod", "icon/button_hover_static");
+    private static final Identifier EMPTY = Identifier.of("minigamesmod", "icon/empty");
 
     public MinigamesButton(int x, int y) {
-        super(20, 20, net.minecraft.text.Text.empty(), 16, 16, new ButtonTextures(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.text.Text.empty(), 16, 16, new ButtonTextures(MinigamesMod.CONFIG.staticIconButton ? DEFAULT_STATIC_TEXTURE : DEFAULT_TEXTURE, MinigamesMod.CONFIG.staticIconButton ? HOVER_STATIC_TEXTURE : HOVER_TEXTURE), button -> {
             MinecraftClient client = MinecraftClient.getInstance();
             client.setScreen(new MinigameListScreen(client.currentScreen));
         }, null, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
