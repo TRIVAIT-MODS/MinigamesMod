@@ -3,6 +3,11 @@ package org.trivait.minigamesmod;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -13,6 +18,7 @@ import org.trivait.minigamesmod.minigame.cookieclicker.CookieClicker;
 import org.trivait.minigamesmod.minigame.game2048.Game2048;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
 import org.trivait.minigamesmod.minigame.minesweeper.game.SavedGame;
+import org.trivait.minigamesmod.minigame.pinball.Pinball;
 import org.trivait.minigamesmod.minigame.sudoku.Sudoku;
 import org.trivait.minigamesmod.minigame.tetris.Tetris;
 import org.trivait.minigamesmod.minigame.dino.GoogleDino;
@@ -40,5 +46,11 @@ public class MinigamesMod implements ClientModInitializer {
         MinigameRegistry.register(new Sudoku());
         MinigameRegistry.register(new BubbleShooter());
         MinigameRegistry.register(new CookieClicker());
+        //MinigameRegistry.register(new Pinball());
+
+        FabricLoader.getInstance().getModContainer("minigamesmod").ifPresent(s ->
+                ResourceManagerHelper.registerBuiltinResourcePack(Identifier.of("minigamesmod", "minigames"),
+                        s, Text.translatable("resourcePack.minigames"), ResourcePackActivationType.NORMAL)
+        );
     }
 }
