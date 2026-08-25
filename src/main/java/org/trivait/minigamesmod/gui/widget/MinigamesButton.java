@@ -7,15 +7,19 @@ import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.gui.MinigameListScreen;
 
 public class MinigamesButton extends SpriteIconButton.CenteredIcon {
 
     private static final Identifier DEFAULT_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button");
+    private static final Identifier DEFAULT_STATIC_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button_static");
     private static final Identifier HOVER_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button_hover");
+    private static final Identifier HOVER_STATIC_TEXTURE = Identifier.fromNamespaceAndPath("minigamesmod", "icon/button_hover_static");
+    private static final Identifier EMPTY = Identifier.fromNamespaceAndPath("minigamesmod", "icon/empty");
 
     public MinigamesButton(int x, int y) {
-        super(20, 20, net.minecraft.network.chat.Component.empty(), 16, 16, new WidgetSprites(DEFAULT_TEXTURE, HOVER_TEXTURE), button -> {
+        super(20, 20, net.minecraft.network.chat.Component.empty(), 16, 16, new WidgetSprites(MinigamesMod.CONFIG.staticIconButton ? DEFAULT_STATIC_TEXTURE : DEFAULT_TEXTURE, MinigamesMod.CONFIG.staticIconButton ? HOVER_STATIC_TEXTURE : HOVER_TEXTURE), button -> {
             Minecraft client = Minecraft.getInstance();
             client.setScreen(new MinigameListScreen(client.screen));
         }, null, Button.DEFAULT_NARRATION);
