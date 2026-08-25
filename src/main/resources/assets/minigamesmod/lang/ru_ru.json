@@ -1,6 +1,7 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
   "text.autoconfig.minigames.option.leaderboard": "Лидерборд включен",
+  "text.autoconfig.minigames.option.staticIconButton": "Статичная текстурка кнопки на главном экране и в меню паузы",
   "text.autoconfig.minigames.option.mainMenuButton": "Кнопка на главном экране",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Позиция на главном экране",
   "text.autoconfig.minigames.option.pauseMenuButton": "Кнопка в меню паузы",
@@ -68,6 +69,9 @@
   "text.autoconfig.minigames/cookie_clicker_ui.option.volume": "Громкость",
   "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Звуки из куки кликера",
   "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Максимальный спавн печенек на фоне",
+
+  "text.autoconfig.minigames/pinball_ui.title": "Настройки пинбола",
+  "text.autoconfig.minigames/pinball_ui.option.volume": "Громкость",
 
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
@@ -157,6 +161,8 @@
   "minigame.tetris.high_score": "РЕКОРД",
   "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
 
+  "minigame.pinball.title": "Пинбол",
+
   "minigame.tetris.mode.off": "Выкл",
   "minigame.tetris.mode.instant": "Мгновенный",
   "minigame.tetris.mode.outline": "Контур",
@@ -170,5 +176,7 @@
   "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд",
 
   "modmenu.summaryTranslation.minigamesmod": "Добавляет много прикольных мини-игр в майнкрафт!",
-  "modmenu.descriptionTranslation.minigamesmod": "Добавляет много прикольных мини-игр в майнкрафт!"
+  "modmenu.descriptionTranslation.minigamesmod": "Добавляет много прикольных мини-игр в майнкрафт!",
+
+  "resourcePack.minigames": "Vanilla-Style minigames"
 }
