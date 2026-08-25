@@ -3,6 +3,11 @@ package org.trivait.minigamesmod;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.trivait.iba.api.IconButtons;
@@ -49,5 +54,10 @@ public class MinigamesMod implements ClientModInitializer {
 
         IconButtons.addTitleScreenButton(btn, () -> CONFIG.mainMenuButtonPosition==MainMenuButtonPosition.ICON_BUTTON&&CONFIG.mainMenuButton);
         IconButtons.addPauseScreenButton(btn, () -> CONFIG.pauseMenuButtonPosition==PauseMenuButtonPosition.ICON_BUTTON&&CONFIG.pauseMenuButton);
+
+        FabricLoader.getInstance().getModContainer("minigamesmod").ifPresent(s ->
+                ResourceManagerHelper.registerBuiltinResourcePack(Identifier.fromNamespaceAndPath("minigamesmod", "minigames"),
+                        s, Component.translatable("resourcePack.minigames"), ResourcePackActivationType.NORMAL)
+        );
     }
 }

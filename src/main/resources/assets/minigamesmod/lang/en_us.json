@@ -1,6 +1,7 @@
 {
   "text.autoconfig.minigames.title": "Minigames Mod",
   "text.autoconfig.minigames.option.leaderboard": "Leaderboard enabled",
+  "text.autoconfig.minigames.option.staticIconButton": "Static button texture in title screen and main menu",
   "text.autoconfig.minigames.option.mainMenuButton": "Title screen button",
   "text.autoconfig.minigames.option.mainMenuButtonPosition": "Title screen button position",
   "text.autoconfig.minigames.option.pauseMenuButton": "Game menu button",
@@ -69,6 +70,9 @@
   "text.autoconfig.minigames/cookie_clicker_ui.option.volume": "Volume",
   "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Cookie Clicker Sounds",
   "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Max background cookie spawn rate",
+
+  "text.autoconfig.minigames/pinball_ui.title": "Pinball Options",
+  "text.autoconfig.minigames/pinball_ui.option.volume": "Volume",
 
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
@@ -164,6 +168,8 @@
   "minigame.tetris.high_score": "HIGH SCORE",
   "minigame.tetris.new_high_score": "NEW HIGH SCORE",
 
+  "minigame.pinball.title": "Pinball",
+
   "minigame.leaderboard": "Leaderboard",
   "minigame.leaderboard.conditions": "Conditions",
 
@@ -172,5 +178,7 @@
   "minigame.leaderboard.notSupported": "This minigame does not support a leaderboard.",
 
   "modmenu.summaryTranslation.minigamesmod": "This mod adds some cool minigames.",
-  "modmenu.descriptionTranslation.minigamesmod": "This mod adds some cool minigames."
+  "modmenu.descriptionTranslation.minigamesmod": "This mod adds some cool minigames.",
+
+  "resourcePack.minigames": "Vanilla-Style minigames"
 }
