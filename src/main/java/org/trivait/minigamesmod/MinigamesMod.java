@@ -13,12 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.config.Config;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
+import org.trivait.minigamesmod.minigame.solitaire.Solitaire;
 import org.trivait.minigamesmod.minigame.bubbleshooter.BubbleShooter;
 import org.trivait.minigamesmod.minigame.cookieclicker.CookieClicker;
 import org.trivait.minigamesmod.minigame.game2048.Game2048;
 import org.trivait.minigamesmod.minigame.minesweeper.MinesweeperGame;
-import org.trivait.minigamesmod.minigame.minesweeper.game.SavedGame;
-import org.trivait.minigamesmod.minigame.pinball.Pinball;
 import org.trivait.minigamesmod.minigame.sudoku.Sudoku;
 import org.trivait.minigamesmod.minigame.tetris.Tetris;
 import org.trivait.minigamesmod.minigame.dino.GoogleDino;
@@ -46,7 +45,7 @@ public class MinigamesMod implements ClientModInitializer {
         MinigameRegistry.register(new Sudoku());
         MinigameRegistry.register(new BubbleShooter());
         MinigameRegistry.register(new CookieClicker());
-        //MinigameRegistry.register(new Pinball());
+        MinigameRegistry.register(new Solitaire());
 
         FabricLoader.getInstance().getModContainer("minigamesmod").ifPresent(s ->
                 ResourceManagerHelper.registerBuiltinResourcePack(Identifier.of("minigamesmod", "minigames"),

@@ -1,4 +1,4 @@
-package org.trivait.minigamesmod.minigame.pinball;
+package org.trivait.minigamesmod.minigame.solitaire;
 
 import me.shedaniel.autoconfig.ConfigData;
 import net.minecraft.client.gui.screen.Screen;
@@ -7,26 +7,26 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.trivait.minigamesmod.api.AbstractMinigame;
 
-public class Pinball extends AbstractMinigame {
-    public Pinball() {
-        super("pinball",
-                Text.translatable("minigame.pinball.title"),
+public class Solitaire extends AbstractMinigame {
+    public Solitaire() {
+        super("solitaire",
+                Text.translatable("minigame.solitaire.title"),
                 Identifier.ofVanilla("textures/item/diamond_pickaxe.png")
         );
     }
 
     @Override
     public @Nullable Class<? extends ConfigData> getConfigClass() {
-        return PinballConfig.class;
+        return SolitaireConfig.class;
     }
 
     @Override
     public @Nullable Class<? extends ConfigData> getVisibleConfigClass() {
-        return PinballVisibleConfig.class;
+        return SolitaireVisibleConfig.class;
     }
 
     @Override
     public Screen createScreen(Screen parent) {
-        return new PinballScreen(parent, this);
+        return new SolitaireScreen(parent, this);
     }
 }

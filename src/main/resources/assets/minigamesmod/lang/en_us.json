@@ -71,8 +71,8 @@
   "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Cookie Clicker Sounds",
   "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Max background cookie spawn rate",
 
-  "text.autoconfig.minigames/pinball_ui.title": "Pinball Options",
-  "text.autoconfig.minigames/pinball_ui.option.volume": "Volume",
+  "text.autoconfig.minigames/solitaire_ui.title": "Solitaire Options",
+  "text.autoconfig.minigames/solitaire_ui.option.volume": "Volume",
 
   "minigame.tetris.mode.off": "Off",
   "minigame.tetris.mode.instant": "Instant",
@@ -168,7 +168,8 @@
   "minigame.tetris.high_score": "HIGH SCORE",
   "minigame.tetris.new_high_score": "NEW HIGH SCORE",
 
-  "minigame.pinball.title": "Pinball",
+  "minigame.solitaire.title": "Solitaire",
+  "minigame.solitaire.win": "You won!",
 
   "minigame.leaderboard": "Leaderboard",
   "minigame.leaderboard.conditions": "Conditions",

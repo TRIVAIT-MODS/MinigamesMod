@@ -70,8 +70,8 @@
   "text.autoconfig.minigames/cookie_clicker_ui.option.cookieClickerSounds": "Звуки из куки кликера",
   "text.autoconfig.minigames/cookie_clicker_ui.option.maxCookieRate": "Максимальный спавн печенек на фоне",
 
-  "text.autoconfig.minigames/pinball_ui.title": "Настройки пинбола",
-  "text.autoconfig.minigames/pinball_ui.option.volume": "Громкость",
+  "text.autoconfig.minigames/solitaire_ui.title": "Настройки косынки",
+  "text.autoconfig.minigames/solitaire_ui.option.volume": "Громкость",
 
   "screen.minigames.list.title": "Мини-игры",
   "screen.minigames.list.empty": "Нет установленных миниигр",
@@ -161,7 +161,8 @@
   "minigame.tetris.high_score": "РЕКОРД",
   "minigame.tetris.new_high_score": "НОВЫЙ РЕКОРД",
 
-  "minigame.pinball.title": "Пинбол",
+  "minigame.solitaire.title": "Косынка",
+  "minigame.solitaire.win": "Победа!",
 
   "minigame.tetris.mode.off": "Выкл",
   "minigame.tetris.mode.instant": "Мгновенный",

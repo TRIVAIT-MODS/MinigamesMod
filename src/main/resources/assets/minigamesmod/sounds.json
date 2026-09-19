@@ -18,5 +18,35 @@
       "minigamesmod:clickb6",
       "minigamesmod:clickb7"
     ]
+  },
+  "putcard0": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:putcard0"
+    ]
+  },
+  "putcard1": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:putcard1"
+    ]
+  },
+  "putcard2": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:putcard2"
+    ]
+  },
+  "dragstart": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:dragstart"
+    ]
+  },
+  "dragend": {
+    "subtitle": "",
+    "sounds": [
+      "minigamesmod:dragend"
+    ]
   }
 }
