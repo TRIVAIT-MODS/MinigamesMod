@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.dino;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -20,7 +21,6 @@ import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector4d;
-import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
@@ -100,11 +100,13 @@ public class GoogleDinoScreen extends Screen {
     public boolean keyPressed(KeyEvent input) {
         int keyCode = input.key();
 
-        if (keyCode==GLFW.GLFW_KEY_SPACE||keyCode==GLFW.GLFW_KEY_UP) {
+        if (keyCode== InputConstants.KEY_SPACE||keyCode==InputConstants.KEY_UP) {
             dino.jump();
+            return true;
         }
-        if (keyCode==GLFW.GLFW_KEY_LEFT_SHIFT||keyCode==GLFW.GLFW_KEY_LEFT_CONTROL||keyCode==GLFW.GLFW_KEY_DOWN||keyCode==GLFW.GLFW_KEY_S) {
+        if (keyCode==InputConstants.KEY_LSHIFT||keyCode==InputConstants.KEY_LCONTROL||keyCode==InputConstants.KEY_DOWN||keyCode==InputConstants.KEY_S) {
             dino.crouching = true;
+            return true;
         }
 
         return super.keyPressed(input);
@@ -113,7 +115,7 @@ public class GoogleDinoScreen extends Screen {
     @Override
     public boolean keyReleased(KeyEvent input) {
         int keyCode = input.key();
-        if (keyCode==GLFW.GLFW_KEY_LEFT_SHIFT||keyCode==GLFW.GLFW_KEY_LEFT_CONTROL||keyCode==GLFW.GLFW_KEY_DOWN||keyCode==GLFW.GLFW_KEY_S) {
+        if (keyCode==InputConstants.KEY_LSHIFT||keyCode==InputConstants.KEY_LCONTROL||keyCode==InputConstants.KEY_DOWN||keyCode==InputConstants.KEY_S) {
             dino.crouching = false;
         }
         return super.keyReleased(input);

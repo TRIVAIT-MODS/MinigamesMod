@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -8,7 +9,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameDefinition;
 import org.trivait.minigamesmod.api.MinigameRegistry;
@@ -215,11 +215,11 @@ public class MinigameListScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == GLFW.GLFW_KEY_LEFT) {
+        if (input.key() == InputConstants.KEY_LEFT) {
             scrollLeft();
         }
 
-        if (input.key() == GLFW.GLFW_KEY_RIGHT) {
+        if (input.key() == InputConstants.KEY_RIGHT) {
             scrollRight();
         }
         return super.keyPressed(input);

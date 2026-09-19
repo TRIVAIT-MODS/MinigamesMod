@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.sudoku;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -13,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
@@ -170,11 +170,11 @@ public class SudokuScreen extends Screen {
             selectedCol = c;
 
             if (!savedInitial[r][c]) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+                if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                     savedGrid[r][c] = (savedGrid[r][c] % 9) + 1;
                     PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
-                } else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                } else if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                     savedGrid[r][c] = savedGrid[r][c] - 1;
                     if (savedGrid[r][c] < 0) {
                         savedGrid[r][c] = 9;
@@ -212,19 +212,19 @@ public class SudokuScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
+        if (input.key() == InputConstants.KEY_ESCAPE) {
             this.onClose();
             return true;
         }
         if (won) return super.keyPressed(input);
         if (selectedRow >= 0 && selectedRow < 9 && selectedCol >= 0 && selectedCol < 9) {
             if (!savedInitial[selectedRow][selectedCol]) {
-                if (input.key() >= GLFW.GLFW_KEY_1 && input.key() <= GLFW.GLFW_KEY_9) {
-                    savedGrid[selectedRow][selectedCol] = input.key() - GLFW.GLFW_KEY_1 + 1;
+                if (input.key() >= InputConstants.KEY_1 && input.key() <= InputConstants.KEY_9) {
+                    savedGrid[selectedRow][selectedCol] = input.key() - InputConstants.KEY_1 + 1;
                     PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();
                     return true;
-                } else if (input.key() == GLFW.GLFW_KEY_0 || input.key() == GLFW.GLFW_KEY_BACKSPACE || input.key() == GLFW.GLFW_KEY_DELETE) {
+                } else if (input.key() == InputConstants.KEY_0 || input.key() == InputConstants.KEY_BACKSPACE || input.key() == InputConstants.KEY_DELETE) {
                     savedGrid[selectedRow][selectedCol] = 0;
                     PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                     checkWinCondition();

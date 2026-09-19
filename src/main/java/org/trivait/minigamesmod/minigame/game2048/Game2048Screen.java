@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.game2048;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.sun.jna.platform.win32.GL;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
@@ -12,7 +13,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
@@ -156,19 +156,19 @@ public class Game2048Screen extends Screen {
         int dr = 0, dc = 0;
         Random random = new Random();
         switch (input.key()) {
-            case GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_W -> {
+            case InputConstants.KEY_UP, InputConstants.KEY_W -> {
                 dr = -1;
                 PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
-            case GLFW.GLFW_KEY_DOWN, GLFW.GLFW_KEY_S -> {
+            case InputConstants.KEY_DOWN, InputConstants.KEY_S -> {
                 dr = 1;
                 PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
-            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_A -> {
+            case InputConstants.KEY_LEFT, InputConstants.KEY_A -> {
                 dc = -1;
                 PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }
-            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_D -> {
+            case InputConstants.KEY_RIGHT, InputConstants.KEY_D -> {
                 dc = 1;
                 PlayingSoundManager.playSound(SoundEvents.ITEM_FRAME_ROTATE_ITEM, random.nextFloat(0.9f, 1.2f), vol());
             }

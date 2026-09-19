@@ -5,6 +5,8 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -54,10 +56,10 @@ public class MinigamesMod implements ClientModInitializer {
 
         IconButtons.addTitleScreenButton(btn, () -> CONFIG.mainMenuButtonPosition==MainMenuButtonPosition.ICON_BUTTON&&CONFIG.mainMenuButton);
         IconButtons.addPauseScreenButton(btn, () -> CONFIG.pauseMenuButtonPosition==PauseMenuButtonPosition.ICON_BUTTON&&CONFIG.pauseMenuButton);
-
-        FabricLoader.getInstance().getModContainer("minigamesmod").ifPresent(s ->
-                ResourceManagerHelper.registerBuiltinResourcePack(Identifier.fromNamespaceAndPath("minigamesmod", "minigames"),
-                        s, Component.translatable("resourcePack.minigames"), ResourcePackActivationType.NORMAL)
-        );
+        
+        FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(container -> {
+            ResourceLoader.registerBuiltinPack(Identifier.fromNamespaceAndPath("minigamesmod", "minigames"),
+                    container, Component.translatable("resourcePack.minigames"), PackActivationType.NORMAL);
+        });
     }
 }
