@@ -2,7 +2,6 @@ package org.trivait.minigamesmod.minigame.sudoku;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
@@ -21,15 +20,20 @@ import org.trivait.minigamesmod.gui.widget.ConfigButton;
 
 public class SudokuScreen extends Screen {
 
+    private static final int MAX_MISTAKES = 3;
+
     private final Screen parent;
     private final Sudoku minigame;
     private int selectedRow = -1;
     private int selectedCol = -1;
-    private boolean won = false;
+    private int highlightedNumber = 0;
 
     private static int[][] savedGrid = null;
     private static boolean[][] savedInitial = null;
     private static int[][] savedSolution = null;
+    private static int savedMistakes = 0;
+    private static boolean savedGameOver = false;
+    private static boolean savedWon = false;
 
     public SudokuScreen(Screen parent, Sudoku sudoku) {
         super(Component.literal("Sudoku"));
@@ -68,7 +72,12 @@ public class SudokuScreen extends Screen {
             System.arraycopy(puzzle[r], 0, savedGrid[r], 0, 9);
             System.arraycopy(initMap[r], 0, savedInitial[r], 0, 9);
         }
-        won = false;
+        savedMistakes = 0;
+        savedGameOver = false;
+        savedWon = false;
+        selectedRow = -1;
+        selectedCol = -1;
+        highlightedNumber = 0;
     }
 
     public void resetGame() {
@@ -76,7 +85,7 @@ public class SudokuScreen extends Screen {
     }
 
     private void checkWinCondition() {
-        if (won || savedGrid == null || savedSolution == null) {
+        if (savedWon || savedGameOver || savedGrid == null || savedSolution == null) {
             return;
         }
 
@@ -88,13 +97,67 @@ public class SudokuScreen extends Screen {
             }
         }
 
-        won = true;
+        savedWon = true;
 
         if (MinigameRegistry.getConfig(SudokuVisibleConfig.class).difficulty == Difficulty.MEDIUM) {
             minigame.getLeaderboard().doPost(1);
         }
 
         PlayingSoundManager.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, vol());
+    }
+
+    private boolean isDigitCompleted(int num) {
+        if (savedGrid == null || savedSolution == null) {
+            return false;
+        }
+        int count = 0;
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                if (savedGrid[r][c] == num && (savedInitial[r][c] || savedGrid[r][c] == savedSolution[r][c])) {
+                    count++;
+                }
+            }
+        }
+        return count >= 9;
+    }
+
+    private void enterNumber(int num) {
+        if (savedGameOver || savedWon) {
+            return;
+        }
+        if (isDigitCompleted(num)) {
+            return;
+        }
+        if (selectedRow < 0 || selectedRow >= 9 || selectedCol < 0 || selectedCol >= 9) {
+            highlightedNumber = (highlightedNumber == num) ? 0 : num;
+            return;
+        }
+        if (savedInitial[selectedRow][selectedCol]) {
+            highlightedNumber = (highlightedNumber == num) ? 0 : num;
+            return;
+        }
+        if (savedGrid[selectedRow][selectedCol] == savedSolution[selectedRow][selectedCol] && savedGrid[selectedRow][selectedCol] != 0) {
+            highlightedNumber = (highlightedNumber == num) ? 0 : num;
+            return;
+        }
+        if (savedGrid[selectedRow][selectedCol] == num) {
+            return;
+        }
+        if (num == savedSolution[selectedRow][selectedCol]) {
+            savedGrid[selectedRow][selectedCol] = num;
+            highlightedNumber = num;
+            PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
+            checkWinCondition();
+        } else {
+            savedGrid[selectedRow][selectedCol] = num;
+            highlightedNumber = num;
+            savedMistakes++;
+            PlayingSoundManager.playSound(SoundEvents.VILLAGER_NO, 1.0F, vol());
+            if (savedMistakes >= MAX_MISTAKES) {
+                savedGameOver = true;
+                PlayingSoundManager.playSound(SoundEvents.VILLAGER_DEATH, 0.9F, vol());
+            }
+        }
     }
 
     @Override
@@ -109,12 +172,17 @@ public class SudokuScreen extends Screen {
         super.extractRenderState(context, mouseX, mouseY, delta);
         int boardSize = 9 * 16;
         int startX = (this.width - boardSize) / 2;
-        int startY = (this.height - boardSize) / 2;
+        int startY = (this.height - boardSize - 24) / 2 + 4;
 
-        if (won) {
+        if (savedWon) {
             Component winText = Component.translatable("minigame.sudoku.win").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD);
             int winWidth = this.font.width(winText);
-            context.text(this.font, winText, (this.width - winWidth) / 2, startY - 20, 0xFF00FF00, true);
+            context.text(this.font, winText, (this.width - winWidth) / 2, startY - 14, 0xFF00FF00, true);
+        } else {
+            Component mistakesText = Component.translatable("minigame.sudoku.mistakes", savedMistakes);
+            int mistakesWidth = this.font.width(mistakesText);
+            int mistakesColor = (savedMistakes > 0) ? 0xFFFF0000 : 0xFF555555;
+            context.text(this.font, mistakesText, (this.width - mistakesWidth) / 2, startY - 14, mistakesColor, false);
         }
 
         context.fill(startX, startY, startX + boardSize, startY + boardSize, 0xFFFFFFFF);
@@ -124,20 +192,32 @@ public class SudokuScreen extends Screen {
                 int x = startX + c * 16;
                 int y = startY + r * 16;
 
+                int val = savedGrid[r][c];
+
+                if (highlightedNumber > 0) {
+                    if (val == highlightedNumber) {
+                        context.fill(x, y, x + 16, y + 16, 0x4400A2FF);
+                    }
+                    if (r == selectedRow || c == selectedCol || (r / 3 == selectedRow / 3 && c / 3 == selectedCol / 3)) {
+                        context.fill(x, y, x + 16, y + 16, 0x1A00A2FF);
+                    }
+                }
+
                 if (r == selectedRow && c == selectedCol) {
                     context.fill(x, y, x + 16, y + 16, 0x5500A2FF);
                 }
 
-                int val = savedGrid[r][c];
                 if (val != 0) {
                     String text = String.valueOf(val);
                     int textWidth = this.font.width(text);
                     int textX = x + (16 - textWidth) / 2;
                     int textY = y + (16 - 8) / 2;
                     if (savedInitial[r][c]) {
-                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLUE, ChatFormatting.BOLD), textX, textY, 0xFF0000FF, false);
+                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLACK, ChatFormatting.BOLD), textX, textY, 0xFF000000, false);
+                    } else if (val != savedSolution[r][c]) {
+                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.RED, ChatFormatting.BOLD), textX, textY, 0xFFFF0000, false);
                     } else {
-                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLACK, ChatFormatting.ITALIC), textX, textY, 0xFF000000, false);
+                        context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BLUE, ChatFormatting.BOLD), textX, textY, 0xFF0000FF, false);
                     }
                 }
             }
@@ -149,85 +229,154 @@ public class SudokuScreen extends Screen {
             context.fill(startX + offset - (thickness == 2 ? 1 : 0), startY, startX + offset + (thickness == 2 ? 1 : 1), startY + boardSize, 0xFF000000);
             context.fill(startX, startY + offset - (thickness == 2 ? 1 : 0), startX + boardSize, startY + offset + (thickness == 2 ? 1 : 1), 0xFF000000);
         }
+
+        int btnY = startY + boardSize + 8;
+        for (int i = 1; i <= 9; i++) {
+            int bx = startX + (i - 1) * 16;
+            boolean completed = isDigitCompleted(i);
+            boolean hovered = !completed && mouseX >= bx && mouseX < bx + 16 && mouseY >= btnY && mouseY < btnY + 16;
+            int bg = completed ? 0xFFCCCCCC : ((highlightedNumber == i) ? 0x5500A2FF : (hovered ? 0xFFE0E0E0 : 0xFFFFFFFF));
+            int borderColor = completed ? 0xFF888888 : 0xFF000000;
+            int textColor = completed ? 0xFF888888 : 0xFF000000;
+
+            context.fill(bx, btnY, bx + 16, btnY + 16, bg);
+            context.fill(bx, btnY, bx + 16, btnY + 1, borderColor);
+            context.fill(bx, btnY + 15, bx + 16, btnY + 16, borderColor);
+            context.fill(bx, btnY, bx + 1, btnY + 16, borderColor);
+            context.fill(bx + 15, btnY, bx + 16, btnY + 16, borderColor);
+
+            String text = String.valueOf(i);
+            int tw = this.font.width(text);
+            context.text(this.font, Component.literal(text).copy().withStyle(ChatFormatting.BOLD), bx + (16 - tw) / 2, btnY + (16 - 8) / 2, textColor, false);
+        }
+
+        if (savedGameOver) {
+            context.fill(startX, startY, startX + boardSize, startY + boardSize, 0xCC000000);
+            Component gameOverText = Component.translatable("minigame.sudoku.game_over").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+            int textW = this.font.width(gameOverText);
+            context.text(this.font, gameOverText, (this.width - textW) / 2, startY + (boardSize - 8) / 2, 0xFFFF0000, true);
+        }
     }
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        if (won) return super.mouseClicked(click, doubled);
         int boardSize = 9 * 16;
         int startX = (this.width - boardSize) / 2;
-        int startY = (this.height - boardSize) / 2;
+        int startY = (this.height - boardSize - 24) / 2 + 4;
 
-        double mouseX = click.x();
-        double mouseY = click.y();
-        int button = click.button();
+        if (savedGameOver) {
+            if (click.x() >= startX && click.x() < startX + boardSize && click.y() >= startY && click.y() < startY + boardSize) {
+                resetGame();
+                PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
+                return true;
+            }
+            return super.mouseClicked(click, doubled);
+        }
 
-        if (mouseX >= startX && mouseX < startX + boardSize && mouseY >= startY && mouseY < startY + boardSize) {
-            int c = (int) ((mouseX - startX) / 16);
-            int r = (int) ((mouseY - startY) / 16);
+        if (click.x() >= startX && click.x() < startX + boardSize && click.y() >= startY && click.y() < startY + boardSize) {
+            int c = (int) ((click.x() - startX) / 16);
+            int r = (int) ((click.y() - startY) / 16);
 
             selectedRow = r;
             selectedCol = c;
+            highlightedNumber = savedGrid[r][c];
 
-            if (!savedInitial[r][c]) {
-                if (button == InputConstants.MOUSE_BUTTON_LEFT) {
-                    savedGrid[r][c] = (savedGrid[r][c] % 9) + 1;
+            if (click.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
+                if (!savedInitial[r][c] && savedGrid[r][c] != savedSolution[r][c]) {
+                    savedGrid[r][c] = 0;
+                    highlightedNumber = 0;
                     PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                    checkWinCondition();
-                } else if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
-                    savedGrid[r][c] = savedGrid[r][c] - 1;
-                    if (savedGrid[r][c] < 0) {
-                        savedGrid[r][c] = 9;
-                    }
-                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                    checkWinCondition();
+                    return true;
                 }
             }
+
+            PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
             return true;
         }
+
+        int btnY = startY + boardSize + 8;
+        for (int i = 1; i <= 9; i++) {
+            int bx = startX + (i - 1) * 16;
+            if (click.x() >= bx && click.x() < bx + 16 && click.y() >= btnY && click.y() < btnY + 16) {
+                if (!isDigitCompleted(i)) {
+                    enterNumber(i);
+                }
+                return true;
+            }
+        }
+
         return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (won) return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-        if (selectedRow >= 0 && selectedRow < 9 && selectedCol >= 0 && selectedCol < 9) {
-            if (!savedInitial[selectedRow][selectedCol]) {
-                if (verticalAmount > 0) {
-                    savedGrid[selectedRow][selectedCol] = (savedGrid[selectedRow][selectedCol] % 9) + 1;
-                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                } else if (verticalAmount < 0) {
-                    savedGrid[selectedRow][selectedCol] = savedGrid[selectedRow][selectedCol] - 1;
-                    if (savedGrid[selectedRow][selectedCol] < 0) {
-                        savedGrid[selectedRow][selectedCol] = 9;
-                    }
-                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                }
-                checkWinCondition();
-                return true;
-            }
-        }
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-    @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == InputConstants.KEY_ESCAPE) {
+        int keyCode = input.key();
+
+        if (keyCode == InputConstants.KEY_ESCAPE) {
             this.onClose();
             return true;
         }
-        if (won) return super.keyPressed(input);
-        if (selectedRow >= 0 && selectedRow < 9 && selectedCol >= 0 && selectedCol < 9) {
-            if (!savedInitial[selectedRow][selectedCol]) {
-                if (input.key() >= InputConstants.KEY_1 && input.key() <= InputConstants.KEY_9) {
-                    savedGrid[selectedRow][selectedCol] = input.key() - InputConstants.KEY_1 + 1;
-                    PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                    checkWinCondition();
-                    return true;
-                } else if (input.key() == InputConstants.KEY_0 || input.key() == InputConstants.KEY_BACKSPACE || input.key() == InputConstants.KEY_DELETE) {
+        if (savedGameOver || savedWon) {
+            if (keyCode == InputConstants.KEY_NUMPADENTER || keyCode == InputConstants.KEY_SPACE) {
+                resetGame();
+                return true;
+            }
+            return super.keyPressed(input);
+        }
+        if (keyCode == InputConstants.KEY_UP || keyCode == InputConstants.KEY_W) {
+            if (selectedRow < 0) {
+                selectedRow = 4;
+                selectedCol = 4;
+            } else {
+                selectedRow = Math.max(0, selectedRow - 1);
+            }
+            highlightedNumber = savedGrid[selectedRow][selectedCol];
+            return true;
+        }
+        if (keyCode == InputConstants.KEY_DOWN || keyCode == InputConstants.KEY_S) {
+            if (selectedRow < 0) {
+                selectedRow = 4;
+                selectedCol = 4;
+            } else {
+                selectedRow = Math.min(8, selectedRow + 1);
+            }
+            highlightedNumber = savedGrid[selectedRow][selectedCol];
+            return true;
+        }
+        if (keyCode == InputConstants.KEY_LEFT || keyCode == InputConstants.KEY_A) {
+            if (selectedCol < 0) {
+                selectedRow = 4;
+                selectedCol = 4;
+            } else {
+                selectedCol = Math.max(0, selectedCol - 1);
+            }
+            highlightedNumber = savedGrid[selectedRow][selectedCol];
+            return true;
+        }
+        if (keyCode == InputConstants.KEY_RIGHT || keyCode == InputConstants.KEY_D) {
+            if (selectedCol < 0) {
+                selectedRow = 4;
+                selectedCol = 4;
+            } else {
+                selectedCol = Math.min(8, selectedCol + 1);
+            }
+            highlightedNumber = savedGrid[selectedRow][selectedCol];
+            return true;
+        }
+        if (keyCode >= InputConstants.KEY_1 && keyCode <= InputConstants.KEY_9) {
+            enterNumber(keyCode - InputConstants.KEY_1 + 1);
+            return true;
+        }
+        if (keyCode >= InputConstants.KEY_NUMPAD1 && keyCode <= InputConstants.KEY_NUMPAD9) {
+            enterNumber(keyCode - InputConstants.KEY_NUMPAD1 + 1);
+            return true;
+        }
+        if (keyCode == InputConstants.KEY_0 || keyCode == InputConstants.KEY_NUMPAD0 || keyCode == InputConstants.KEY_BACKSPACE || keyCode == InputConstants.KEY_DELETE) {
+            if (selectedRow >= 0 && selectedRow < 9 && selectedCol >= 0 && selectedCol < 9) {
+                if (!savedInitial[selectedRow][selectedCol] && savedGrid[selectedRow][selectedCol] != savedSolution[selectedRow][selectedCol]) {
                     savedGrid[selectedRow][selectedCol] = 0;
+                    highlightedNumber = 0;
                     PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
-                    checkWinCondition();
                     return true;
                 }
             }
