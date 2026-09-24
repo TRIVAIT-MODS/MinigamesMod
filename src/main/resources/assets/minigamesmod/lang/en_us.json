@@ -116,6 +116,10 @@
   "minigame.sudoku.title": "Sudoku",
   "minigame.sudoku.win": "Win!",
   "minigame.sudoku.condition.first": "Medium difficulty",
+  "minigame.sudoku.mistakes": "Mistakes: %s/3",
+  "minigame.sudoku.game_over": "Game Over!",
+  "minigame.sudoku.erase": "Erase",
+  "minigame.sudoku.restart": "Restart",
 
   "minigame.bubbleshooter.title": "Bubble Shooter",
   "minigame.bubbleshooter.background.filled": "Filled",

@@ -93,6 +93,10 @@
   "minigame.sudoku.title": "Судоку",
   "minigame.sudoku.win": "Победа",
   "minigame.sudoku.condition.first": "Средняя сложность",
+  "minigame.sudoku.mistakes": "Ошибки: %s/3",
+  "minigame.sudoku.game_over": "Конец игры!",
+  "minigame.sudoku.erase": "Стереть",
+  "minigame.sudoku.restart": "Заново",
 
   "minigame.bubbleshooter.title": "Бабл шутер",
   "minigame.bubbleshooter.background.filled": "Заливка",

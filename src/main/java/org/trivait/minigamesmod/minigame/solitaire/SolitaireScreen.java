@@ -7,11 +7,12 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextIconButtonWidget;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
-import org.trivait.minigamesmod.ModSounds;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
@@ -22,39 +23,55 @@ import java.util.List;
 public final class SolitaireScreen extends Screen {
     private static final int BOARD_WIDTH = 310;
     private static final int BOARD_HEIGHT = 260;
-    private static final int GAME_X = 8;
-    private static final int GAME_Y = 8;
-    private static final int GAME_WIDTH = BOARD_WIDTH - GAME_X * 2;
-    private static final int GAME_HEIGHT = BOARD_HEIGHT - GAME_Y * 2;
-    private static final int PADDING = 5;
     private static final int CARD_WIDTH = 37;
     private static final int CARD_HEIGHT = 49;
-    private static final int MAX_CARD_STEP = 14;
-    private static final int COLUMN_GAP = 4;
+    private static final int COLUMN_GAP = 5;
     private static final int COLUMN_STEP = CARD_WIDTH + COLUMN_GAP;
-    private static final int FOUNDATION_START = 128;
-    private static final int DEAL_DELAY = 42;
-    private static final int DEAL_DURATION = 190;
-    private static final int MOVE_DURATION = 150;
+    private static final int DEAL_DELAY = 30;
+    private static final int DEAL_DURATION = 140;
+    private static final int DRAW_DURATION = 120;
+    private static final int RECYCLE_DURATION = 160;
+    private static final int AUTO_MOVE_DURATION = 140;
 
     private final Screen parent;
     private final Solitaire minigame;
     private SolitaireGame game;
     private int boardLeft;
     private int boardTop;
-    private long lastFrame;
-    private long dealTime;
-    private Motion motion;
-    private ReturnAnimation returnAnimation;
-    private final List<DealCard> dealCards = new ArrayList<>();
+
     private int selectedColumn = -1;
     private int selectedIndex = -1;
-    private int cardStep;
     private int selectedFoundation = -1;
     private boolean selectedWaste;
     private boolean dragging;
     private int dragX;
     private int dragY;
+    private boolean wonTriggered;
+
+    private long lastClickTime = 0;
+    private int lastClickColumn = -2;
+    private int lastClickIndex = -2;
+
+    private final List<DealStep> dealSteps = new ArrayList<>();
+    private long dealStartTime;
+    private boolean dealing;
+
+    private boolean drawAnimActive;
+    private long drawStartTime;
+    private SolitaireGame.Card drawAnimCard;
+
+    private boolean recycleAnimActive;
+    private long recycleStartTime;
+
+    private boolean autoMoveActive;
+    private long autoMoveStartTime;
+    private SolitaireGame.Card autoMoveCard;
+    private int autoMoveFromX;
+    private int autoMoveFromY;
+    private int autoMoveToX;
+    private int autoMoveToY;
+    private boolean autoMoveFromWaste;
+    private int autoMoveFoundation = -1;
 
     public SolitaireScreen(Screen parent, Solitaire minigame) {
         super(Text.empty());
@@ -64,12 +81,15 @@ public final class SolitaireScreen extends Screen {
 
     @Override
     protected void init() {
-        if (game == null) startGame();
+        if (game == null) {
+            startGame();
+        }
         layout();
         clearChildren();
         ButtonWidget back = TextIconButtonWidget.builder(Text.empty(), button -> close(), true)
                 .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/return"), 15, 15).build();
         back.setTooltip(Tooltip.of(Text.translatable("minigame.2048.undo")));
+        back.setDimensionsAndPosition(20, 20, 10, 10);
         ButtonWidget restart = TextIconButtonWidget.builder(Text.empty(), button -> restart(), true)
                 .texture(Identifier.of(MinigamesMod.MOD_ID, "icon/restart"), 15, 15).build();
         restart.setTooltip(Tooltip.of(Text.translatable("minigame.restart")));
@@ -80,21 +100,32 @@ public final class SolitaireScreen extends Screen {
     }
 
     private void startGame() {
+        layout();
         game = new SolitaireGame();
-        lastFrame = System.nanoTime();
-        dealTime = 0;
-        dealCards.clear();
-        for (int column = 0; column < game.tableau.size(); column++) {
-            for (int index = 0; index < game.tableau.get(column).size(); index++) {
-                dealCards.add(new DealCard(game.tableau.get(column).get(index), column, index, dealCards.size() * DEAL_DELAY));
+        wonTriggered = false;
+        clearSelection();
+        drawAnimActive = false;
+        recycleAnimActive = false;
+        autoMoveActive = false;
+        setupDeal();
+        playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.2f);
+    }
+
+    private void setupDeal() {
+        dealSteps.clear();
+        int step = 0;
+        for (int c = 0; c < 7; c++) {
+            List<SolitaireGame.Card> pile = game.tableau.get(c);
+            for (int r = 0; r < pile.size(); r++) {
+                dealSteps.add(new DealStep(pile.get(r), c, r, step * DEAL_DELAY));
+                step++;
             }
         }
-        sound(ModSounds.PUTCARD0);
+        dealStartTime = System.currentTimeMillis();
+        dealing = true;
     }
 
     private void restart() {
-        motion = null;
-        returnAnimation = null;
         clearSelection();
         startGame();
         init();
@@ -103,120 +134,304 @@ public final class SolitaireScreen extends Screen {
     private void layout() {
         boardLeft = (width - BOARD_WIDTH) / 2;
         boardTop = (height - BOARD_HEIGHT) / 2;
-        int tallest = 1;
-        if (game != null) for (List<SolitaireGame.Card> pile : game.tableau) tallest = Math.max(tallest, pile.size());
-        int available = boardTop + GAME_Y + GAME_HEIGHT - PADDING - tableauY();
-        cardStep = tallest == 1 ? MAX_CARD_STEP : Math.min(MAX_CARD_STEP, Math.max(1, (available - CARD_HEIGHT) / (tallest - 1)));
     }
 
-    private int stockX() { return boardLeft + GAME_X + PADDING; }
-    private int wasteX() { return stockX() + CARD_WIDTH + COLUMN_GAP; }
-    private int topY() { return boardTop + GAME_Y + PADDING; }
-    private int tableauY() { return topY() + CARD_HEIGHT + PADDING; }
-    private int columnX(int column) { return boardLeft + GAME_X + PADDING + column * COLUMN_STEP; }
-    private int foundationX(int slot) { return boardLeft + GAME_X + FOUNDATION_START + slot * COLUMN_STEP; }
+    private int startX() {
+        return boardLeft + 9;
+    }
+
+    private int topY() {
+        return boardTop + 10;
+    }
+
+    private int tableauY() {
+        return topY() + CARD_HEIGHT + 8;
+    }
+
+    private int stockX() {
+        return startX();
+    }
+
+    private int wasteX() {
+        return startX() + COLUMN_STEP;
+    }
+
+    private int foundationX(int slot) {
+        return startX() + (3 + slot) * COLUMN_STEP;
+    }
+
+    private int columnX(int column) {
+        return startX() + column * COLUMN_STEP;
+    }
+
     private int columnAt(int x) {
-        int column = (x - columnX(0) + COLUMN_GAP / 2) / COLUMN_STEP;
-        return column >= 0 && column < 7 ? column : -1;
+        int col = (x - startX()) / COLUMN_STEP;
+        return (col >= 0 && col < 7) ? col : -1;
     }
 
-    private int cardAt(int column, int y) {
+    private int cardY(int column, int index) {
         List<SolitaireGame.Card> pile = game.tableau.get(column);
-        if (pile.isEmpty() || y < tableauY()) return -1;
-        return Math.min(pile.size() - 1, Math.max(0, (y - tableauY()) / cardStep));
+        int y = tableauY();
+        int faceDownStep = 10;
+        int faceUpStep = 15;
+        int totalEstimated = 0;
+        for (int i = 0; i < pile.size() - 1; i++) {
+            totalEstimated += pile.get(i).faceUp ? faceUpStep : faceDownStep;
+        }
+        int available = BOARD_HEIGHT - 12 - (tableauY() - boardTop) - CARD_HEIGHT;
+        if (totalEstimated > available && totalEstimated > 0) {
+            float factor = (float) available / totalEstimated;
+            faceDownStep = Math.max(4, Math.round(faceDownStep * factor));
+            faceUpStep = Math.max(6, Math.round(faceUpStep * factor));
+        }
+        for (int i = 0; i < index; i++) {
+            y += pile.get(i).faceUp ? faceUpStep : faceDownStep;
+        }
+        return y;
+    }
+
+    private int cardAt(int column, int mouseY) {
+        List<SolitaireGame.Card> pile = game.tableau.get(column);
+        if (pile.isEmpty() || mouseY < tableauY()) {
+            return -1;
+        }
+        for (int i = pile.size() - 1; i >= 0; i--) {
+            int cy = cardY(column, i);
+            if (selectedColumn == column && !dragging && i >= selectedIndex) {
+                cy -= 3;
+            }
+            if (mouseY >= cy && mouseY < cy + CARD_HEIGHT) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private boolean inside(int x, int y, int left, int top) {
         return x >= left && x < left + CARD_WIDTH && y >= top && y < top + CARD_HEIGHT;
     }
 
-    private boolean selected() { return selectedColumn >= 0 || selectedWaste || selectedFoundation >= 0; }
-    private void clearSelection() { selectedColumn = selectedIndex = selectedFoundation = -1; selectedWaste = dragging = false; }
-    private boolean animating() { return !dealCards.isEmpty() || returnAnimation != null || motion != null; }
-    private float volume() { return Math.max(1.0f, PlayingSoundManager.vol(MinigameRegistry.getConfig(SolitaireVisibleConfig.class).volume)); }
-    private void sound(SoundEvent event) { PlayingSoundManager.playSound(event, 1.0f, volume()); }
+    private boolean selected() {
+        return selectedColumn >= 0 || selectedWaste || selectedFoundation >= 0;
+    }
+
+    private void clearSelection() {
+        selectedColumn = -1;
+        selectedIndex = -1;
+        selectedFoundation = -1;
+        selectedWaste = false;
+        dragging = false;
+    }
+
+    private float volume() {
+        return Math.max(0.1f, PlayingSoundManager.vol(MinigameRegistry.getConfig(SolitaireVisibleConfig.class).volume));
+    }
+
+    private void playSound(SoundEvent event, float pitch) {
+        PlayingSoundManager.playSound(event, pitch, volume());
+    }
+
+    private void startAutoMove(SolitaireGame.Card card, int fromX, int fromY, int toX, int toY, boolean fromWaste, int foundationSlot) {
+        autoMoveActive = true;
+        autoMoveStartTime = System.currentTimeMillis();
+        autoMoveCard = card;
+        autoMoveFromX = fromX;
+        autoMoveFromY = fromY;
+        autoMoveToX = toX;
+        autoMoveToY = toY;
+        autoMoveFromWaste = fromWaste;
+        autoMoveFoundation = foundationSlot;
+    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button != GLFW.GLFW_MOUSE_BUTTON_1 || game.won || animating()) return super.mouseClicked(mouseX, mouseY, button);
+        if (game.won) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+        if (dealing) {
+            dealing = false;
+        }
         layout();
         int x = (int) mouseX;
         int y = (int) mouseY;
+
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
+            if (inside(x, y, wasteX(), topY())) {
+                if (!game.waste.isEmpty()) {
+                    SolitaireGame.Card topCard = game.waste.get(game.waste.size() - 1);
+                    int target = game.findFoundationFor(topCard);
+                    if (target != -1 && game.moveWasteToFoundation(target)) {
+                        startAutoMove(topCard, wasteX(), topY(), foundationX(target), topY(), true, target);
+                        playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+                        clearSelection();
+                        checkWon();
+                        return true;
+                    }
+                }
+            }
+            int column = columnAt(x);
+            if (column >= 0 && y >= tableauY()) {
+                List<SolitaireGame.Card> pile = game.tableau.get(column);
+                if (!pile.isEmpty() && pile.get(pile.size() - 1).faceUp) {
+                    SolitaireGame.Card topCard = pile.get(pile.size() - 1);
+                    int target = game.findFoundationFor(topCard);
+                    int cy = cardY(column, pile.size() - 1);
+                    if (target != -1 && game.moveTableauToFoundation(column, target)) {
+                        startAutoMove(topCard, columnX(column), cy, foundationX(target), topY(), false, target);
+                        playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+                        clearSelection();
+                        checkWon();
+                        return true;
+                    }
+                }
+            }
+            return true;
+        }
+
+        if (button != GLFW.GLFW_MOUSE_BUTTON_1) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
         if (inside(x, y, stockX(), topY())) {
-            if (game.stock.isEmpty() && !game.waste.isEmpty()) startReturnAnimation();
-            else if (!game.stock.isEmpty()) {
-                SolitaireGame.Card previous = game.waste.isEmpty() ? null : game.waste.get(game.waste.size() - 1);
+            long now = System.currentTimeMillis();
+            if (game.stock.isEmpty() && !game.waste.isEmpty()) {
+                recycleAnimActive = true;
+                recycleStartTime = now;
                 game.draw();
-                motion = new Motion(game.waste.get(game.waste.size() - 1), stockX(), topY(), wasteX(), topY(), previous);
+                playSound(SoundEvents.ITEM_BUNDLE_DROP_CONTENTS, 1.1f);
+            } else if (!game.stock.isEmpty()) {
+                game.draw();
+                drawAnimActive = true;
+                drawStartTime = now;
+                drawAnimCard = game.waste.get(game.waste.size() - 1);
+                playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.3f);
             }
             clearSelection();
-            sound(ModSounds.PUTCARD0);
             return true;
         }
+
+        long now = System.currentTimeMillis();
+
         if (inside(x, y, wasteX(), topY())) {
-            if (!selected() && !game.waste.isEmpty()) selectedWaste = true;
-            else clearSelection();
+            if (!game.waste.isEmpty()) {
+                boolean isDouble = (now - lastClickTime < 300 && lastClickColumn == -1);
+                lastClickTime = now;
+                lastClickColumn = -1;
+                lastClickIndex = 0;
+                if (isDouble) {
+                    SolitaireGame.Card topCard = game.waste.get(game.waste.size() - 1);
+                    int target = game.findFoundationFor(topCard);
+                    if (target != -1 && game.moveWasteToFoundation(target)) {
+                        startAutoMove(topCard, wasteX(), topY(), foundationX(target), topY(), true, target);
+                        playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+                        clearSelection();
+                        checkWon();
+                        return true;
+                    }
+                }
+                if (selectedWaste) {
+                    clearSelection();
+                } else {
+                    clearSelection();
+                    selectedWaste = true;
+                    playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.8f);
+                }
+            }
             return true;
         }
+
         for (int slot = 0; slot < 4; slot++) {
             if (inside(x, y, foundationX(slot), topY())) {
-                if (selected()) dropFoundation(slot);
-                else if (game.foundations[slot] > 0) selectedFoundation = slot;
+                if (selected()) {
+                    dropFoundation(slot);
+                } else if (game.foundations[slot] > 0) {
+                    clearSelection();
+                    selectedFoundation = slot;
+                    playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.8f);
+                }
                 return true;
             }
         }
+
         int column = columnAt(x);
-        if (column < 0 || y < tableauY()) return super.mouseClicked(mouseX, mouseY, button);
-        if (selected()) {
-            dropTableau(column);
+        if (column >= 0 && y >= tableauY()) {
+            if (selected()) {
+                dropTableau(column);
+                return true;
+            }
+            int index = cardAt(column, y);
+            if (index >= 0) {
+                SolitaireGame.Card card = game.tableau.get(column).get(index);
+                if (!card.faceUp) {
+                    if (index == game.tableau.get(column).size() - 1) {
+                        game.flip(column);
+                        playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.5f);
+                    }
+                } else if (game.canMoveRun(game.tableau.get(column), index)) {
+                    boolean isDouble = (now - lastClickTime < 300 && lastClickColumn == column && lastClickIndex == index);
+                    lastClickTime = now;
+                    lastClickColumn = column;
+                    lastClickIndex = index;
+                    if (isDouble && index == game.tableau.get(column).size() - 1) {
+                        int target = game.findFoundationFor(card);
+                        int cy = cardY(column, index);
+                        if (target != -1 && game.moveTableauToFoundation(column, target)) {
+                            startAutoMove(card, columnX(column), cy, foundationX(target), topY(), false, target);
+                            playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+                            clearSelection();
+                            checkWon();
+                            return true;
+                        }
+                    }
+                    clearSelection();
+                    selectedColumn = column;
+                    selectedIndex = index;
+                    playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.8f);
+                }
+            }
             return true;
         }
-        int index = cardAt(column, y);
-        if (index >= 0) {
-            SolitaireGame.Card card = game.tableau.get(column).get(index);
-            if (!card.faceUp) game.flip(column);
-            else if (game.canMoveRun(game.tableau.get(column), index)) {
-                selectedColumn = column;
-                selectedIndex = index;
-            }
-        }
-        return true;
-    }
 
-    private SolitaireGame.Card selectedCard() {
-        if (selectedWaste) return game.waste.get(game.waste.size() - 1);
-        if (selectedFoundation >= 0) return card(SolitaireGame.Suit.values()[game.foundationSuits[selectedFoundation]], game.foundations[selectedFoundation]);
-        return game.tableau.get(selectedColumn).get(selectedIndex);
+        clearSelection();
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private void dropTableau(int target) {
-        boolean wasDragging = dragging;
-        SolitaireGame.Card moving = selectedCard();
-        boolean moved = selectedWaste ? game.moveWasteToTableau(target) : selectedFoundation >= 0 ? game.moveFoundationToTableau(selectedFoundation, target) : game.moveTableauToTableau(selectedColumn, selectedIndex, target);
-        if (moved) sound(ModSounds.PUTCARD1);
-        if (wasDragging) sound(ModSounds.DRAG_END);
+        boolean moved = selectedWaste ? game.moveWasteToTableau(target)
+                : selectedFoundation >= 0 ? game.moveFoundationToTableau(selectedFoundation, target)
+                : selectedColumn >= 0 ? game.moveTableauToTableau(selectedColumn, selectedIndex, target) : false;
+        if (moved) {
+            playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+            checkWon();
+        } else if (dragging) {
+            playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.0f);
+        }
         clearSelection();
     }
 
     private void dropFoundation(int target) {
-        boolean wasDragging = dragging;
-        SolitaireGame.Card moving = selectedCard();
-        boolean moved = selectedWaste ? game.moveWasteToFoundation(target) : selectedColumn >= 0 && game.moveTableauToFoundation(selectedColumn, target);
-        if (moved) sound(ModSounds.PUTCARD2);
-        if (wasDragging) sound(ModSounds.DRAG_END);
+        boolean moved = selectedWaste ? game.moveWasteToFoundation(target)
+                : selectedColumn >= 0 ? game.moveTableauToFoundation(selectedColumn, target) : false;
+        if (moved) {
+            playSound(SoundEvents.BLOCK_WOOL_PLACE, 1.1f);
+            checkWon();
+        } else if (dragging) {
+            playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.0f);
+        }
         clearSelection();
     }
 
-    private void startReturnAnimation() {
-        returnAnimation = new ReturnAnimation(new ArrayList<>(game.waste));
-        game.draw();
-        sound(ModSounds.PUTCARD0);
+    private void checkWon() {
+        if (game.won && !wonTriggered) {
+            wonTriggered = true;
+            minigame.onWin();
+            minigame.getLeaderboard().doPost(1);
+        }
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_1 && selected()) {
-            if (!dragging) sound(ModSounds.DRAG_START);
             dragging = true;
             dragX = (int) mouseX;
             dragY = (int) mouseY;
@@ -228,14 +443,24 @@ public final class SolitaireScreen extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_1 && dragging) {
-            layout();
             int x = (int) mouseX;
             int y = (int) mouseY;
             int column = columnAt(x);
-            if (y >= tableauY() && column >= 0) dropTableau(column);
-            else if (y >= topY() && y < topY() + CARD_HEIGHT && x >= foundationX(0) && x < foundationX(3) + CARD_WIDTH) dropFoundation(Math.min(3, Math.max(0, (x - foundationX(0)) / COLUMN_STEP)));
-            else {
-                sound(ModSounds.DRAG_END);
+            if (y >= tableauY() && column >= 0) {
+                dropTableau(column);
+            } else if (y >= topY() && y < topY() + CARD_HEIGHT) {
+                boolean dropped = false;
+                for (int slot = 0; slot < 4; slot++) {
+                    if (x >= foundationX(slot) && x < foundationX(slot) + CARD_WIDTH) {
+                        dropFoundation(slot);
+                        dropped = true;
+                        break;
+                    }
+                }
+                if (!dropped) {
+                    clearSelection();
+                }
+            } else {
                 clearSelection();
             }
             return true;
@@ -245,124 +470,243 @@ public final class SolitaireScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            close();
+            return true;
+        }
         if (keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
-            game.undo();
-            clearSelection();
+            if (dealing) {
+                dealing = false;
+            }
+            if (game.undo()) {
+                clearSelection();
+                drawAnimActive = false;
+                recycleAnimActive = false;
+                autoMoveActive = false;
+                playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, 1.3f);
+            }
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private static int lerp(int from, int to, float progress) {
+        return Math.round(from + (to - from) * progress);
+    }
+
+    private DealStep findDealStep(int column, int index) {
+        for (DealStep step : dealSteps) {
+            if (step.column == column && step.index == index) {
+                return step;
+            }
+        }
+        return null;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         layout();
-        long now = System.nanoTime();
-        long elapsed = lastFrame == 0 ? 0 : Math.min(50, (now - lastFrame) / 1_000_000);
-        lastFrame = now;
-        dealTime += elapsed;
-        if (!dealCards.isEmpty() && dealTime >= (dealCards.size() - 1L) * DEAL_DELAY + DEAL_DURATION) dealCards.clear();
-        if (motion != null && (motion.elapsed += elapsed) >= MOVE_DURATION) motion = null;
-        if (returnAnimation != null && (returnAnimation.elapsed += elapsed) >= MOVE_DURATION + DEAL_DELAY * returnAnimation.cards.size()) returnAnimation = null;
-        context.drawTexture(SolitaireTextures.GUI_TEXTURE, boardLeft, boardTop, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, BOARD_WIDTH, BOARD_HEIGHT);
-        drawBoard(context);
-    }
+        long now = System.currentTimeMillis();
 
-    private void drawBoard(DrawContext context) {
-        slot(context, stockX(), topY());
-        if (returnAnimation == null && !game.stock.isEmpty()) texture(context, SolitaireTextures.CLOSED_CARD, stockX(), topY());
-        slot(context, wasteX(), topY());
-        if (!game.waste.isEmpty() && !selectedWaste && (motion == null || motion.previousCard == null)) card(context, game.waste.get(game.waste.size() - 1), wasteX(), topY());
-        for (int slot = 0; slot < 4; slot++) {
-            slot(context, foundationX(slot), topY());
-            if (game.foundations[slot] > 0 && selectedFoundation != slot && !motionAt(foundationX(slot), topY())) card(context, card(SolitaireGame.Suit.values()[game.foundationSuits[slot]], game.foundations[slot]), foundationX(slot), topY());
+        if (drawAnimActive && now - drawStartTime >= DRAW_DURATION) {
+            drawAnimActive = false;
+            drawAnimCard = null;
         }
 
-        for (int column = 0; column < 7; column++) {
-            List<SolitaireGame.Card> pile = game.tableau.get(column);
-            slot(context, columnX(column), tableauY());
-            for (int index = 0; index < pile.size(); index++) {
-                SolitaireGame.Card current = pile.get(index);
-                if (dragging && selectedColumn == column && index >= selectedIndex) continue;
-                if (motion != null && motion.card == current) continue;
-                DealCard deal = findDeal(current);
-                if (deal != null && dealTime < deal.start) continue;
-                if (deal != null && !deal.soundPlayed) {
-                    deal.soundPlayed = true;
-                    sound(ModSounds.PUTCARD2);
+        if (recycleAnimActive && now - recycleStartTime >= RECYCLE_DURATION) {
+            recycleAnimActive = false;
+        }
+
+        if (autoMoveActive && now - autoMoveStartTime >= AUTO_MOVE_DURATION) {
+            autoMoveActive = false;
+            autoMoveCard = null;
+            autoMoveFoundation = -1;
+        }
+
+        if (dealing && now - dealStartTime >= dealSteps.size() * DEAL_DELAY + DEAL_DURATION) {
+            dealing = false;
+        }
+
+        context.drawTexture(SolitaireTextures.GUI_TEXTURE, boardLeft, boardTop, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, BOARD_WIDTH, BOARD_HEIGHT);
+
+        slot(context, stockX(), topY());
+        if (!game.stock.isEmpty() || recycleAnimActive) {
+            texture(context, SolitaireTextures.CLOSED_CARD, stockX(), topY());
+        }
+
+        slot(context, wasteX(), topY());
+        if (!game.waste.isEmpty() && !recycleAnimActive) {
+            if (drawAnimActive) {
+                if (game.waste.size() >= 2) {
+                    card(context, game.waste.get(game.waste.size() - 2), wasteX(), topY());
                 }
-                int x = columnX(column);
-                int y = tableauY() + index * cardStep;
-                if (deal != null && dealTime < deal.start + DEAL_DURATION) {
-                    float progress = smooth((dealTime - deal.start) / (float) DEAL_DURATION);
-                    x = lerp(stockX(), x, progress);
-                    y = lerp(topY(), y, progress);
+            } else if (dragging && selectedWaste) {
+                if (game.waste.size() >= 2) {
+                    card(context, game.waste.get(game.waste.size() - 2), wasteX(), topY());
                 }
-                if (current.faceUp) card(context, current, x, y);
-                else texture(context, SolitaireTextures.CLOSED_CARD, x, y);
+            } else if (autoMoveActive && autoMoveFromWaste) {
+                if (!game.waste.isEmpty()) {
+                    card(context, game.waste.get(game.waste.size() - 1), wasteX(), topY());
+                }
+            } else {
+                int wy = (selectedWaste && !dragging) ? topY() - 3 : topY();
+                card(context, game.waste.get(game.waste.size() - 1), wasteX(), wy);
             }
         }
-        if (selectedWaste && !dragging) slot(context, wasteX(), topY());
-        if (selectedFoundation >= 0) slot(context, foundationX(selectedFoundation), topY());
-        if (dragging) drawDragged(context);
-        if (motion != null) drawMotion(context);
-        if (returnAnimation != null) drawReturn(context);
-        if (game.won) context.drawCenteredTextWithShadow(textRenderer, Text.translatable("minigame.solitaire.win"), boardLeft + BOARD_WIDTH / 2, boardTop + BOARD_HEIGHT - 18, 0xFFFFFF00);
+
+        for (int slot = 0; slot < 4; slot++) {
+            slot(context, foundationX(slot), topY());
+            int rank = game.foundations[slot];
+            if (rank > 0) {
+                SolitaireGame.Suit suit = SolitaireGame.Suit.values()[game.foundationSuits[slot]];
+                if (dragging && selectedFoundation == slot) {
+                    if (rank > 1) {
+                        card(context, card(suit, rank - 1), foundationX(slot), topY());
+                    }
+                } else if (autoMoveActive && autoMoveFoundation == slot) {
+                    if (rank > 1) {
+                        card(context, card(suit, rank - 1), foundationX(slot), topY());
+                    }
+                } else {
+                    int fy = (selectedFoundation == slot && !dragging) ? topY() - 3 : topY();
+                    card(context, card(suit, rank), foundationX(slot), fy);
+                }
+            }
+        }
+
+        for (int col = 0; col < 7; col++) {
+            slot(context, columnX(col), tableauY());
+            List<SolitaireGame.Card> pile = game.tableau.get(col);
+            for (int i = 0; i < pile.size(); i++) {
+                if (dealing) {
+                    DealStep step = findDealStep(col, i);
+                    if (step != null && now < dealStartTime + step.startMs + DEAL_DURATION) {
+                        continue;
+                    }
+                }
+                if (dragging && selectedColumn == col && i >= selectedIndex) {
+                    continue;
+                }
+                int y = cardY(col, i);
+                if (selectedColumn == col && !dragging && i >= selectedIndex) {
+                    y -= 3;
+                }
+                SolitaireGame.Card current = pile.get(i);
+                if (current.faceUp) {
+                    card(context, current, columnX(col), y);
+                } else {
+                    texture(context, SolitaireTextures.CLOSED_CARD, columnX(col), y);
+                }
+            }
+        }
+
+        if (dealing) {
+            long elapsed = now - dealStartTime;
+            for (DealStep step : dealSteps) {
+                if (elapsed >= step.startMs && elapsed < step.startMs + DEAL_DURATION) {
+                    float p = (float) (elapsed - step.startMs) / DEAL_DURATION;
+                    float t = p * p * (3 - 2 * p);
+                    int x = lerp(stockX(), columnX(step.column), t);
+                    int y = lerp(topY(), cardY(step.column, step.index), t);
+                    if (!step.soundPlayed) {
+                        step.soundPlayed = true;
+                        playSound(SoundEvents.BLOCK_WOOL_PLACE, 0.9f + step.index * 0.05f);
+                    }
+                    texture(context, SolitaireTextures.CLOSED_CARD, x, y);
+                }
+            }
+        }
+
+        if (drawAnimActive && drawAnimCard != null) {
+            float p = Math.min(1.0f, (float) (now - drawStartTime) / DRAW_DURATION);
+            float t = p * p * (3 - 2 * p);
+            int x = lerp(stockX(), wasteX(), t);
+            card(context, drawAnimCard, x, topY());
+        }
+
+        if (recycleAnimActive) {
+            float p = Math.min(1.0f, (float) (now - recycleStartTime) / RECYCLE_DURATION);
+            float t = p * p * (3 - 2 * p);
+            int x = lerp(wasteX(), stockX(), t);
+            texture(context, SolitaireTextures.CLOSED_CARD, x, topY());
+        }
+
+        if (autoMoveActive && autoMoveCard != null) {
+            float p = Math.min(1.0f, (float) (now - autoMoveStartTime) / AUTO_MOVE_DURATION);
+            float t = p * p * (3 - 2 * p);
+            int x = lerp(autoMoveFromX, autoMoveToX, t);
+            int y = lerp(autoMoveFromY, autoMoveToY, t);
+            card(context, autoMoveCard, x, y);
+        }
+
+        if (dragging) {
+            drawDragged(context);
+        }
+
+        if (game.won) {
+            Text winText = Text.translatable("minigame.solitaire.win").formatted(Formatting.GOLD, Formatting.BOLD);
+            int winWidth = textRenderer.getWidth(winText);
+            context.drawText(textRenderer, winText, boardLeft + (BOARD_WIDTH - winWidth) / 2, boardTop + BOARD_HEIGHT - 18, 0xFFFFD700, true);
+        }
     }
 
     private void drawDragged(DrawContext context) {
-        if (selectedWaste || selectedFoundation >= 0) card(context, selectedCard(), dragX - CARD_WIDTH / 2, dragY - CARD_HEIGHT / 2);
-        else for (int index = selectedIndex; index < game.tableau.get(selectedColumn).size(); index++) card(context, game.tableau.get(selectedColumn).get(index), dragX - CARD_WIDTH / 2, dragY - CARD_HEIGHT / 2 + (index - selectedIndex) * cardStep);
-    }
-
-    private void drawMotion(DrawContext context) {
-        float progress = smooth(motion.elapsed / (float) MOVE_DURATION);
-        if (motion.previousCard != null) card(context, motion.previousCard, wasteX(), topY());
-        card(context, motion.card, lerp(motion.fromX, motion.toX, progress), lerp(motion.fromY, motion.toY, progress));
-    }
-
-    private void drawReturn(DrawContext context) {
-        for (int index = 0; index < returnAnimation.cards.size(); index++) {
-            float progress = smooth((returnAnimation.elapsed - index * (float) DEAL_DELAY) / MOVE_DURATION);
-            if (progress >= 1) continue;
-            card(context, returnAnimation.cards.get(index), lerp(wasteX(), stockX(), Math.max(0, progress)), topY());
+        if (selectedWaste) {
+            int cx = dragX - CARD_WIDTH / 2;
+            int cy = dragY - CARD_HEIGHT / 2;
+            card(context, game.waste.get(game.waste.size() - 1), cx, cy);
+        } else if (selectedFoundation >= 0) {
+            int cx = dragX - CARD_WIDTH / 2;
+            int cy = dragY - CARD_HEIGHT / 2;
+            card(context, card(SolitaireGame.Suit.values()[game.foundationSuits[selectedFoundation]], game.foundations[selectedFoundation]), cx, cy);
+        } else if (selectedColumn >= 0) {
+            List<SolitaireGame.Card> pile = game.tableau.get(selectedColumn);
+            int cx = dragX - CARD_WIDTH / 2;
+            int cy = dragY - CARD_HEIGHT / 2;
+            for (int i = selectedIndex; i < pile.size(); i++) {
+                int cardY = cy + (i - selectedIndex) * 15;
+                card(context, pile.get(i), cx, cardY);
+            }
         }
     }
 
-    private DealCard findDeal(SolitaireGame.Card card) {
-        for (DealCard deal : dealCards) if (deal.card == card) return deal;
-        return null;
+    private SolitaireGame.Card card(SolitaireGame.Suit suit, int rank) {
+        SolitaireGame.Card card = new SolitaireGame.Card(suit, rank);
+        card.faceUp = true;
+        return card;
     }
 
-    private boolean motionAt(int x, int y) { return motion != null && motion.toX == x && motion.toY == y; }
-    private static int lerp(int from, int to, float progress) { return Math.round(from + (to - from) * progress); }
-    private static float smooth(float value) { value = Math.max(0, Math.min(1, value)); return value * value * (3 - 2 * value); }
-    private SolitaireGame.Card card(SolitaireGame.Suit suit, int rank) { SolitaireGame.Card card = new SolitaireGame.Card(suit, rank); card.faceUp = true; return card; }
-    private void slot(DrawContext context, int x, int y) { texture(context, SolitaireTextures.OVERLAY_CARD, x, y); }
-    private void card(DrawContext context, SolitaireGame.Card card, int x, int y) { texture(context, SolitaireTextures.cardTexture(card.suit, card.rank), x, y); }
-    private void texture(DrawContext context, Identifier texture, int x, int y) { context.drawTexture(texture, x, y, 0, 0, CARD_WIDTH, CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT); }
+    private void slot(DrawContext context, int x, int y) {
+        texture(context, SolitaireTextures.OVERLAY_CARD, x, y);
+    }
+
+    private void card(DrawContext context, SolitaireGame.Card card, int x, int y) {
+        texture(context, SolitaireTextures.cardTexture(card.suit, card.rank), x, y);
+    }
+
+    private void texture(DrawContext context, Identifier texture, int x, int y) {
+        context.drawTexture(texture, x, y, 0, 0, CARD_WIDTH, CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT);
+    }
 
     @Override
-    public void close() { super.close(); MinecraftClient.getInstance().setScreen(parent); }
+    public void close() {
+        super.close();
+        MinecraftClient.getInstance().setScreen(parent);
+    }
 
-    private static final class DealCard {
+    private static final class DealStep {
         private final SolitaireGame.Card card;
-        private final int start;
+        private final int column;
+        private final int index;
+        private final int startMs;
         private boolean soundPlayed;
-        private DealCard(SolitaireGame.Card card, int column, int index, int start) { this.card = card; this.start = start; }
-    }
 
-    private static final class Motion {
-        private final SolitaireGame.Card card;
-        private final SolitaireGame.Card previousCard;
-        private final int fromX, fromY, toX, toY;
-        private long elapsed;
-        private Motion(SolitaireGame.Card card, int fromX, int fromY, int toX, int toY, SolitaireGame.Card previousCard) { this.card = card; this.fromX = fromX; this.fromY = fromY; this.toX = toX; this.toY = toY; this.previousCard = previousCard; }
-    }
-
-    private static final class ReturnAnimation {
-        private final List<SolitaireGame.Card> cards;
-        private long elapsed;
-        private ReturnAnimation(List<SolitaireGame.Card> cards) { this.cards = cards; }
+        private DealStep(SolitaireGame.Card card, int column, int index, int startMs) {
+            this.card = card;
+            this.column = column;
+            this.index = index;
+            this.startMs = startMs;
+        }
     }
 }
