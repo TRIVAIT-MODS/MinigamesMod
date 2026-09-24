@@ -1,9 +1,9 @@
 package org.trivait.minigamesmod.minigame.sudoku;
 
 public enum Difficulty {
-    EASY(30),
-    MEDIUM(40),
-    HARD(50);
+    EASY(40),
+    MEDIUM(48),
+    HARD(54);
 
     private final int cellsToRemove;
 
