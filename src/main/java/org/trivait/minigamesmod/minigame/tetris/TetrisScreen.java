@@ -141,7 +141,7 @@ public class TetrisScreen extends Screen {
         leftPressed = rightPressed = upPressed = downPressed = spacePressed = false;
         nextMino = pickMino();
         nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                (nextMino instanceof MinoJ || nextMino instanceof MinoZ ? Block.SIZE :
                 (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                 TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
     }
@@ -208,7 +208,7 @@ public class TetrisScreen extends Screen {
             currentMino.setXY(TETRIS_WIDTH / 2, Block.SIZE);
             nextMino = pickMino();
             nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                    (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                    (nextMino instanceof MinoJ || nextMino instanceof MinoZ ? Block.SIZE :
                     (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                     TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
         }

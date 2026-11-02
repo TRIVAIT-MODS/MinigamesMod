@@ -140,13 +140,13 @@ public class Mino {
 
     protected TextureResource getFixedBlockTexture() {
         Identifier texture = switch (type) {
-            case "square" -> Identifier.ofVanilla("textures/block/gold_block.png");
-            case "bar" -> Identifier.ofVanilla("textures/block/diamond_block.png");
+            case "o" -> Identifier.ofVanilla("textures/block/gold_block.png");
+            case "i" -> Identifier.ofVanilla("textures/block/diamond_block.png");
             case "t" -> Identifier.ofVanilla("textures/block/amethyst_block.png");
-            case "l1" -> Identifier.ofVanilla("textures/block/copper_block.png");
-            case "l2" -> Identifier.ofVanilla("textures/block/lapis_block.png");
-            case "z1" -> Identifier.ofVanilla("textures/block/redstone_block.png");
-            case "z2" -> Identifier.ofVanilla("textures/block/emerald_block.png");
+            case "l" -> Identifier.ofVanilla("textures/block/copper_block.png");
+            case "j" -> Identifier.ofVanilla("textures/block/lapis_block.png");
+            case "z" -> Identifier.ofVanilla("textures/block/redstone_block.png");
+            case "s" -> Identifier.ofVanilla("textures/block/emerald_block.png");
             default -> Identifier.ofVanilla("textures/block/iron_block.png");
         };
 
@@ -277,7 +277,7 @@ public class Mino {
                         if (!outline[1]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
                         if (!outline[0]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
                     }
-                    if (!(this instanceof MinoSquare)) {
+                    if (!(this instanceof MinoO)) {
                         if (!outline[0] && !outline[2]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
                         if (!outline[0] && !outline[3]) context.drawVerticalLine(TetrisScreen.left_x + block.x + Block.SIZE - 1, TetrisScreen.top_y + block.y + yOffset, TetrisScreen.top_y + block.y + yOffset, Colors.WHITE);
                         if (!outline[1] && !outline[2]) context.drawVerticalLine(TetrisScreen.left_x + block.x, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, TetrisScreen.top_y + block.y + Block.SIZE + yOffset - 1, Colors.WHITE);
