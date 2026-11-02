@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.config.Config;
+import org.trivait.minigamesmod.config.MinigameLayoutConfig;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
 import org.trivait.minigamesmod.minigame.bubbleshooter.BubbleShooter;
 import org.trivait.minigamesmod.minigame.cookieclicker.CookieClicker;
@@ -33,6 +34,7 @@ public class MinigamesMod implements ClientModInitializer {
     public void onInitializeClient() {
         AutoConfig.register(Config.class, GsonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(Config.class).getConfig();
+        AutoConfig.register(MinigameLayoutConfig.class, GsonConfigSerializer::new);
 
         SheetsApi.fetchScriptVersionAsync();
         ModSounds.register();
@@ -46,6 +48,8 @@ public class MinigamesMod implements ClientModInitializer {
         MinigameRegistry.register(new BubbleShooter());
         MinigameRegistry.register(new CookieClicker());
         MinigameRegistry.register(new Solitaire());
+
+        MinigameLayoutConfig.get().sync();
 
         FabricLoader.getInstance().getModContainer("minigamesmod").ifPresent(s ->
                 ResourceManagerHelper.registerBuiltinResourcePack(Identifier.of("minigamesmod", "minigames"),
