@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.trivait.iba.api.IconButtons;
 import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.config.Config;
+import org.trivait.minigamesmod.config.MinigameLayoutConfig;
 import org.trivait.minigamesmod.config.util.MainMenuButtonPosition;
 import org.trivait.minigamesmod.config.util.PauseMenuButtonPosition;
 import org.trivait.minigamesmod.gui.widget.MinigamesButton;
@@ -39,6 +40,7 @@ public class MinigamesMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         AutoConfig.register(Config.class, GsonConfigSerializer::new);
+        AutoConfig.register(MinigameLayoutConfig.class, GsonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(Config.class).getConfig();
 
         SheetsApi.fetchScriptVersionAsync();
