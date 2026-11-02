@@ -11,10 +11,11 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.trivait.minigamesmod.MinigamesMod;
 import org.trivait.minigamesmod.api.MinigameDefinition;
-import org.trivait.minigamesmod.api.MinigameRegistry;
+import org.trivait.minigamesmod.config.MinigameLayoutConfig;
 import org.trivait.minigamesmod.gui.widget.ArrowButtonWidget;
 import org.trivait.minigamesmod.gui.widget.MainConfigButton;
 import org.trivait.minigamesmod.gui.widget.MinigameCardWidget;
+import org.trivait.minigamesmod.gui.widget.RearrangeButton;
 import org.trivait.minigamesmod.leaderboard.Leaderboard;
 import org.trivait.minigamesmod.leaderboard.SheetsApi;
 import org.trivait.minigamesmod.minigame.minesweeper.screen.SelectLeaderboardScreen;
@@ -31,7 +32,7 @@ public class MinigameListScreen extends Screen {
     private static final float ANIM_SPEED = 0.15f;
 
     private final @Nullable Screen parent;
-    private int selectedIndex = MinigameRegistry.getAll().size() / 2;
+    private int selectedIndex;
     private float animOffset = 0f;
     private final List<MinigameCardWidget> cards = new ArrayList<>();
     private final List<ArrowButtonWidget> arrows = new ArrayList<>();
@@ -41,8 +42,14 @@ public class MinigameListScreen extends Screen {
     private boolean leaderboardNotSupported;
 
     public MinigameListScreen(@Nullable Screen parent) {
+        this(parent, -1, 0f);
+    }
+
+    public MinigameListScreen(@Nullable Screen parent, int selectedIndex, float animOffset) {
         super(Component.translatable("screen.minigames.list.title"));
         this.parent = parent;
+        this.selectedIndex = selectedIndex;
+        this.animOffset = animOffset;
     }
 
     @Override
@@ -50,7 +57,11 @@ public class MinigameListScreen extends Screen {
         cards.clear();
         arrows.clear();
 
-        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+        List<MinigameDefinition> all = MinigameLayoutConfig.get().getVisibleList();
+
+        if (selectedIndex < 0 || selectedIndex >= all.size()) {
+            selectedIndex = all.isEmpty() ? 0 : all.size() / 2;
+        }
 
         int centerX = this.width / 2;
         int cardY = this.height / 2 - CARD_HEIGHT / 2 - 10;
@@ -101,7 +112,12 @@ public class MinigameListScreen extends Screen {
         if (MinigamesMod.CONFIG.leaderboard) {
             this.addRenderableWidget(leaderboardBtn);
         }
-        this.addRenderableWidget(new MainConfigButton(width-20-5, 5));
+
+        this.addRenderableWidget(new RearrangeButton(width - 20 - 5 - 20 - 4, 5, b -> {
+            Minecraft.getInstance().setScreen(new MinigameArrangeScreen(parent, selectedIndex, animOffset));
+        }));
+        this.addRenderableWidget(new MainConfigButton(width - 20 - 5, 5));
+
         updateActive();
     }
 
@@ -114,7 +130,7 @@ public class MinigameListScreen extends Screen {
     }
 
     private void scrollRight() {
-        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+        List<MinigameDefinition> all = MinigameLayoutConfig.get().getVisibleList();
 
         if (selectedIndex < all.size() - 1) {
             selectedIndex++;
@@ -124,15 +140,18 @@ public class MinigameListScreen extends Screen {
     }
 
     private void updateActive() {
-        List<MinigameDefinition> all = List.copyOf(MinigameRegistry.getAll());
+        List<MinigameDefinition> all = MinigameLayoutConfig.get().getVisibleList();
 
         if (all.isEmpty()) {
             leaderboardBlocked = true;
             leaderboardNotSupported = false;
-            leaderboardBtn.active = false;
+            if (leaderboardBtn != null) {
+                leaderboardBtn.active = false;
+            }
             return;
         }
 
+        selectedIndex = Math.max(0, Math.min(selectedIndex, all.size() - 1));
         MinigameDefinition selected = all.get(selectedIndex);
         Leaderboard leaderboard = selected.getLeaderboard();
         boolean hasLeaderboard = leaderboard != null;
@@ -140,7 +159,9 @@ public class MinigameListScreen extends Screen {
 
         leaderboardBlocked = !SheetsApi.leaderboardsEnabled;
         leaderboardNotSupported = !hasLeaderboard && !isMinesweeper;
-        leaderboardBtn.active = !leaderboardBlocked && !leaderboardNotSupported;
+        if (leaderboardBtn != null) {
+            leaderboardBtn.active = !leaderboardBlocked && !leaderboardNotSupported;
+        }
     }
 
     private void updateCardScales(float offset) {
@@ -166,9 +187,7 @@ public class MinigameListScreen extends Screen {
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         for (ArrowButtonWidget arrow : arrows) {
             if (arrow.isMouseOver(click.x(), click.y())) {
-                arrow.mouseClicked(click, doubled);
-
-                return true;
+                return arrow.mouseClicked(click, doubled);
             }
         }
 
@@ -191,6 +210,7 @@ public class MinigameListScreen extends Screen {
         if (cards.isEmpty()) {
             context.centeredText(this.font, Component.translatable("screen.minigames.list.empty"), this.width / 2, this.height / 2 - 10, 0xFF888888);
         }
+
         if (MinigamesMod.CONFIG.leaderboard) {
             if (leaderboardBtn != null && mouseX >= leaderboardBtn.getX() && mouseX < leaderboardBtn.getX() + leaderboardBtn.getWidth() && mouseY >= leaderboardBtn.getY() && mouseY < leaderboardBtn.getY() + leaderboardBtn.getHeight()) {
                 if (leaderboardBlocked) {
@@ -215,13 +235,16 @@ public class MinigameListScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == GLFW.GLFW_KEY_LEFT) {
+        int keyCode = input.key();
+
+        if (keyCode == GLFW.GLFW_KEY_LEFT) {
             scrollLeft();
         }
 
-        if (input.key() == GLFW.GLFW_KEY_RIGHT) {
+        if (keyCode == GLFW.GLFW_KEY_RIGHT) {
             scrollRight();
         }
+
         return super.keyPressed(input);
     }
 
@@ -233,7 +256,7 @@ public class MinigameListScreen extends Screen {
 
         context.horizontalLine(0, this.width, cardY - 4, -1);
         context.horizontalLine(0, this.width, cardY + CARD_HEIGHT + 4, -1);
-        context.fill(0, cardY - 4, this.width, cardY + CARD_HEIGHT + 8, 0x30FFFFFF);
+        context.fill(0, cardY - 4, this.width, cardY + CARD_HEIGHT + 4, 0x30FFFFFF);
     }
 
     @Override

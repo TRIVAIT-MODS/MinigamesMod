@@ -177,6 +177,10 @@
   "minigame.leaderboard.conditions": "Условия",
 
   "minigame.config.btn": "Открыть конфиг",
+  "minigame.layout.btn": "Перестановка мини-игр",
+  "screen.minigames.layout.title": "Настройка мини-игр",
+  "screen.minigames.layout.visible_empty": "Нет активных мини-игр",
+  "screen.minigames.layout.hidden_empty": "Нет скрытых мини-игр",
   "minigame.leaderboard.disabled": "Лидерборды выключены, временно, или навсегда, никто не знает...",
   "minigame.leaderboard.notSupported": "Эта мини-игра не поддерживает лидерборд",
 
