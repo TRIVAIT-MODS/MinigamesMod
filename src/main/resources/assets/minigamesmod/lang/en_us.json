@@ -179,6 +179,10 @@
   "minigame.leaderboard.conditions": "Conditions",
 
   "minigame.config.btn": "Open config",
+  "minigame.layout.btn": "Customize layout",
+  "screen.minigames.layout.title": "Customize Minigames",
+  "screen.minigames.layout.visible_empty": "No active minigames",
+  "screen.minigames.layout.hidden_empty": "No hidden minigames",
   "minigame.leaderboard.disabled": "Leaderboards are disabled. Whether temporarily or permanently, it's unknown...",
   "minigame.leaderboard.notSupported": "This minigame does not support a leaderboard.",
 
