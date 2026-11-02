@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.snake;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -344,7 +345,7 @@ public class SnakeScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == 256 && this.shouldCloseOnEsc()) {
+        if (input.key() == InputConstants.KEY_ESCAPE && this.shouldCloseOnEsc()) {
             this.onClose();
             return true;
         }
@@ -355,7 +356,7 @@ public class SnakeScreen extends Screen {
         }
 
         switch (input.key()) {
-            case 265, 87 -> {
+            case InputConstants.KEY_UP, InputConstants.KEY_W -> {
                 if (direction[1] != 1 && nextDirection[1] != 1) {
                     nextDirection[0] = 0;
                     nextDirection[1] = -1;
@@ -363,7 +364,7 @@ public class SnakeScreen extends Screen {
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 264, 83 -> {
+            case InputConstants.KEY_DOWN, InputConstants.KEY_S -> {
                 if (direction[1] != -1 && nextDirection[1] != -1) {
                     nextDirection[0] = 0;
                     nextDirection[1] = 1;
@@ -371,7 +372,7 @@ public class SnakeScreen extends Screen {
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 263, 65 -> {
+            case InputConstants.KEY_LEFT, InputConstants.KEY_A -> {
                 if (direction[0] != 1 && nextDirection[0] != 1) {
                     nextDirection[0] = -1;
                     nextDirection[1] = 0;
@@ -379,7 +380,7 @@ public class SnakeScreen extends Screen {
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 262, 68 -> {
+            case InputConstants.KEY_RIGHT, InputConstants.KEY_D -> {
                 if (direction[0] != -1 && nextDirection[0] != -1) {
                     nextDirection[0] = 1;
                     nextDirection[1] = 0;
@@ -387,7 +388,7 @@ public class SnakeScreen extends Screen {
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 32 -> {
+            case InputConstants.KEY_SPACE -> {
                 gamePaused = !gamePaused;
                 return true;
             }

@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.tetris;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -362,24 +363,24 @@ public class TetrisScreen extends Screen {
     @Override
     public boolean keyPressed(@NotNull KeyEvent input) {
         int keyCode = input.key();
-        if (keyCode == 256 && this.shouldCloseOnEsc()) {
+        if (keyCode == InputConstants.KEY_ESCAPE && this.shouldCloseOnEsc()) {
             this.onClose();
             return true;
         } else {
             switch (keyCode) {
-                case 262, 68:
+                case InputConstants.KEY_RIGHT, InputConstants.KEY_D:
                     rightPressed = true;
                     break;
-                case 263, 65:
+                case InputConstants.KEY_LEFT, InputConstants.KEY_A:
                     leftPressed = true;
                     break;
-                case 264, 83:
+                case InputConstants.KEY_DOWN, InputConstants.KEY_S:
                     downPressed = true;
                     break;
-                case 265, 87:
+                case InputConstants.KEY_UP, InputConstants.KEY_W:
                     upPressed = true;
                     break;
-                case 32:
+                case InputConstants.KEY_SPACE:
                     spacePressed = true;
                     break;
                 default:

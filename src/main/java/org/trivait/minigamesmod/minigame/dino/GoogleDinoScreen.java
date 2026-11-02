@@ -35,8 +35,8 @@ public class GoogleDinoScreen extends Screen {
     private static final int GUI_WIDTH = 350;
     private static final int GUI_HEIGHT = 197;
     private static final Identifier GUI_TEXTURE = Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/dino/gui.png");
-    private static final int GAME_WIDTH = GUI_WIDTH-16;
-    private static final int GAME_HEIGHT = GUI_HEIGHT-16;
+    private static final int GAME_WIDTH = GUI_WIDTH - 16;
+    private static final int GAME_HEIGHT = GUI_HEIGHT - 16;
 
     private static final int ROAD_WIDTH = 2400;
     private static final int ROAD_HEIGHT = 24;
@@ -84,27 +84,27 @@ public class GoogleDinoScreen extends Screen {
         this.addRenderableWidget(returnButton);
         this.addRenderableWidget(new ConfigButton(60, 10, minigame));
 
-        dino = new Dino((height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17, (height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17);
+        dino = new Dino((height - GUI_HEIGHT) / 2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17, (height - GUI_HEIGHT) / 2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17);
     }
 
     private void restart() {
-        road1X=0;
-        road2X=ROAD_WIDTH;
+        road1X = 0;
+        road2X = ROAD_WIDTH;
         gameRunning = true;
-        score=0;
+        score = 0;
         objects.clear();
-        dino = new Dino((height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17, (height-GUI_HEIGHT)/2+8+GAME_HEIGHT-4-ROAD_HEIGHT+17);
+        dino = new Dino((height - GUI_HEIGHT) / 2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17, (height - GUI_HEIGHT) / 2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17);
     }
 
     @Override
     public boolean keyPressed(KeyEvent input) {
         int keyCode = input.key();
 
-        if (keyCode== InputConstants.KEY_SPACE||keyCode==InputConstants.KEY_UP) {
+        if (keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_UP || keyCode == InputConstants.KEY_W) {
             dino.jump();
             return true;
         }
-        if (keyCode==InputConstants.KEY_LSHIFT||keyCode==InputConstants.KEY_LCONTROL||keyCode==InputConstants.KEY_DOWN||keyCode==InputConstants.KEY_S) {
+        if (keyCode == InputConstants.KEY_LSHIFT || keyCode == InputConstants.KEY_LCONTROL || keyCode == InputConstants.KEY_DOWN || keyCode == InputConstants.KEY_S) {
             dino.crouching = true;
             return true;
         }
@@ -115,7 +115,7 @@ public class GoogleDinoScreen extends Screen {
     @Override
     public boolean keyReleased(KeyEvent input) {
         int keyCode = input.key();
-        if (keyCode==InputConstants.KEY_LSHIFT||keyCode==InputConstants.KEY_LCONTROL||keyCode==InputConstants.KEY_DOWN||keyCode==InputConstants.KEY_S) {
+        if (keyCode == InputConstants.KEY_LSHIFT || keyCode == InputConstants.KEY_LCONTROL || keyCode == InputConstants.KEY_DOWN || keyCode == InputConstants.KEY_S) {
             dino.crouching = false;
         }
         return super.keyReleased(input);
@@ -129,8 +129,8 @@ public class GoogleDinoScreen extends Screen {
         Font tr = Minecraft.getInstance().font;
         Matrix3x2fStack matrices = context.pose();
 
-        int guiX = (width-GUI_WIDTH)/2;
-        int guiY = (height-GUI_HEIGHT)/2;
+        int guiX = (width - GUI_WIDTH) / 2;
+        int guiY = (height - GUI_HEIGHT) / 2;
 
         if (gameRunning) {
             if (objects != null) {
@@ -146,17 +146,17 @@ public class GoogleDinoScreen extends Screen {
             road2X -= speed * delta;
         }
 
-        if (road1X+ROAD_WIDTH<0) {
-            road1X=road2X+ROAD_WIDTH;
+        if (road1X + ROAD_WIDTH < 0) {
+            road1X = road2X + ROAD_WIDTH;
         }
-        if (road2X+ROAD_WIDTH<0) {
-            road2X=road1X+ROAD_WIDTH;
+        if (road2X + ROAD_WIDTH < 0) {
+            road2X = road1X + ROAD_WIDTH;
         }
 
         context.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, guiX, guiY, 0, 0, GUI_WIDTH, GUI_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
-        context.fill(guiX+8, guiY+8, guiX+8+GAME_WIDTH, guiY+8+GAME_HEIGHT, -1);
+        context.fill(guiX + 8, guiY + 8, guiX + 8 + GAME_WIDTH, guiY + 8 + GAME_HEIGHT, -1);
 
-        renderObjects(context, delta, guiX+8, guiY+8);
+        renderObjects(context, delta, guiX + 8, guiY + 8);
 
         String formattedScore = String.format("%05d", score);
         int scoreHI = MinigameRegistry.getConfig(GoogleDinoConfig.class).score;
@@ -179,7 +179,7 @@ public class GoogleDinoScreen extends Screen {
             int overY = guiY + 8 + GAME_HEIGHT / 2 - 10;
 
             matrices.pushMatrix();
-            matrices.translate(overX-10, overY);
+            matrices.translate(overX - 10, overY);
             matrices.scale(2.0F, 2.0F);
             context.text(tr, Component.literal(overText).withStyle(style -> style.withBold(true).withColor(0x909191)), 0, 0, 0xFFFFFFFF, false);
             matrices.popMatrix();
@@ -198,8 +198,8 @@ public class GoogleDinoScreen extends Screen {
         obstacleSpawnTicks++;
         cloudSpawnTicks++;
 
-        int gameX = (width-GUI_WIDTH)/2 + 8;
-        int gameY = (height-GUI_HEIGHT)/2 + 8;
+        int gameX = (width - GUI_WIDTH) / 2 + 8;
+        int gameY = (height - GUI_HEIGHT) / 2 + 8;
         int lastObstacleX = getLastObstacleX();
 
         if (obstacleSpawnTicks >= obstacleSpawnDelay && lastObstacleX < gameX + GAME_WIDTH - 90) {
@@ -227,32 +227,32 @@ public class GoogleDinoScreen extends Screen {
     }
 
     private void renderObjects(GuiGraphicsExtractor ctx, float delta, int gameX, int gameY) {
-        ctx.enableScissor(gameX, gameY, gameX+GAME_WIDTH, gameY+GAME_HEIGHT);
+        ctx.enableScissor(gameX, gameY, gameX + GAME_WIDTH, gameY + GAME_HEIGHT);
         renderRoad(ctx, gameX, gameY);
 
-        if (objects!=null) {
+        if (objects != null) {
             for (GameObject gameObject : objects) {
                 gameObject.render(ctx, delta);
             }
         }
 
-        dino.render(ctx, delta, gameX+10);
+        dino.render(ctx, delta, gameX + 10);
 
         ctx.disableScissor();
     }
 
     private void renderRoad(GuiGraphicsExtractor ctx, int gameX, int gameY) {
-        int y = gameY+GAME_HEIGHT-4-ROAD_HEIGHT;
-        int x = (int) (gameX+road1X);
+        int y = gameY + GAME_HEIGHT - 4 - ROAD_HEIGHT;
+        int x = (int) (gameX + road1X);
 
         ctx.blit(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
-        x = (int) (gameX+road2X);
+        x = (int) (gameX + road2X);
         ctx.blit(RenderPipelines.GUI_TEXTURED, ROAD_TEXTURE, x, y, 0, 0, ROAD_WIDTH, ROAD_HEIGHT, ROAD_WIDTH, ROAD_HEIGHT);
     }
 
     private void spawnObstacle(int gameX, int gameY) {
         int spawnX = gameX + GAME_WIDTH + random.nextInt(20, 80);
-        int baseY = (height-GUI_HEIGHT)/2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17;
+        int baseY = (height - GUI_HEIGHT) / 2 + 8 + GAME_HEIGHT - 4 - ROAD_HEIGHT + 17;
 
         GameObject newObject;
         int choice = random.nextInt(100);
@@ -287,7 +287,7 @@ public class GoogleDinoScreen extends Screen {
         for (GameObject object : objects) {
             if (!object.isCollidable()) continue;
             Vector4d other = object.getBox();
-            if (dinoBox.x+15 < other.z && dinoBox.z+10 > other.x && dinoBox.y < other.w && dinoBox.w > other.y) {
+            if (dinoBox.x + 15 < other.z && dinoBox.z + 10 > other.x && dinoBox.y < other.w && dinoBox.w > other.y) {
                 GoogleDinoConfig config = MinigameRegistry.getConfig(GoogleDinoConfig.class);
                 if (score > config.score) {
                     config.score = score;
