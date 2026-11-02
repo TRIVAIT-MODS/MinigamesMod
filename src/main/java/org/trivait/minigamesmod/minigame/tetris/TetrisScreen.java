@@ -119,6 +119,7 @@ public class TetrisScreen extends Screen {
     }
 
     public void reset() {
+        RandomMino.resetMinoList();
         score = 0;
         linesCleared = 0;
         level = 0;
@@ -134,12 +135,12 @@ public class TetrisScreen extends Screen {
         staticBlocks = new ArrayList<>();
         destroying = new ArrayList<>();
         animations = new ArrayList<>();
-        currentMino = pickMino();
+        currentMino = RandomMino.pickMino();
         currentMino.setXY(TETRIS_WIDTH / 2, Block.SIZE);
         leftPressed = rightPressed = upPressed = downPressed = spacePressed = false;
-        nextMino = pickMino();
+        nextMino = RandomMino.pickMino();
         nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                (nextMino instanceof MinoJ || nextMino instanceof MinoZ ? Block.SIZE :
                 (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                 TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
     }
@@ -204,9 +205,9 @@ public class TetrisScreen extends Screen {
 
             currentMino = nextMino;
             currentMino.setXY(TETRIS_WIDTH / 2, Block.SIZE);
-            nextMino = pickMino();
+            nextMino = RandomMino.pickMino();
             nextMino.setXY(TETRIS_WIDTH + Block.SIZE * 2 +
-                    (nextMino instanceof MinoL2 || nextMino instanceof MinoZ1 ? Block.SIZE :
+                    (nextMino instanceof MinoJ || nextMino instanceof MinoZ ? Block.SIZE :
                     (nextMino instanceof MinoT ? Block.SIZE / 2 : 0)),
                     TETRIS_HEIGHT - (int)(Block.SIZE * 2.5f));
         }
@@ -237,22 +238,6 @@ public class TetrisScreen extends Screen {
         for (Block block : staticBlocks) if (block.y < y) block.y += Block.SIZE;
         if (linesCleared % levelLength == 0) level++;
         return true;
-    }
-
-    private Mino pickMino() {
-        Mino mino = null;
-        int i = new Random().nextInt(7);
-        mino = switch (i) {
-            case 0 -> new MinoL1();
-            case 1 -> new MinoL2();
-            case 2 -> new MinoSquare();
-            case 3 -> new MinoBar();
-            case 4 -> new MinoT();
-            case 5 -> new MinoZ1();
-            case 6 -> new MinoZ2();
-            default -> mino;
-        };
-        return mino;
     }
 
     @Override
