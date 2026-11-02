@@ -362,23 +362,23 @@ public class SnakeScreen extends Screen {
 
         switch (keyCode) {
             case 265, 87 -> {
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 queueDirection(0, -1);
+                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 264, 83 -> {
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 queueDirection(0, 1);
+                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 263, 65 -> {
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 queueDirection(-1, 0);
+                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 262, 68 -> {
-                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 queueDirection(1, 0);
+                PlayingSoundManager.playSound(SoundEvent.of(Identifier.ofVanilla("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
             case 32 -> {
