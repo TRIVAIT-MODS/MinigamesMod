@@ -35,13 +35,13 @@ public abstract class Mino {
 
     public Mino() {
         switch (this) {
-            case MinoSquare ignored -> type = "square";
-            case MinoBar ignored -> type = "bar";
+            case MinoO ignored -> type = "o";
+            case MinoI ignored -> type = "i";
             case MinoT ignored -> type = "t";
-            case MinoL1 ignored -> type = "l1";
-            case MinoL2 ignored -> type = "l2";
-            case MinoZ1 ignored -> type = "z1";
-            case MinoZ2 ignored -> type = "z2";
+            case MinoL ignored -> type = "l";
+            case MinoJ ignored -> type = "j";
+            case MinoZ ignored -> type = "z";
+            case MinoS ignored -> type = "s";
             default -> {
             }
         }
@@ -166,13 +166,13 @@ public abstract class Mino {
     }
     protected Identifier getFixedBlockTexture() {
         Identifier texture = switch (type) {
-            case "square" -> Identifier.ofVanilla("block/gold_block");
-            case "bar" -> Identifier.ofVanilla("block/diamond_block");
+            case "o" -> Identifier.ofVanilla("block/gold_block");
+            case "i" -> Identifier.ofVanilla("block/diamond_block");
             case "t" -> Identifier.ofVanilla("block/amethyst_block");
-            case "l1" -> Identifier.ofVanilla("block/copper_block");
-            case "l2" -> Identifier.ofVanilla("block/lapis_block");
-            case "z1" -> Identifier.ofVanilla("block/redstone_block");
-            case "z2" -> Identifier.ofVanilla("block/emerald_block");
+            case "l" -> Identifier.ofVanilla("block/copper_block");
+            case "j" -> Identifier.ofVanilla("block/lapis_block");
+            case "z" -> Identifier.ofVanilla("block/redstone_block");
+            case "s" -> Identifier.ofVanilla("block/emerald_block");
             default -> Identifier.ofVanilla("block/iron_block");
         };
 
@@ -371,7 +371,7 @@ public abstract class Mino {
                         }
                     }
                     //individual diagonal pixels
-                    if (!(this instanceof MinoSquare)) {
+                    if (!(this instanceof MinoO)) {
                         if (!getOutline(block)[0] && !getOutline(block)[2]) {
                             context.drawVerticalLine(TetrisScreen.leftX + block.x, TetrisScreen.topY + block.y + yOffset, TetrisScreen.topY + block.y + yOffset, color.getRGB());
                         }
