@@ -17,8 +17,10 @@ import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
 import org.trivait.minigamesmod.minigame.tetris.mino.*;
 
+import static org.trivait.minigamesmod.minigame.tetris.mino.RandomMino.pickMino;
+
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class TetrisScreen extends Screen {
     public static int dropInterval = 60;
@@ -237,22 +239,6 @@ public class TetrisScreen extends Screen {
         for (Block block : staticBlocks) if (block.y < y) block.y += Block.SIZE;
         if (linesCleared % levelLength == 0) level++;
         return true;
-    }
-
-    private Mino pickMino() {
-        Mino mino = null;
-        int i = new Random().nextInt(7);
-        mino = switch (i) {
-            case 0 -> new MinoL1();
-            case 1 -> new MinoL2();
-            case 2 -> new MinoSquare();
-            case 3 -> new MinoBar();
-            case 4 -> new MinoT();
-            case 5 -> new MinoZ1();
-            case 6 -> new MinoZ2();
-            default -> mino;
-        };
-        return mino;
     }
 
     @Override
