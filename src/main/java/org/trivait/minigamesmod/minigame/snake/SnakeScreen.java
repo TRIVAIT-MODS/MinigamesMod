@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.snake;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -21,7 +22,9 @@ import org.trivait.minigamesmod.api.MinigameRegistry;
 import org.trivait.minigamesmod.api.PlayingSoundManager;
 import org.trivait.minigamesmod.gui.widget.ConfigButton;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +43,7 @@ public class SnakeScreen extends Screen {
     private List<int[]> snake;
     private int[] food;
     private int[] direction;
-    private int[] nextDirection;
+    private final Deque<int[]> pendingDirections = new ArrayDeque<>();
     private int score;
     private boolean gameOver;
     private boolean gamePaused;
@@ -91,7 +94,7 @@ public class SnakeScreen extends Screen {
         snake.add(new int[]{startX - 3, startY});
 
         direction = new int[]{1, 0};
-        nextDirection = new int[]{1, 0};
+        pendingDirections.clear();
 
         spawnFood();
 
@@ -156,9 +159,13 @@ public class SnakeScreen extends Screen {
         if (updateCounter < UPDATE_INTERVAL) return;
         updateCounter = 0;
 
-        direction[0] = nextDirection[0];
-        direction[1] = nextDirection[1];
+        if (!pendingDirections.isEmpty()) {
+            direction = pendingDirections.removeFirst();
+        }
+        moveSnake();
+    }
 
+    private void moveSnake() {
         int[] head = snake.get(0);
         int newX = head[0] + direction[0];
         int newY = head[1] + direction[1];
@@ -210,7 +217,7 @@ public class SnakeScreen extends Screen {
         gameX = (this.width - GAME_WIDTH) / 2;
         gameY = (this.height - GAME_HEIGHT) / 2;
 
-        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX-8, gameY-8, 0, 0, GAME_WIDTH+16, GAME_HEIGHT+16, GAME_WIDTH+16, GAME_HEIGHT+16);
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/gui.png"), gameX - 8, gameY - 8, 0, 0, GAME_WIDTH + 16, GAME_HEIGHT + 16, GAME_WIDTH + 16, GAME_HEIGHT + 16);
 
         context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake_cell.png"), gameX, gameY, 0, 0, GAME_WIDTH, GAME_HEIGHT, 16, 16);
 
@@ -228,7 +235,7 @@ public class SnakeScreen extends Screen {
 
         context.text(this.font, Component.translatable("minigame.snake.score").append("" + score), textX, textY, CommonColors.WHITE);
 
-        textX = textX+ font.width(Component.translatable("minigame.snake.score").append("" + score).getString()+3);
+        textX = textX + font.width(Component.translatable("minigame.snake.score").append("" + score).getString() + 3);
 
         SnakeConfig config = MinigameRegistry.getConfig(SnakeConfig.class);
         context.text(this.font, Component.translatable("minigame.snake.best_score").append("" + config.snakeHighScore), textX, textY, CommonColors.WHITE);
@@ -261,11 +268,11 @@ public class SnakeScreen extends Screen {
         if (segmentIndex == 0) {
             int headRotation = getHeadRotation();
             drawRotatedTexture(context, matrices, x, y,
-                Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake3.png"), headRotation);
+                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake3.png"), headRotation);
         } else if (segmentIndex == snake.size() - 1) {
             int tailRotation = getTailRotation();
             drawRotatedTexture(context, matrices, x, y,
-                Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake2.png"), tailRotation);
+                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake2.png"), tailRotation);
         } else {
             int[] prevSegment = snake.get(segmentIndex - 1);
             int[] nextSegment = snake.get(segmentIndex + 1);
@@ -278,11 +285,11 @@ public class SnakeScreen extends Screen {
             if (isstraight(prevDx, prevDy, nextDx, nextDy)) {
                 int bodyRotation = getBodyRotation(prevDx, prevDy, nextDx, nextDy);
                 drawRotatedTexture(context, matrices, x, y,
-                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake1.png"), bodyRotation);
+                        Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake1.png"), bodyRotation);
             } else {
                 int turnRotation = getTurnRotation(prevDx, prevDy, nextDx, nextDy);
                 drawRotatedTexture(context, matrices, x, y,
-                    Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake4.png"), turnRotation);
+                        Identifier.fromNamespaceAndPath(MinigamesMod.MOD_ID, "textures/minigame/snake/snake4.png"), turnRotation);
             }
         }
     }
@@ -344,7 +351,7 @@ public class SnakeScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.key() == 256 && this.shouldCloseOnEsc()) {
+        if (input.key() == InputConstants.KEY_ESCAPE && this.shouldCloseOnEsc()) {
             this.onClose();
             return true;
         }
@@ -355,44 +362,44 @@ public class SnakeScreen extends Screen {
         }
 
         switch (input.key()) {
-            case 265, 87 -> {
-                if (direction[1] != 1 && nextDirection[1] != 1) {
-                    nextDirection[0] = 0;
-                    nextDirection[1] = -1;
-                }
+            case InputConstants.KEY_UP, InputConstants.KEY_W -> {
+                queueDirection(0, -1);
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 264, 83 -> {
-                if (direction[1] != -1 && nextDirection[1] != -1) {
-                    nextDirection[0] = 0;
-                    nextDirection[1] = 1;
-                }
+            case InputConstants.KEY_DOWN, InputConstants.KEY_S -> {
+                queueDirection(0, 1);
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 263, 65 -> {
-                if (direction[0] != 1 && nextDirection[0] != 1) {
-                    nextDirection[0] = -1;
-                    nextDirection[1] = 0;
-                }
+            case InputConstants.KEY_LEFT, InputConstants.KEY_A -> {
+                queueDirection(-1, 0);
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 262, 68 -> {
-                if (direction[0] != -1 && nextDirection[0] != -1) {
-                    nextDirection[0] = 1;
-                    nextDirection[1] = 0;
-                }
+            case InputConstants.KEY_RIGHT, InputConstants.KEY_D -> {
+                queueDirection(1, 0);
                 PlayingSoundManager.playSound(SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace("block.wooden_button.click_on")), 2.0F, vol());
                 return true;
             }
-            case 32 -> {
+            case InputConstants.KEY_SPACE -> {
                 gamePaused = !gamePaused;
                 return true;
             }
         }
         return super.keyPressed(input);
+    }
+
+    private void queueDirection(int dx, int dy) {
+        int[] lastDirection = pendingDirections.peekLast();
+        if (lastDirection == null) {
+            lastDirection = direction;
+        }
+        if ((lastDirection[0] == dx && lastDirection[1] == dy)
+                || (lastDirection[0] == -dx && lastDirection[1] == -dy)) {
+            return;
+        }
+        pendingDirections.addLast(new int[]{dx, dy});
     }
 
     @Override
@@ -410,6 +417,6 @@ public class SnakeScreen extends Screen {
     }
 
     private float vol() {
-        return 5*MinigameRegistry.getConfig(SnakeVisibleConfig.class).volume / 100f;
+        return 5 * MinigameRegistry.getConfig(SnakeVisibleConfig.class).volume / 100f;
     }
 }

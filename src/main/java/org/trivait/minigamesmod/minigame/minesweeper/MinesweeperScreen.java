@@ -1,5 +1,6 @@
 package org.trivait.minigamesmod.minigame.minesweeper;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -212,7 +213,7 @@ public class MinesweeperScreen extends Screen {
         if (board == null) return super.mouseClicked(click, doubled);
 
         if (!board.alive || board.won) {
-            if (button == 0) { resetGame(); return true; }
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) { resetGame(); return true; }
             return super.mouseClicked(click, doubled);
         }
 
@@ -226,19 +227,19 @@ public class MinesweeperScreen extends Screen {
 
         Cell c = board.grid[gy][gx];
 
-        if (button == 1) {
+        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             if (!c.revealed) board.toggleFlag(gx, gy);
             MinesweeperGame.setSavedGame(board.toSavedGame());
             return true;
         }
 
-        if (button == 0 && c.revealed) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && c.revealed) {
             board.chord(gx, gy, cfg.enableAnimations);
             MinesweeperGame.setSavedGame(board.toSavedGame());
             return true;
         }
 
-        if (button == 0 && !c.flagged && !c.revealed) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && !c.flagged && !c.revealed) {
             if (board.firstClick) {
                 board.placeMinesAvoiding(gx, gy);
                 board.firstClick = false;
